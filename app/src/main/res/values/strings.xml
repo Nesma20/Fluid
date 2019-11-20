@@ -13,7 +13,12 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="menu_locations">Locations</string>
     <string name="menu_english_language">English</string>
     <string name="menu_arabic_language">Arabic</string>
     <string name="language_preferences">Language Preferences</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="choose_patient">Choose Patient</string>
 </resources>
