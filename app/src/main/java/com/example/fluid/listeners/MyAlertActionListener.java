@@ -1,10 +1,10 @@
 package com.example.fluid.listeners;
 
 
-import com.example.fluid.model.pojo.Item;
+import com.example.fluid.model.pojo.Appointement;
 
 public interface MyAlertActionListener {
-    public void updateData(Item item, String state);
+    public void updateData(Appointement appointement, String state);
 
 
 }

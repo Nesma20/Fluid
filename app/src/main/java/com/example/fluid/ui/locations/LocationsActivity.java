@@ -1,18 +1,18 @@
 package com.example.fluid.ui.locations;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.fluid.MainActivity;
+import com.example.fluid.ui.activities.BaseActivity;
+import com.example.fluid.ui.activities.MainActivity;
 import com.example.fluid.R;
 
 import java.util.List;
 
-public class LocationsActivity extends AppCompatActivity {
+public class LocationsActivity extends BaseActivity {
 RecyclerView mLocationRecyclerView;
 LocationAdapter mLocationAdapter;
 List<String> locations;
@@ -27,7 +27,5 @@ List<String> locations;
         mLocationAdapter = new LocationAdapter(this,locations);
         mLocationRecyclerView.setAdapter(mLocationAdapter);
         mLocationRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-
     }
 }

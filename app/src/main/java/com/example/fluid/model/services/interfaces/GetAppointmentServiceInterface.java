@@ -1,6 +1,5 @@
 package com.example.fluid.model.services.interfaces;
 
-import com.example.fluid.model.pojo.Item;
 import com.example.fluid.model.pojo.Items;
 
 

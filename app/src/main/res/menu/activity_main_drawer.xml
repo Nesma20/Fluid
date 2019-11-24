@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    tools:showIn="navigation_view"
+
+    >
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:id="@+id/nav_edit_profie"
+            android:icon="@drawable/ic_setting"
+            android:title="@string/menu_profile_settings" />
         <item
             android:id="@+id/nav_location"
             android:icon="@drawable/ic_location"
+
             android:title="@string/menu_locations" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
-        <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
     </group>
 
-    <item android:title="@string/language_preferences">
+    <item
+        android:title="@string/language_preferences"
+
+        android:icon="@drawable/ic_language">
         <menu>
             <item
-                android:id="@+id/english_reference"
+
+                android:id="@+id/language_reference"
                 android:title="@string/menu_english_language" />
-            <item
-                android:id="@+id/arabic_reference"
-                android:title="@string/menu_arabic_language" />
+
         </menu>
     </item>
 

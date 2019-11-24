@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.activities.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -31,7 +31,18 @@
         android:layout_height="match_parent"
         android:id="@+id/home_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <include layout="@layout/content_main"/>
+
+<!--        <include-->
+<!--            android:id="@+id/include"-->
+<!--            layout="@layout/content_main" />-->
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -39,13 +50,12 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
         android:id="@+id/start_fab"
+        android:padding="10dp"
         android:src="@drawable/ic_start"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
         android:fitsSystemWindows="true">
 
 
@@ -59,6 +69,7 @@
         android:layout_above="@id/start_fab"
         android:src="@drawable/ic_call"
         android:layout_marginBottom="5dp"
+        android:scaleType="fitXY"
         android:layout_alignParentEnd="true"
         android:fitsSystemWindows="true">
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
@@ -69,7 +80,8 @@
         android:id="@+id/confirm_arrive_fab"
         android:layout_marginEnd="10dp"
         android:layout_above="@id/call_fab"
-        android:src="@drawable/arrive"
+        android:src="@drawable/ic_arrive"
+        android:scaleType="fitXY"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="5dp"
         android:fitsSystemWindows="true">

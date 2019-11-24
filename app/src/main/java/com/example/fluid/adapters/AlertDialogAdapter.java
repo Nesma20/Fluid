@@ -12,17 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fluid.R;
 import com.example.fluid.listeners.MyAlertActionListener;
-import com.example.fluid.model.pojo.Item;
+import com.example.fluid.model.pojo.Appointement;
 
 import java.util.List;
 import java.util.Locale;
 
 public class AlertDialogAdapter extends RecyclerView.Adapter<AlertDialogAdapter.myViewHolder> {
 Context mContext;
-List<Item> items;
+List<Appointement> items;
 String state;
 MyAlertActionListener myAlertActionListener;
-public AlertDialogAdapter(Context mContext, List<Item> items, MyAlertActionListener myAlertActionListener, String state){
+public AlertDialogAdapter(Context mContext, List<Appointement> items, MyAlertActionListener myAlertActionListener, String state){
     this.mContext = mContext;
     this.items = items;
     this.myAlertActionListener =myAlertActionListener;
@@ -36,19 +36,19 @@ public AlertDialogAdapter(Context mContext, List<Item> items, MyAlertActionListe
 
     @Override
     public void onBindViewHolder(@NonNull myViewHolder holder, int position) {
-        final Item item = items.get(position);
+        final Appointement appointement = items.get(position);
         String languagename = Locale.getDefault().getDisplayLanguage();
         if(languagename.contains("English")){
-            holder.patientNameTxt.setText(item.getEnglishName());
+            holder.patientNameTxt.setText(appointement.getEnglishName());
         }
         else if(languagename.contains("العربية") || languagename.contains("Arabic")) {
-            holder.patientNameTxt.setText(item.getArabicName());
+            holder.patientNameTxt.setText(appointement.getArabicName());
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myAlertActionListener.updateData(item, state);
+                myAlertActionListener.updateData(appointement, state);
             }
         });
 

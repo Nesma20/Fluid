@@ -22,7 +22,7 @@ public class RetrofitInstance {
             System.out.println("retrofit instance will be created");
             retrofit = new Retrofit
                     .Builder()
-                    .baseUrl(Constants.base_url)
+                    .baseUrl(Constants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build();

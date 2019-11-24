@@ -1,8 +1,11 @@
 package com.example.fluid.model.pojo;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Item {
+public class Appointement implements Parcelable {
 
     @SerializedName("MRN")
     @Expose
@@ -37,6 +40,32 @@ public class Item {
     @SerializedName("is_followup")
     @Expose
     private String isFollowup;
+
+    protected Appointement(Parcel in) {
+        mRN = in.readString();
+        arabicName = in.readString();
+        englishName = in.readString();
+        sexCode = in.readString();
+        scheduledTime = in.readString();
+        expectedTime = in.readString();
+        checkinTime = in.readString();
+        arrivalTime = in.readString();
+        callingTime = in.readString();
+        slotId = in.readString();
+        isFollowup = in.readString();
+    }
+
+    public static final Creator<Appointement> CREATOR = new Creator<Appointement>() {
+        @Override
+        public Appointement createFromParcel(Parcel in) {
+            return new Appointement(in);
+        }
+
+        @Override
+        public Appointement[] newArray(int size) {
+            return new Appointement[size];
+        }
+    };
 
     public String getMRN() {
         return mRN;
@@ -127,4 +156,23 @@ public class Item {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mRN);
+        dest.writeString(arabicName);
+        dest.writeString(englishName);
+        dest.writeString(sexCode);
+        dest.writeString(scheduledTime);
+        dest.writeString(expectedTime);
+        dest.writeString(checkinTime);
+        dest.writeString(arrivalTime);
+        dest.writeString(callingTime);
+        dest.writeString(slotId);
+        dest.writeString(isFollowup);
+    }
 }

@@ -10,13 +10,13 @@ public class Items {
 
         @SerializedName("items")
         @Expose
-        private List<Item> items = null;
+        private List<Appointement> items = null;
 
-        public List<Item> getItems() {
+        public List<Appointement> getItems() {
             return items;
         }
 
-        public void setItems(List<Item> items) {
+        public void setItems(List<Appointement> items) {
             this.items = items;
         }
 

@@ -14,18 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fluid.R;
 import com.example.fluid.adapters.AlertDialogAdapter;
 import com.example.fluid.listeners.MyAlertActionListener;
-import com.example.fluid.model.pojo.Item;
+import com.example.fluid.model.pojo.Appointement;
 
 import java.util.List;
 
 public class CustomAlertDialog extends Dialog{
-    List<Item> items ;
+    List<Appointement> items ;
     Context context;
     public AlertDialogAdapter alertDialogAdapter;
     RecyclerView mRecyclerView;
     MyAlertActionListener myAlertActionListener;
     String state;
-    public CustomAlertDialog(@NonNull Context context, List<Item> items, MyAlertActionListener myAlertActionListener, String state)  {
+    public CustomAlertDialog(@NonNull Context context, List<Appointement> items, MyAlertActionListener myAlertActionListener, String state)  {
         super(context);
         this.context = context;
         this.items = items;

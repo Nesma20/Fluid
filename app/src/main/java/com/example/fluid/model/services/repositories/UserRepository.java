@@ -5,6 +5,5 @@ import android.content.Context;
 
 
 public class UserRepository {
-    Context mContext;
-
+//TODO: call sign in  and sign up methods
 }

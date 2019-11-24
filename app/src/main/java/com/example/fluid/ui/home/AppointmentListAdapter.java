@@ -1,6 +1,9 @@
 package com.example.fluid.ui.home;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,21 +15,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fluid.R;
-import com.example.fluid.model.pojo.Item;
+import com.example.fluid.model.pojo.Appointement;
+import com.example.fluid.ui.activities.AppointmentDetailsActivity;
 
 import java.util.List;
-import java.util.Locale;
 
 public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentListAdapter.myViewHolder> {
     Context mContext;
-    List<Item> myItems;
-
+    List<Appointement> myItems;
+    private final String APPOINTMENT= "appointment";
     public AppointmentListAdapter(Context context) {
         mContext = context;
 
     }
 
-    public void setItems(List<Item> items) {
+    public void setItems(List<Appointement> items) {
         myItems = items;
     }
 
@@ -40,33 +43,46 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
 
     @Override
     public void onBindViewHolder(@NonNull myViewHolder holder, int position) {
-        final Item item = myItems.get(position);
-        System.out.println("from item in adapter" + item.getArabicName());
-        holder.mRNTxt.setText(item.getMRN());
-        String languagename = mContext.getResources().getConfiguration().locale.getDisplayName();
-        if (languagename.contains("English")) {
-            holder.patientNameTxt.setText(item.getEnglishName());
+        final Appointement appointement = myItems.get(position);
+        System.out.println("from appointement in adapter" + appointement.getArabicName());
+        holder.mRNTxt.setText(appointement.getMRN());
+        String languageName = mContext.getResources().getConfiguration().locale.getDisplayName();
+        if (languageName.contains("English")) {
+            holder.patientNameTxt.setText(appointement.getEnglishName());
 
-        } else if (languagename.contains("العربية") || languagename.contains("Arabic")) {
-            holder.patientNameTxt.setText(item.getArabicName());
+        } else if (languageName.contains("العربية") || languageName.contains("Arabic")) {
+            holder.patientNameTxt.setText(appointement.getArabicName());
         }
-        if (item.getSexCode().contains("F")) {
+        if (appointement.getSexCode().contains("F")) {
 
             holder.patientAvtarImage.setImageResource(R.drawable.girl);
         } else {
             holder.patientAvtarImage.setImageResource(R.drawable.man);
         }
-        if (!item.getArrivalTime().isEmpty()) {
-            holder.patientStateImage.setImageResource(R.drawable.arrive);
+        if (!appointement.getArrivalTime().isEmpty()) {
+            holder.patientStateImage.setImageResource(R.drawable.ic_arrive);
+            holder.patientStateImage.setColorFilter(R.color.colorAccent, PorterDuff.Mode.SRC_IN);
         }
-        if (!item.getCallingTime().isEmpty() && item.getCheckinTime().isEmpty()) {
+        if (!appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_call);
-        } else if (!item.getCheckinTime().isEmpty()) {
+
+            holder.patientStateImage.setColorFilter(R.color.colorAccent);
+        } else if (!appointement.getCheckinTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_start);
-        } else if (item.getCallingTime().isEmpty() && item.getCheckinTime().isEmpty() & item.getArrivalTime().isEmpty()) {
+            holder.patientStateImage.setColorFilter(R.color.colorAccent);
+        } else if (appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty() & appointement.getArrivalTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.hourglass);
 
         }
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent(mContext.getApplicationContext(), AppointmentDetailsActivity.class);
+                intent.putExtra(APPOINTMENT, (Parcelable) appointement);
+                mContext.startActivity(intent);
+                return false;
+            }
+        });
 
 
     }
@@ -77,7 +93,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     }
 
 
-    class myViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    class myViewHolder extends RecyclerView.ViewHolder{
 
         TextView mRNTxt;
         TextView patientNameTxt;
@@ -86,25 +102,13 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
 
         public myViewHolder(View itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
+
             mRNTxt = itemView.findViewById(R.id.patient_id_txt);
             patientNameTxt = itemView.findViewById(R.id.patient_name_text);
             patientStateImage = itemView.findViewById(R.id.patient_state_img);
             patientAvtarImage = itemView.findViewById(R.id.patientAvtar);
         }
-//TODO : Clicking actions
-        @Override
-        public void onClick(View v) {
 
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-
-            Toast.makeText(mContext, "pressed", Toast.LENGTH_SHORT).show();
-            return false;
-        }
 
 
     }

@@ -4,7 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.fluid.model.pojo.Item;
+import com.example.fluid.listeners.OnDataChangedCallBackListener;
+import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.model.pojo.Items;
 import com.example.fluid.model.services.interfaces.GetAppointmentServiceInterface;
 import com.example.fluid.model.services.interfaces.RetrofitInstance;
@@ -18,12 +19,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AppointmentRepository {
-    List<Item> myItemList;
-    private MutableLiveData<List<Item>> mutableLiveData = new MutableLiveData<>();
-    boolean isCheckedOut = false;
+    List<Appointement> myItemList;
+    private MutableLiveData<List<Appointement>> mutableLiveData = new MutableLiveData<>();
 
     public MutableLiveData getAllData(String clinicCode) {
-
         myItemList = new ArrayList<>();
         GetAppointmentServiceInterface getAppointmentServiceInterface = RetrofitInstance.getService();
         Call<Items> call = getAppointmentServiceInterface.getAppointementData(clinicCode);
@@ -33,9 +32,9 @@ public class AppointmentRepository {
                 if (response.isSuccessful()) {
                     System.out.println("*********************** on response ********************");
                     Items items = response.body();
-                    myItemList = (ArrayList<Item>) items.getItems();
-                    for (Item item : myItemList) {
-                        Log.i("items", "  ************** item arrival time ************   " + item.getArrivalTime()+"slot "+item.getSlotId());
+                    myItemList = (ArrayList<Appointement>) items.getItems();
+                    for (Appointement item : myItemList) {
+                        Log.i("items", "  ************** item arrival time ************   " + item.getArrivalTime() + "slot " + item.getSlotId());
                         Log.i("items", "  ************** item scheduled time ************   " + item.getScheduledTime());
                         Log.i("items", "  ************** item calling time ************   " + item.getCallingTime());
                         Log.i("items", "  ************** item checkin time ************   " + item.getCheckinTime());
@@ -52,9 +51,11 @@ public class AppointmentRepository {
                 call.cancel();
             }
         });
-return mutableLiveData;
+        return mutableLiveData;
     }
-    public void callPatient(String slotId){
+
+    public void callPatient(String slotId, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
+
         GetAppointmentServiceInterface getAppointmentServiceInterface = RetrofitInstance.getService();
         Call<ResponseBody> call = getAppointmentServiceInterface.callPatient(slotId);
 
@@ -62,21 +63,21 @@ return mutableLiveData;
 
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.code() == 200)
-                    System.out.println("updated ");
+                if (response.code() == 200) {
+                    onDataChangedCallBackListener.onResponse(true);
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                onDataChangedCallBackListener.onResponse(false);
                 call.cancel();
             }
         });
-
-
-
     }
 
-    public void checkIn(String slotId) {
+    public void checkIn(String slotId, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
 
         GetAppointmentServiceInterface getAppointmentServiceInterface = RetrofitInstance.getService();
         Call<ResponseBody> call = getAppointmentServiceInterface.checkIn(slotId);
@@ -85,16 +86,19 @@ return mutableLiveData;
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200)
-                    System.out.println("entered check in ");
+                    onDataChangedCallBackListener.onResponse(true);
+
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 call.cancel();
+                onDataChangedCallBackListener.onResponse(false);
             }
         });
     }
-    public boolean checkOut(String slotId){
+
+    public void checkOut(String slotId, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
         GetAppointmentServiceInterface getAppointmentServiceInterface = RetrofitInstance.getService();
         Call<ResponseBody> call = getAppointmentServiceInterface.checkout(slotId);
 
@@ -102,19 +106,20 @@ return mutableLiveData;
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200)
-                    System.out.println("entered check out ");
-                isCheckedOut = true;
+                    onDataChangedCallBackListener.onResponse(true);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 call.cancel();
+                onDataChangedCallBackListener.onResponse(false);
             }
         });
 
-    return isCheckedOut;
+
     }
-    public void  confirmArrive(String slotId){
+
+    public void confirmArrive(String slotId, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
         GetAppointmentServiceInterface getAppointmentServiceInterface = RetrofitInstance.getService();
         Call<ResponseBody> call = getAppointmentServiceInterface.confirmArrive(slotId);
 
@@ -122,12 +127,13 @@ return mutableLiveData;
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200)
-                    System.out.println("arrive confirmed ");
+                    onDataChangedCallBackListener.onResponse(true);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 call.cancel();
+                onDataChangedCallBackListener.onResponse(false);
             }
         });
     }

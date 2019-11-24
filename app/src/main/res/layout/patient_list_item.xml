@@ -28,7 +28,6 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
-
             tools:srcCompat="@tools:sample/avatars" />
         <TextView
             android:textColor="@android:color/holo_blue_dark"
@@ -63,8 +62,8 @@
             android:layout_below="@id/patient_name_text">
             <ImageView
                 android:id="@+id/patient_state_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:src="@mipmap/ic_launcher"
                 ></ImageView>
         </LinearLayout>
