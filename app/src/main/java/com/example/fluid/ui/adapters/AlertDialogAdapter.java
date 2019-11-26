@@ -1,4 +1,4 @@
-package com.example.fluid.adapters;
+package com.example.fluid.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.fluid.R;
-import com.example.fluid.listeners.MyAlertActionListener;
+import com.example.fluid.ui.listeners.MyAlertActionListener;
 import com.example.fluid.model.pojo.Appointement;
 
 import java.util.List;

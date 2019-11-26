@@ -1,4 +1,4 @@
-package com.example.fluid.listeners;
+package com.example.fluid.ui.listeners;
 
 public interface UpdateEventListener {
     public void checkInPatient();

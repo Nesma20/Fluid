@@ -1,4 +1,4 @@
-package com.example.fluid.dialogs;
+package com.example.fluid.ui.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.fluid.R;
-import com.example.fluid.adapters.AlertDialogAdapter;
-import com.example.fluid.listeners.MyAlertActionListener;
+import com.example.fluid.ui.adapters.AlertDialogAdapter;
+import com.example.fluid.ui.listeners.MyAlertActionListener;
 import com.example.fluid.model.pojo.Appointement;
 
 import java.util.List;

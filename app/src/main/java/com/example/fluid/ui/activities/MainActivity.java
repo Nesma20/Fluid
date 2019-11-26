@@ -14,17 +14,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.fluid.adapters.ViewPagerAdapter;
-import com.example.fluid.listeners.MyTabHandler;
+import com.example.fluid.ui.adapters.ViewPagerAdapter;
 import com.example.fluid.R;
-import com.example.fluid.listeners.MyTabClickListener;
-import com.example.fluid.listeners.UpdateEventListener;
+import com.example.fluid.ui.listeners.OnPageChangedListener;
+import com.example.fluid.ui.listeners.UpdateEventListener;
 import com.example.fluid.ui.home.HomeFragment;
 import com.example.fluid.ui.locations.LocationsActivity;
-import com.example.fluid.ui.slideshow.SlideshowFragment;
 import com.example.fluid.utils.Constants;
 import com.example.fluid.utils.PreferenceController;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -46,6 +43,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     DrawerLayout drawer;
     NavigationView navigationView;
     private List<UpdateEventListener> myCallListenerList;
+    private List<OnPageChangedListener> onPageChangedListeners;
+    private int state = 0;
 
     public static final String LOCATIONS = "locations";
 
@@ -69,9 +68,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
        locationList.add("PED11");
         initializeViews();
         checkOnTheCurrentLanguage();
-        setupViewPager(mViewPager);
-
-
         callFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,19 +86,50 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public void onClick(View v) {
                 if (isAppointmentStarted) {
                     myCallListenerList.get(mViewPager.getCurrentItem()).checkInPatient();
-                    callFab.setEnabled(false);
-                    callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.darkGrey)));
+//                    callFab.setEnabled(false);
+//                    callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.darkGrey)));
                 } else {
-                    startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_start));
+                   startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_start));
                     myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
                     callFab.setEnabled(true);
-                    callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorAccent)));
+                   callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorAccent)));
                 }
 
             }
 
         });
+        setupViewPager(mViewPager);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //region Don't Open
+                if (state==0){
+                    onPageChangedListeners.get(0).onPageChange();
+                    state ++;
+                    //RRRRRRR
+                }
+                //endregion
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                onPageChangedListeners.get(position).onPageChange();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
     public void checkOnTheCurrentLanguage(){
         if (PreferenceController.getInstance(this).get(PreferenceController.LANGUAGE).equals(Constants.ARABIC)) {
          navigationView.getMenu().findItem(R.id.language_reference).setTitle(R.string.menu_english_language);
@@ -125,17 +152,24 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void setupViewPager(ViewPager myViewPager) {
         myCallListenerList = new ArrayList<>();
+        onPageChangedListeners = new ArrayList<>();
+        HomeFragment homeFragment;
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         UpdateEventListener listener;
+        OnPageChangedListener onPageChangedListener;
         for (int i = 0; i < locationList.size(); i++) {
 //                mTabLayout.addTab(mTabLayout.newTab().setText(locationList.get(i)), true);
-            listener = mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i)), locationList.get(i));
+            homeFragment = mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i)), locationList.get(i));
+            myViewPager.setOffscreenPageLimit(0);
+            listener = homeFragment;
+            onPageChangedListener = homeFragment;
             myCallListenerList.add(listener);
+            onPageChangedListeners.add(onPageChangedListener);
         }
         myViewPager.setAdapter(mViewPagerAdapter);
-        myViewPager.setOffscreenPageLimit(0);
         mTabLayout.setupWithViewPager(myViewPager);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -152,18 +186,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             case R.id.language_reference:
                 changeLanguage((String) menuItem.getTitle());
                 break;
-//            case R.id.arabic_reference:
-//                changeLanguage(Constants.ARABIC);
-//                break;
+
             case R.id.nav_location:
                 Intent intent = new Intent(this, LocationsActivity.class);
                 intent.putStringArrayListExtra(LOCATIONS, locationList);
                 startActivity(intent);
                 break;
-//            case R.id.nav_slideshow:
-//                SlideshowFragment slideshowFragment = new SlideshowFragment();
-//                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//                ft.replace(R.id.frame_layout, slideshowFragment).commit();
+
 
         }
 
@@ -184,10 +213,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    public void onIconChanged() {
-        this.isAppointmentStarted = false;
-        startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_start));
+    public void onIconChanged(boolean isAppointmentStarted) {
+        this.isAppointmentStarted = isAppointmentStarted;
+        if(this.isAppointmentStarted){
+        startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_logout));
         callFab.setEnabled(false);
         callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.darkGrey)));
+        this.isAppointmentStarted = false;
+        }
+        else{
+            callFab.setEnabled(true);
+            callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent)));
+            this.isAppointmentStarted = true;
+
+        }
     }
 }

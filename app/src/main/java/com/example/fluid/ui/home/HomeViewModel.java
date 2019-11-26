@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.fluid.listeners.OnDataChangedCallBackListener;
+import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.model.services.repositories.AppointmentRepository;
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ public class HomeViewModel extends ViewModel {
         itemArrayList = (ArrayList<Appointement>) myliveData.getValue();
         return myliveData;
     }
-    public void updateWithCalling(final String clinicCode, String slotId){
-        appointmentRepository.callPatient(slotId, new OnDataChangedCallBackListener() {
+    public void updateWithCalling(final String clinicCode){
+        appointmentRepository.callPatient(clinicCode, new OnDataChangedCallBackListener() {
             @Override
             public void onResponse(boolean isDataChanged) {
                 if(isDataChanged)

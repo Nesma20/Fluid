@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,7 +36,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     @NonNull
     @Override
     public myViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.patient_list_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.customer_list_item, parent, false);
         return new myViewHolder(view);
     }
 
@@ -55,7 +54,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         }
         if (appointement.getSexCode().contains("F")) {
 
-            holder.patientAvtarImage.setImageResource(R.drawable.girl);
+            holder.patientAvtarImage.setImageResource(R.drawable.ic_girl);
         } else {
             holder.patientAvtarImage.setImageResource(R.drawable.man);
         }
@@ -70,9 +69,6 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         } else if (!appointement.getCheckinTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_start);
             holder.patientStateImage.setColorFilter(R.color.colorAccent);
-        } else if (appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty() & appointement.getArrivalTime().isEmpty()) {
-            holder.patientStateImage.setImageResource(R.drawable.hourglass);
-
         }
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -103,10 +99,10 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         public myViewHolder(View itemView) {
             super(itemView);
 
-            mRNTxt = itemView.findViewById(R.id.patient_id_txt);
-            patientNameTxt = itemView.findViewById(R.id.patient_name_text);
-            patientStateImage = itemView.findViewById(R.id.patient_state_img);
-            patientAvtarImage = itemView.findViewById(R.id.patientAvtar);
+            mRNTxt = itemView.findViewById(R.id.customer_id_txt);
+            patientNameTxt = itemView.findViewById(R.id.customer_name_text);
+            patientStateImage = itemView.findViewById(R.id.customer_state_img);
+            patientAvtarImage = itemView.findViewById(R.id.customerAvatar);
         }
 
 

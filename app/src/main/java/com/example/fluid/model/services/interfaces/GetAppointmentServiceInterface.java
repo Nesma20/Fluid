@@ -10,11 +10,11 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface GetAppointmentServiceInterface {
-    @GET("/ords/pf/api/getClinicSchedule/{clinic_code}")
-    Call<Items> getAppointementData(@Path("clinic_code") String code);
+    @GET("/ords/pf/api/getClinicSchedule/{location_code}")
+    Call<Items> getAppointementData(@Path("location_code") String code);
 
-    @PUT("/ords/pf/api/call/{slot_id}")
-    Call<ResponseBody> callPatient(@Path("slot_id") String slot_id);
+    @PUT("/ords/pf/api/call/{location_code}")
+    Call<ResponseBody> callPatient(@Path("location_code") String clinicCode);
 
     @PUT("/ords/pf/api/checkin/{slot_id}")
     Call<ResponseBody> checkIn(@Path("slot_id") String slot_id);

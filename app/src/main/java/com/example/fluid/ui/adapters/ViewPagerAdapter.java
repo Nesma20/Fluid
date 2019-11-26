@@ -1,4 +1,4 @@
-package com.example.fluid.adapters;
+package com.example.fluid.ui.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
