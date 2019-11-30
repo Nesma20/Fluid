@@ -12,6 +12,8 @@
     <string name="menu_english_language">English</string>
     <string name="menu_arabic_language">Arabic</string>
     <string name="language_preferences">Language Preferences</string>
+    <string name="menu_logout">Log out</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -25,9 +27,12 @@
     <string name="calling_time_txt">Calling Time:</string>
     <string name="customer_name_txt">customer name</string>
     <string name="customer_picture">customer picture</string>
-<!-- strings for login page -->
+    <!-- strings for login page -->
     <string name="prompt_email">Mail</string>
     <string name="prompt_password">Password</string>
     <string name="welcome_back_txt">Welcome back!</string>
     <string name="login_with_google_account">Log in with google account</string>
+    <string name="no_internet_image">no internet image</string>
+    <string name="Oh_no_string" >Oh no!</string>
+    <string name="no_internet_txt">No internet found. Check your internet connection and try again.</string>
 </resources>

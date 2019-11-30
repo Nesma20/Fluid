@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view"
-    >
+    tools:showIn="nav_view">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_edit_profie"
@@ -13,19 +12,18 @@
             android:icon="@drawable/ic_location"
 
             android:title="@string/menu_locations" />
+
+
+        <item
+
+            android:id="@+id/language_reference"
+            android:icon="@drawable/ic_language"
+            android:title="@string/menu_english_language" />
+        <item
+
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_log_out"
+            android:title="@string/menu_logout" />
+
     </group>
-
-    <item
-        android:title="@string/language_preferences"
-
-        android:icon="@drawable/ic_language">
-        <menu>
-            <item
-
-                android:id="@+id/language_reference"
-                android:title="@string/menu_english_language" />
-
-        </menu>
-    </item>
-
 </menu>

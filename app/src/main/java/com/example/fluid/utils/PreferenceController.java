@@ -6,6 +6,11 @@ import android.content.SharedPreferences;
 public class PreferenceController {
   private static final String DATABASE_NAME = "FluidApp";
   public static final String LANGUAGE = "lang";
+  public static final String PREF_EMAIL= "email";
+  public static final String PREF_PASSWORD= "password";
+  public static final String PREF_USERNAME= "username";
+
+
   private static PreferenceController instance;
   private SharedPreferences preferences;
 

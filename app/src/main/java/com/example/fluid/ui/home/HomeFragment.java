@@ -13,8 +13,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.fluid.R;
+import com.example.fluid.ui.activities.MainActivity;
 import com.example.fluid.ui.dialogs.CustomAlertDialog;
 import com.example.fluid.ui.listeners.MyAlertActionListener;
 import com.example.fluid.ui.listeners.MyTabHandler;
@@ -32,6 +34,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     private AppointmentListAdapter myAdapter;
     private View view;
     Appointement itemStarted;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private  boolean isAppointmentStarted = false;
     private RecyclerView myListView;
     private  String clinicCode;
@@ -87,34 +90,45 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         view = inflater.inflate(R.layout.fragment_home, container, false);
         myListView = view.findViewById(R.id.appointmentRecyclerView);
         myList = new ArrayList<>();
-
         myAdapter = new AppointmentListAdapter(getActivity());
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-//        homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
-//            @Override
-//            public void onChanged(List<Appointement> items) {
-//                if(myList == null)
-//                    myList = new ArrayList<>();
-//                myList = items;
-//                numOfCalls = 0;
-//                for (int i = 0; i < myList.size(); i++) {
-//                    if (!myList.get(i).getCallingTime().isEmpty())
-//                        numOfCalls++;
-//                    if (!myList.get(i).getCheckinTime().isEmpty()) {
-//                        isAppointmentStarted = true;
-//                      //  mListener.onIconChanged(true);
-//                        itemStarted = myList.get(i);
-//                    }
-//
-//                }
-//                mListener.onIconChanged(isAppointmentStarted);
-//                Log.i(TAG, "observe data");
-//                Log.i(TAG, "number of calls" + numOfCalls);
-//                myAdapter.setItems(myList);
-//                setAdapterTorecyclerView();
-//
-//            }
-//        });
+        mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onPageChange();
+                mSwipeRefreshLayout.setRefreshing(false);
+
+            }
+        });
+
+        homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
+            @Override
+            public void onChanged(List<Appointement> items) {
+                if(myList == null)
+                    myList = new ArrayList<>();
+               mListener.notifyByListSize(items.size());
+                mSwipeRefreshLayout.setRefreshing(false);
+                myList = items;
+                numOfCalls = 0;
+                for (int i = 0; i < myList.size(); i++) {
+                    if (!myList.get(i).getCallingTime().isEmpty())
+                        numOfCalls++;
+                    if (!myList.get(i).getCheckinTime().isEmpty()) {
+                        isAppointmentStarted = true;
+                        itemStarted = myList.get(i);
+                    }
+
+                }
+               mListener.onIconChanged(isAppointmentStarted);
+                Log.i(TAG, "observe data");
+                Log.i(TAG, "number of calls" + numOfCalls);
+                myAdapter.setItems(myList);
+                setAdapterTorecyclerView();
+
+            }
+        });
 
         return view;
     }
@@ -192,6 +206,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        homeViewModel = null;
     }
 
 
@@ -225,8 +240,12 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
             @Override
             public void onChanged(List<Appointement> items) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 if(myList == null)
                     myList = new ArrayList<>();
+                if(items.size() == 0){
+                    mListener.onNoDataReturned();
+                }
                 myList = items;
                 numOfCalls = 0;
                 isAppointmentStarted = false;
@@ -240,6 +259,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
 
 
                 }
+                mListener.notifyByListSize(items.size());
                 mListener.onIconChanged(isAppointmentStarted);
                 Log.i(TAG, "observe data");
                 Log.i(TAG, "number of calls" + numOfCalls);
@@ -248,11 +268,16 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
 
             }
         });
-    }
+
+        }
+
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onIconChanged(boolean isAppointmentStarted);
+        void onNoDataReturned();
+        void notifyByListSize(int listSize);
 
     }
 }

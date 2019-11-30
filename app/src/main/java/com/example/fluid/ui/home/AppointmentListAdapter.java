@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fluid.R;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.ui.activities.AppointmentDetailsActivity;
+import com.example.fluid.utils.StringUtil;
+import com.example.fluid.utils.Constants;
 
 import java.util.List;
 
@@ -45,11 +47,12 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         final Appointement appointement = myItems.get(position);
         System.out.println("from appointement in adapter" + appointement.getArabicName());
         holder.mRNTxt.setText(appointement.getMRN());
-        String languageName = mContext.getResources().getConfiguration().locale.getDisplayName();
-        if (languageName.contains("English")) {
-            holder.patientNameTxt.setText(appointement.getEnglishName());
+        String languageName = mContext.getApplicationContext().getResources().getConfiguration().locale.getLanguage();
+        if (languageName.contains(Constants.ENGLISH)) {
+            holder.patientNameTxt.setText(StringUtil.toCamelCase(appointement.getEnglishName()));
 
-        } else if (languageName.contains("العربية") || languageName.contains("Arabic")) {
+
+        } else if (languageName.contains("العربية") || languageName.contains(Constants.ARABIC)) {
             holder.patientNameTxt.setText(appointement.getArabicName());
         }
         if (appointement.getSexCode().contains("F")) {

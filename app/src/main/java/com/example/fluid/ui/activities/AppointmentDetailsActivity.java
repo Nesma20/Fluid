@@ -53,41 +53,37 @@ TextView callingTimeTxt;
             LocalDateTime localDateTime = LocalDateTime.parse(appointement.getArrivalTime(), formatter);
             arrivalTimeTxt.setText(localDateTime.getHour()+":"+localDateTime.getMinute());
         }
+        else {
+            arrivalTimeTxt.setText("");
+
+        }
         if(!appointement.getExpectedTime().isEmpty()) {
 
             LocalDateTime localDateTime = LocalDateTime.parse(appointement.getExpectedTime(), formatter);
             expectedTimeTxt.setText(localDateTime.getHour()+":"+localDateTime.getMinute());
+        }
+        else
+        {
+            expectedTimeTxt.setText("");
+
         }
         if(!appointement.getCallingTime().isEmpty()) {
 
             LocalDateTime localDateTime = LocalDateTime.parse(appointement.getCallingTime(), formatter);
             callingTimeTxt.setText(localDateTime.getHour()+":"+localDateTime.getMinute());
         }
+        else{
+            callingTimeTxt.setText("");
+
+        }
         if(!appointement.getScheduledTime().isEmpty()) {
 
             LocalDateTime localDateTime = LocalDateTime.parse(appointement.getScheduledTime(), formatter);
             scheduledTimeTxt.setText(localDateTime.getHour()+":"+localDateTime.getMinute());
         }
-        Calendar cal = Calendar.getInstance();
-        long milliDiff = cal.get(Calendar.ZONE_OFFSET);
-// Got local offset, now loop through available timezone id(s).
-        String [] ids = TimeZone.getAvailableIDs();
-        String name = null;
-        for (String id : ids) {
-            TimeZone tz = TimeZone.getTimeZone(id);
-            if (tz.getRawOffset() == milliDiff) {
-                // Found a match.
-                name = id;
-                break;
-            }
+        else{
+            scheduledTimeTxt.setText("");
         }
-        Log.i(TAG,"time zone name"+name);
-
-//
-//        scheduledTimeTxt.setText(appointement.getScheduledTime());
-//        expectedTimeTxt.setText(appointement.getExpectedTime());
-//        callingTimeTxt.setText(appointement.getCallingTime());
-//        arrivalTimeTxt.setText(appointement.getArrivalTime());
     }
     public void setUpViews(){
      customerImageView = findViewById(R.id.customer_img_view);
@@ -95,8 +91,8 @@ TextView callingTimeTxt;
      customerNameTxt = findViewById(R.id.customer_name);
      scheduledTimeTxt = findViewById(R.id.scheduled_time_txt);
      expectedTimeTxt = findViewById(R.id.expected_time_txt);
-     arrivalTimeTxt = findViewById(R.id.arrival_time_txt);
-     callingTimeTxt = findViewById(R.id.calling_time_txt);
+     arrivalTimeTxt = findViewById(R.id.arrive_time_txt);
+     callingTimeTxt = findViewById(R.id.called_time_txt);
 
     }
 }
