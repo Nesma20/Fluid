@@ -1,5 +1,6 @@
 package com.example.fluid.ui.home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -23,6 +25,7 @@ import com.example.fluid.ui.listeners.MyTabHandler;
 import com.example.fluid.ui.listeners.OnPageChangedListener;
 import com.example.fluid.ui.listeners.UpdateEventListener;
 import com.example.fluid.model.pojo.Appointement;
+import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
 
 import java.util.ArrayList;
@@ -38,7 +41,9 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     private  boolean isAppointmentStarted = false;
     private RecyclerView myListView;
     private  String clinicCode;
+    private int position;
     private static final String ARG_LOCATION_CODE="LOCATION_CODE";
+    private static final String POSITION = "POSITION";
     private int numOfCalls = 0;
     private static String TAG = "AppointmentListFragment";
     private OnFragmentInteractionListener mListener;
@@ -50,12 +55,12 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     }
 
 
-    public static HomeFragment newInstance(String clinicCode) {
+    public static HomeFragment newInstance(int position,String clinicCode) {
         HomeFragment fragment = new HomeFragment();
         Log.i(TAG, "new Instance method");
         Bundle args = new Bundle();
         args.putString(ARG_LOCATION_CODE, clinicCode);
-//        args.putString(ARG_PARAM2, param2);
+        args.putInt(POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,6 +71,9 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         Log.i(TAG, "onCreate method");
         if (getArguments() != null) {
             clinicCode = getArguments().getString(ARG_LOCATION_CODE);
+            position = getArguments().getInt(POSITION);
+
+
         }
 
     }
@@ -94,42 +102,17 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+       if(myList.size() ==0)
+           onPageChange(position);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                onPageChange();
+                onPageChange(position);
                 mSwipeRefreshLayout.setRefreshing(false);
 
             }
         });
-
-        homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
-            @Override
-            public void onChanged(List<Appointement> items) {
-                if(myList == null)
-                    myList = new ArrayList<>();
-               mListener.notifyByListSize(items.size());
-                mSwipeRefreshLayout.setRefreshing(false);
-                myList = items;
-                numOfCalls = 0;
-                for (int i = 0; i < myList.size(); i++) {
-                    if (!myList.get(i).getCallingTime().isEmpty())
-                        numOfCalls++;
-                    if (!myList.get(i).getCheckinTime().isEmpty()) {
-                        isAppointmentStarted = true;
-                        itemStarted = myList.get(i);
-                    }
-
-                }
-               mListener.onIconChanged(isAppointmentStarted);
-                Log.i(TAG, "observe data");
-                Log.i(TAG, "number of calls" + numOfCalls);
-                myAdapter.setItems(myList);
-                setAdapterTorecyclerView();
-
-            }
-        });
-
         return view;
     }
 
@@ -236,16 +219,24 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     }
 
     @Override
-    public void onPageChange() {
+    public void onAttach(@NonNull Activity activity) {
+        super.onAttach(activity);
+         activity1 = activity;
+    }
+    Activity activity1;
+
+    @Override
+    public void onPageChange(final int position) {
+        if(getActivity() != null)
+        if(CheckForNetwork.isConnectionOn(activity1)){
+            if(position==this.position)
         homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
             @Override
             public void onChanged(List<Appointement> items) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 if(myList == null)
                     myList = new ArrayList<>();
-                if(items.size() == 0){
-                    mListener.onNoDataReturned();
-                }
+
                 myList = items;
                 numOfCalls = 0;
                 isAppointmentStarted = false;
@@ -256,18 +247,20 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
                         isAppointmentStarted = true;
                         itemStarted = myList.get(i);
                     }
-
-
                 }
-                mListener.notifyByListSize(items.size());
                 mListener.onIconChanged(isAppointmentStarted);
                 Log.i(TAG, "observe data");
                 Log.i(TAG, "number of calls" + numOfCalls);
                 myAdapter.setItems(myList);
                 setAdapterTorecyclerView();
-
+                mListener.notifyByListSize(items.size(),position);
             }
         });
+
+        }
+        else{
+            mListener.onNoDataReturned();
+        }
 
         }
 
@@ -277,7 +270,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         // TODO: Update argument type and name
         void onIconChanged(boolean isAppointmentStarted);
         void onNoDataReturned();
-        void notifyByListSize(int listSize);
+        void notifyByListSize(int listSize, int tabPosition);
 
     }
 }

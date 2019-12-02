@@ -40,35 +40,6 @@ public class BaseActivity extends AppCompatActivity {
         super.attachBaseContext(MyContextWrapper.wrap(newBase, new Locale(lang)));
     }
 
-//    public void checkNetworkConnection(){
-//        AlertDialog.Builder builder =new AlertDialog.Builder(this);
-//        builder.setTitle("No internet Connection");
-//        builder.setMessage("Please turn on internet connection to continue");
-//        builder.setNegativeButton("close", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//            }
-//        });
-//        AlertDialog alertDialog = builder.create();
-//        alertDialog.show();
-//    }
-    public boolean isNetworkConnectionAvailable(){
-        ConnectivityManager cm =
-                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnected();
-        if(isConnected) {
-            Log.i("Network", "Connected");
-            return true;
-        }
-        else{
-
-            Log.i("Network","Not Connected");
-            return false;
-        }
-    }
 
 }

@@ -32,9 +32,12 @@
         android:id="@+id/home_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-<!--        <include-->
-<!--            android:id="@+id/include"-->
-<!--            layout="@layout/content_main" />-->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/frame_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"

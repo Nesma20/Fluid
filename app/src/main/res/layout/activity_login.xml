@@ -34,17 +34,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2"></TextView>
 
-    <Button
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/loginWithGoogleAccountBtn"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_24"
         android:layout_marginTop="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/margin_24"
-        android:background="@color/colorPrimary"
-        android:hint="@string/login_with_google_account"
         android:padding="@dimen/button_login_padding"
-        android:textColorHint="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/welcome_back_txt" />
