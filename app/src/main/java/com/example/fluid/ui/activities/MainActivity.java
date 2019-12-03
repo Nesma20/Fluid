@@ -32,6 +32,7 @@ import com.example.fluid.ui.locations.LocationsActivity;
 import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
 import com.example.fluid.utils.PreferenceController;
+import com.example.fluid.utils.ReadPropertiesXmlFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -68,6 +69,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (!isUserLoggedIn()) {
             redirectToLogin();
         }
+      Log.i(TAG,ReadPropertiesXmlFile.readFromXml("ip",getApplicationContext())+" ");
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);

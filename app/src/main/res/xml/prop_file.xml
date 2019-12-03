@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Here are url details</comment>
+    <entry key="ip"></entry>
+    <entry key="port">pomegranate</entry>
+</properties>

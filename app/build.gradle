@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+def ip = hasProperty('ip') ? ip : 'provide this in gradle.properties'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -10,6 +10,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "IP", "\"$ip\""
+
     }
     buildTypes {
         release {
@@ -46,6 +49,8 @@ dependencies {
     implementation 'com.google.apis:google-api-services-people:v1-rev277-1.23.0'
     implementation 'androidx.multidex:multidex:2.0.1'
         testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

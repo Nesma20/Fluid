@@ -1,5 +1,7 @@
 package com.example.fluid.utils;
 
+import com.example.fluid.BuildConfig;
+
 public class StringUtil {
     public static String toCamelCase(final String words) {
         if (words == null)

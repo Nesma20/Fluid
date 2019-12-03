@@ -48,8 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 // Configure sign-in to request the user's ID, email address, and basic
 // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-
+                .requestIdToken("574842241815-stc69a4n3pctnmp0dvukd7dpv73o6r4a.apps.googleusercontent.com")
                 .build();
 // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -95,13 +94,12 @@ public class LoginActivity extends AppCompatActivity {
 
                 HttpTransport httpTransport = new NetHttpTransport();
                 JacksonFactory jsonFactory = new JacksonFactory();
-                String clientId = "574842241815-m5nj8uccrqq9mog93i0fniim6gi78v69.apps.googleusercontent.com";
-                String clientSecret = "kFpL7hdKJjdivPuBYyx--2I1";
+                String clientId = "574842241815-20po4mvnj6ndc5cecig7sh3a0vvd5euc.apps.googleusercontent.com";
+                String clientSecret = "Lkq4-hBzrBw1EQ6kYW-eA-2A";
 
                 GoogleCredential credential = new GoogleCredential.Builder()
                         .setTransport(httpTransport)
                         .setJsonFactory(jsonFactory)
-
                         .setClientSecrets(clientId, clientSecret)
                         .build();
 
@@ -110,9 +108,9 @@ public class LoginActivity extends AppCompatActivity {
                                 build();
                 try {
 
+                    Log.i(TAG,"account token"+account.getIdToken());
                     Person profile = peopleService.people().get("people/" + account.getId())
                             .setPersonFields("names,emailAddresses")
-                            .setAccessToken(account.getIdToken())
                             .execute();
 
                     Log.i(TAG, profile.getEmailAddresses().get(0).getValue());

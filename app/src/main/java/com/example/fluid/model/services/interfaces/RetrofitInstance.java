@@ -1,5 +1,7 @@
 package com.example.fluid.model.services.interfaces;
 
+import com.example.fluid.BuildConfig;
+import com.example.fluid.utils.ReadPropertiesXmlFile;
 import com.example.fluid.utils.Constants;
 
 import okhttp3.OkHttpClient;
@@ -15,7 +17,7 @@ public class RetrofitInstance {
     {
         if(retrofit == null)
         {
-
+            System.out.println(" ip    "+ BuildConfig.IP);
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
