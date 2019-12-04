@@ -3,6 +3,7 @@ package com.example.fluid.ui.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,12 +26,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.fluid.R;
 import com.example.fluid.ui.NoLocationAvailableFragment;
 import com.example.fluid.ui.adapters.ViewPagerAdapter;
-import com.example.fluid.R;
+import com.example.fluid.ui.home.HomeFragment;
 import com.example.fluid.ui.listeners.OnPageChangedListener;
 import com.example.fluid.ui.listeners.UpdateEventListener;
-import com.example.fluid.ui.home.HomeFragment;
 import com.example.fluid.ui.locations.LocationsActivity;
 import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
@@ -58,6 +62,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     TextView tabTitle;
     TextView tabCount;
     View customTabView;
+    AnimationDrawable startOrEndAnimation ;
     private static final String MSG_KEY = "message";
     public static final String LOCATIONS = "locations";
     public static final String TAG = "MainActivity";
@@ -121,14 +126,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onClick(View v) {
                 if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
+
                     if (isAppointmentStarted) {
                         myCallListenerList.get(mViewPager.getCurrentItem()).checkInPatient();
+
                     } else {
-                        startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_start));
+
+                        startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_start));
+            startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary)));
+
                         myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
                         callFab.setEnabled(true);
-                        callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorAccent)));
+                        callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary)));
+                        animateStartOrEndBtn();
+                        startOrEndAnimation.stop();
                     }
+
                 } else {
                     redirectToNoInternetConnection();
                 }
@@ -142,7 +155,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //region Don't Open
                 if (state == 0) {
-                    onPageChangedListeners.get(0).onPageChange(state);
+                    onPageChangedListeners.get(0).onPageChange();
                     Log.i(TAG, "on scrolled selected " + position);
                     state = 1;
 
@@ -153,7 +166,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             @Override
             public void onPageSelected(int position) {
-                onPageChangedListeners.get(position).onPageChange(position);
+                onPageChangedListeners.get(position).onPageChange();
                 Log.i(TAG, "on page selected " + position);
 
 
@@ -179,14 +192,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             navigationView.getMenu().findItem(R.id.language_reference).setTitle(R.string.menu_arabic_language);
         }
     }
+    private void animateStartOrEndBtn(){
+        startOrEndFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.animation_fab_with_rotation));
+        startOrEndAnimation = (AnimationDrawable) startOrEndFab.getDrawable();
+        startOrEndAnimation.start();
+    }
 
     public void initializeViews() {
 
         mTabLayout = findViewById(R.id.tab_layout);
         mViewPager = findViewById(R.id.view_pager);
         startOrEndFab = findViewById(R.id.start_fab);
+
         callFab = findViewById(R.id.call_fab);
         arrivalFab = findViewById(R.id.confirm_arrive_fab);
+
 
 
     }
@@ -201,7 +221,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             OnPageChangedListener onPageChangedListener;
 
             for (int i = 0; i < locationList.size(); i++) {
-                homeFragment = mViewPagerAdapter.addFragment(HomeFragment.newInstance(i,locationList.get(i)), locationList.get(i));
+                homeFragment = mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i)),locationList.get(i));
                 myViewPager.setOffscreenPageLimit(0);
                 listener = homeFragment;
                 onPageChangedListener = homeFragment;
@@ -326,8 +346,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     public void redirectToNoInternetConnection() {
         Intent intent = new Intent(MainActivity.this, NoInternetConnectionActivity.class);
-        // set the new task and clear flags
-        //  intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
@@ -335,14 +353,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void onIconChanged(boolean isAppointmentStarted) {
         this.isAppointmentStarted = isAppointmentStarted;
         if (this.isAppointmentStarted) {
-            startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_out));
+            startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_finish));
             callFab.setEnabled(false);
             callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.darkGrey)));
+            startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent)));
+            animateStartOrEndBtn();
+            startOrEndAnimation.stop();
             this.isAppointmentStarted = false;
         } else {
-            callFab.setEnabled(true);
-            callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent)));
-            startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_start));
+//            callFab.setEnabled(true);
+//            callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+            startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_start));
+           startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+
             this.isAppointmentStarted = true;
 
         }
@@ -356,11 +379,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    public void notifyByListSize(final int listSize,int tabPosition) {
+    public void notifyByListSize(final int listSize) {
 
 
         size = listSize;
-        mTabLayout.getTabAt(tabPosition).setCustomView(updateTabTextView(tabPosition, listSize));
+        mTabLayout.getTabAt(mViewPager.getCurrentItem()).setCustomView(updateTabTextView(mViewPager.getCurrentItem(), listSize));
 
     }
 

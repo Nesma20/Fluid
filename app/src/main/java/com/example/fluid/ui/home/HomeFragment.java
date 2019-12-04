@@ -41,9 +41,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     private  boolean isAppointmentStarted = false;
     private RecyclerView myListView;
     private  String clinicCode;
-    private int position;
     private static final String ARG_LOCATION_CODE="LOCATION_CODE";
-    private static final String POSITION = "POSITION";
     private int numOfCalls = 0;
     private static String TAG = "AppointmentListFragment";
     private OnFragmentInteractionListener mListener;
@@ -55,12 +53,11 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     }
 
 
-    public static HomeFragment newInstance(int position,String clinicCode) {
+    public static HomeFragment newInstance(String clinicCode) {
         HomeFragment fragment = new HomeFragment();
         Log.i(TAG, "new Instance method");
         Bundle args = new Bundle();
         args.putString(ARG_LOCATION_CODE, clinicCode);
-        args.putInt(POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,7 +68,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         Log.i(TAG, "onCreate method");
         if (getArguments() != null) {
             clinicCode = getArguments().getString(ARG_LOCATION_CODE);
-            position = getArguments().getInt(POSITION);
+
 
 
         }
@@ -103,12 +100,12 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
        if(myList.size() ==0)
-           onPageChange(position);
+           onPageChange();
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                onPageChange(position);
+                onPageChange();
                 mSwipeRefreshLayout.setRefreshing(false);
 
             }
@@ -214,11 +211,6 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     }
 
     @Override
-    public void changeNumberOfList(MyTabHandler myTabHandler) {
-
-    }
-
-    @Override
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
          activity1 = activity;
@@ -226,10 +218,9 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     Activity activity1;
 
     @Override
-    public void onPageChange(final int position) {
+    public void onPageChange() {
         if(getActivity() != null)
         if(CheckForNetwork.isConnectionOn(activity1)){
-            if(position==this.position)
         homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
             @Override
             public void onChanged(List<Appointement> items) {
@@ -253,7 +244,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
                 Log.i(TAG, "number of calls" + numOfCalls);
                 myAdapter.setItems(myList);
                 setAdapterTorecyclerView();
-                mListener.notifyByListSize(items.size(),position);
+                mListener.notifyByListSize(items.size());
             }
         });
 
@@ -270,7 +261,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         // TODO: Update argument type and name
         void onIconChanged(boolean isAppointmentStarted);
         void onNoDataReturned();
-        void notifyByListSize(int listSize, int tabPosition);
+        void notifyByListSize(int listSize);
 
     }
 }

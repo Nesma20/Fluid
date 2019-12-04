@@ -5,6 +5,6 @@ public interface UpdateEventListener {
     public void confirmArrived();
     public void callPatient();
     public void checkOutPatient();
-    public void changeNumberOfList(MyTabHandler myTabHandler);
+
 
  }

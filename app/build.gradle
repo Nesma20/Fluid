@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-def ip = hasProperty('ip') ? ip : 'provide this in gradle.properties'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -10,9 +9,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField "String", "IP", "\"$ip\""
-
     }
     buildTypes {
         release {
