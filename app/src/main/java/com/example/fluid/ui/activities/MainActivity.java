@@ -6,14 +6,11 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.view.animation.OvershootInterpolator;
-import android.view.animation.ScaleAnimation;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,7 +33,6 @@ import com.example.fluid.ui.locations.LocationsActivity;
 import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
 import com.example.fluid.utils.PreferenceController;
-import com.example.fluid.utils.ReadPropertiesXmlFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -56,16 +52,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     DrawerLayout drawer;
     NavigationView navigationView;
     private List<UpdateEventListener> myCallListenerList;
-    private List<OnPageChangedListener> onPageChangedListeners;
-    private int state = 0;
-    private int size = 0;
+
     TextView tabTitle;
     TextView tabCount;
     View customTabView;
-    AnimationDrawable startOrEndAnimation ;
-    private static final String MSG_KEY = "message";
+    AnimationDrawable startOrEndAnimation;
     public static final String LOCATIONS = "locations";
     public static final String TAG = "MainActivity";
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +68,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (!isUserLoggedIn()) {
             redirectToLogin();
         }
-      Log.i(TAG,ReadPropertiesXmlFile.readFromXml("ip",getApplicationContext())+" ");
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -133,7 +127,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     } else {
 
                         startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_start));
-            startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary)));
+                        startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary)));
 
                         myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
                         callFab.setEnabled(true);
@@ -149,34 +143,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         });
 
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                //region Don't Open
-                if (state == 0) {
-                    onPageChangedListeners.get(0).onPageChange();
-                    Log.i(TAG, "on scrolled selected " + position);
-                    state = 1;
-
-                }
-                //endregion
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                onPageChangedListeners.get(position).onPageChange();
-                Log.i(TAG, "on page selected " + position);
-
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
     @Override
@@ -188,45 +154,41 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void checkOnTheCurrentLanguage() {
         if (PreferenceController.getInstance(this).get(PreferenceController.LANGUAGE).equals(Constants.ARABIC)) {
             navigationView.getMenu().findItem(R.id.language_reference).setTitle(R.string.menu_english_language);
+            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         } else if (PreferenceController.getInstance(this).get(PreferenceController.LANGUAGE).equals(Constants.ENGLISH)) {
             navigationView.getMenu().findItem(R.id.language_reference).setTitle(R.string.menu_arabic_language);
+            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         }
     }
-    private void animateStartOrEndBtn(){
+
+    private void animateStartOrEndBtn() {
         startOrEndFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.animation_fab_with_rotation));
         startOrEndAnimation = (AnimationDrawable) startOrEndFab.getDrawable();
         startOrEndAnimation.start();
     }
 
     public void initializeViews() {
-
         mTabLayout = findViewById(R.id.tab_layout);
         mViewPager = findViewById(R.id.view_pager);
         startOrEndFab = findViewById(R.id.start_fab);
-
         callFab = findViewById(R.id.call_fab);
         arrivalFab = findViewById(R.id.confirm_arrive_fab);
-
-
-
     }
 
     private void setupViewPager(ViewPager myViewPager) {
         if (locationList.size() != 0) {
             myCallListenerList = new ArrayList<>();
-            onPageChangedListeners = new ArrayList<>();
+
             HomeFragment homeFragment;
             mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
             UpdateEventListener listener;
-            OnPageChangedListener onPageChangedListener;
 
             for (int i = 0; i < locationList.size(); i++) {
-                homeFragment = mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i)),locationList.get(i));
+                homeFragment = mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i)), locationList.get(i));
                 myViewPager.setOffscreenPageLimit(0);
                 listener = homeFragment;
-                onPageChangedListener = homeFragment;
                 myCallListenerList.add(listener);
-                onPageChangedListeners.add(onPageChangedListener);
+
 
             }
             myViewPager.setAdapter(mViewPagerAdapter);
@@ -235,52 +197,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             redirectTONoLocationAvailableFragment();
         }
     }
-    Handler handler;
+
     private View updateTabTextView(int pos, final int listSize) {
         customTabView = getLayoutInflater().inflate(R.layout.location_tab, null);
         tabTitle = customTabView.findViewById(R.id.location_tab_txt_view);
         tabCount = customTabView.findViewById(R.id.new_notifications_for_list_size);
         tabTitle.setText(locationList.get(pos));
         tabCount.setVisibility(View.VISIBLE);
-        tabCount.setText("");
-         new Thread(){
-             @Override
-             public void run() {
-                 super.run();
-                 synchronized (this){
-                     try {
-                         wait(1000);
-                         handler.sendEmptyMessage(0);
-                     } catch (InterruptedException e) {
-                         e.printStackTrace();
-                     }
-                 }
-             }
-         }.start();
         if (listSize != 0) {
-
-             handler = new Handler(){
-                @Override
-                public void handleMessage(@NonNull Message msg) {
-                    super.handleMessage(msg);
-                    tabCount.setText(listSize + "");
-                }
-            }
-            ;
-            Log.i(TAG, "counter " + size);
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    size = listSize;
-//
-//
-//                }
-//            }, 1000);
-//
-            // tabCount.setText(listSize+"");
+            tabCount.setText(listSize + "");
+        } else {
+            tabCount.setText("");
         }
-
-
+        Log.i(TAG, "tab count " + tabCount.getText().toString());
         return customTabView;
     }
 
@@ -307,7 +236,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 startActivity(intent);
                 break;
 
-
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -323,7 +251,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 PreferenceController.getInstance(this).persist(PreferenceController.LANGUAGE, Constants.ARABIC);
                 mTabLayout.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
             }
-            recreate();
+            finish();
+            startActivity(new Intent(this,MainActivity.class));
+           // recreate();
 
         }
 
@@ -364,7 +294,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //            callFab.setEnabled(true);
 //            callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
             startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_start));
-           startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+            startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
 
             this.isAppointmentStarted = true;
 
@@ -375,15 +305,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void onNoDataReturned() {
 
         redirectToNoInternetConnection();
-
     }
 
     @Override
     public void notifyByListSize(final int listSize) {
 
 
-        size = listSize;
-        mTabLayout.getTabAt(mViewPager.getCurrentItem()).setCustomView(updateTabTextView(mViewPager.getCurrentItem(), listSize));
+        if (mTabLayout.getTabAt(mViewPager.getCurrentItem()).getCustomView() == null)
+            mTabLayout.getTabAt(mViewPager.getCurrentItem()).setCustomView(updateTabTextView(mViewPager.getCurrentItem(), listSize));
+        else
+            ((TextView) mTabLayout.getTabAt(mViewPager.getCurrentItem()).getCustomView().findViewById(R.id.new_notifications_for_list_size)).setText(" " + listSize);
 
     }
 
@@ -398,20 +329,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         transaction.add(R.id.frame_layout, NoLocationAvailableFragment.newInstance()).commit();
 
     }
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        for(UpdateEventListener updateEventListener : myCallListenerList){
-//            updateEventListener = null;
-//
-//        }
-//        myCallListenerList = null;
-//        for(OnPageChangedListener onPageChangedListener : onPageChangedListeners){
-//            onPageChangedListener = null;
-//        }
-//        onPageChangedListeners = null;
-//    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (UpdateEventListener updateEventListener : myCallListenerList) {
+            updateEventListener = null;
+        }
+        myCallListenerList = null;
 
 
+    }
 }
 

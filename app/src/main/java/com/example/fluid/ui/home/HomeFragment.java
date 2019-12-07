@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,21 +32,22 @@ import com.example.fluid.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements  UpdateEventListener, MyAlertActionListener, OnPageChangedListener {
+public class HomeFragment extends Fragment implements UpdateEventListener, MyAlertActionListener, OnPageChangedListener {
     private HomeViewModel homeViewModel;
-    private List<Appointement> myList;
+    private List<Appointement> myList = new ArrayList<>();
     private AppointmentListAdapter myAdapter;
     private View view;
     Appointement itemStarted;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private  boolean isAppointmentStarted = false;
+    private boolean isAppointmentStarted = false;
     private RecyclerView myListView;
-    private  String clinicCode;
-    private static final String ARG_LOCATION_CODE="LOCATION_CODE";
+    private String clinicCode;
+    private static final String ARG_LOCATION_CODE = "LOCATION_CODE";
     private int numOfCalls = 0;
     private static String TAG = "AppointmentListFragment";
     private OnFragmentInteractionListener mListener;
     CustomAlertDialog alertDialog;
+    boolean isFragmentVisible = false;
 
 
     public HomeFragment() {
@@ -68,9 +70,6 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         Log.i(TAG, "onCreate method");
         if (getArguments() != null) {
             clinicCode = getArguments().getString(ARG_LOCATION_CODE);
-
-
-
         }
 
     }
@@ -94,17 +93,17 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         myListView = view.findViewById(R.id.appointmentRecyclerView);
-        myList = new ArrayList<>();
         myAdapter = new AppointmentListAdapter(getActivity());
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-       if(myList.size() ==0)
-           onPageChange();
+        if (myList.size() == 0 && isFragmentVisible)
+            onPageChange();
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if(isFragmentVisible)
                 onPageChange();
                 mSwipeRefreshLayout.setRefreshing(false);
 
@@ -155,6 +154,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
                     itemsList.add(myList.get(i));
                 }
             }
+        if (itemsList!=null&&itemsList.size()>0)
         alertDialog = new CustomAlertDialog(getContext(), itemsList, this, state);
         alertDialog.show();
     }
@@ -187,6 +187,7 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
         super.onDetach();
         mListener = null;
         homeViewModel = null;
+        clinicCode = null;
     }
 
 
@@ -213,55 +214,62 @@ public class HomeFragment extends Fragment implements  UpdateEventListener, MyAl
     @Override
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
-         activity1 = activity;
+        activity1 = activity;
     }
+
     Activity activity1;
 
     @Override
     public void onPageChange() {
-        if(getActivity() != null)
-        if(CheckForNetwork.isConnectionOn(activity1)){
-        homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
-            @Override
-            public void onChanged(List<Appointement> items) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                if(myList == null)
-                    myList = new ArrayList<>();
-
-                myList = items;
-                numOfCalls = 0;
-                isAppointmentStarted = false;
-                for (int i = 0; i < myList.size(); i++) {
-                    if (!myList.get(i).getCallingTime().isEmpty())
-                        numOfCalls++;
-                    if (!myList.get(i).getCheckinTime().isEmpty()) {
-                        isAppointmentStarted = true;
-                        itemStarted = myList.get(i);
+        if (getActivity() != null)
+            if (CheckForNetwork.isConnectionOn(activity1)) {
+                homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
+                    @Override
+                    public void onChanged(List<Appointement> items) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        myList = items;
+                        numOfCalls = 0;
+                        isAppointmentStarted = false;
+                        for (int i = 0; i < myList.size(); i++) {
+                            if (!myList.get(i).getCallingTime().isEmpty())
+                                numOfCalls++;
+                            if (!myList.get(i).getCheckinTime().isEmpty()) {
+                                isAppointmentStarted = true;
+                                itemStarted = myList.get(i);
+                            }
+                        }
+                        mListener.onIconChanged(isAppointmentStarted);
+                        Log.i(TAG, "observe data");
+                        Log.i(TAG, "number of calls" + numOfCalls);
+                        myAdapter.setItems(myList);
+                        setAdapterTorecyclerView();
+                        Log.i(TAG, "from clinic location " + clinicCode);
+                        mListener.notifyByListSize(items.size());
                     }
-                }
-                mListener.onIconChanged(isAppointmentStarted);
-                Log.i(TAG, "observe data");
-                Log.i(TAG, "number of calls" + numOfCalls);
-                myAdapter.setItems(myList);
-                setAdapterTorecyclerView();
-                mListener.notifyByListSize(items.size());
+                });
+
+            } else {
+                mListener.onNoDataReturned();
             }
-        });
 
-        }
-        else{
-            mListener.onNoDataReturned();
-        }
-
-        }
-
+    }
 
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onIconChanged(boolean isAppointmentStarted);
+
         void onNoDataReturned();
+
         void notifyByListSize(int listSize);
 
+    }
+
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        isFragmentVisible = menuVisible;
+        if (getContext() != null && menuVisible && myList.size() == 0)
+            onPageChange();
     }
 }

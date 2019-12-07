@@ -16,10 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fluid.R;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.ui.activities.AppointmentDetailsActivity;
+import com.example.fluid.utils.PreferenceController;
 import com.example.fluid.utils.StringUtil;
 import com.example.fluid.utils.Constants;
 
 import java.util.List;
+
+import static com.example.fluid.utils.Constants.ENGLISH;
 
 public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentListAdapter.myViewHolder> {
     Context mContext;
@@ -47,11 +50,9 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         final Appointement appointement = myItems.get(position);
         System.out.println("from appointement in adapter" + appointement.getArabicName());
         holder.mRNTxt.setText(appointement.getMRN());
-        String languageName = mContext.getApplicationContext().getResources().getConfiguration().locale.getLanguage();
+        String languageName = PreferenceController.getInstance(mContext).get(PreferenceController.LANGUAGE);
         if (languageName.contains(Constants.ENGLISH)) {
             holder.patientNameTxt.setText(StringUtil.toCamelCase(appointement.getEnglishName()));
-
-
         } else if (languageName.contains("العربية") || languageName.contains(Constants.ARABIC)) {
             holder.patientNameTxt.setText(appointement.getArabicName());
         }

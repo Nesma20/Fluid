@@ -1,4 +1,4 @@
-package com.example.fluid.ui.adapters;
+package com.example.fluid.ui.dialogs;
 
 import android.content.Context;
 import android.view.LayoutInflater;

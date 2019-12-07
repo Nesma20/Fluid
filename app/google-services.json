@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "574842241815-m5nj8uccrqq9mog93i0fniim6gi78v69.apps.googleusercontent.com",
+          "client_id": "574842241815-v2406n53tbap19fjcea7s9496vbvjor6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.fluid",
@@ -29,14 +29,14 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCeoGhJesmxhRSSg3cBmJa6uxPIfRi6ALo"
+          "current_key": "AIzaSyATNt_O5qL5ovukfRVr4jjj4bY7ShnpUPk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "574842241815-20po4mvnj6ndc5cecig7sh3a0vvd5euc.apps.googleusercontent.com",
+              "client_id": "574842241815-ghi8kcinh8cogrdbrjfn1bk68204gdg8.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

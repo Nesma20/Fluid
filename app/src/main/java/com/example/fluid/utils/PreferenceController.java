@@ -7,9 +7,8 @@ public class PreferenceController {
   private static final String DATABASE_NAME = "FluidApp";
   public static final String LANGUAGE = "lang";
   public static final String PREF_EMAIL= "email";
-  public static final String PREF_PASSWORD= "password";
-  public static final String PREF_USERNAME= "username";
-
+  public static final String PREF_USER_NAME= "username";
+  public static final String PREF_IMAGE_PROFILE_URL = "profilePhotoUrl";
 
   private static PreferenceController instance;
   private SharedPreferences preferences;

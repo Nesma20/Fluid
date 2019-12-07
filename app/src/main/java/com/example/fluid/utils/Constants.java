@@ -9,5 +9,8 @@ public interface Constants {
     public static final int STATE_OK = 200;
     public static final String ARABIC = "ar";
     public static final String ENGLISH = "en";
+    public static final String IP = "ip";
+    public static final String PORT = "port";
+
 
 }

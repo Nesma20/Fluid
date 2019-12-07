@@ -17,6 +17,7 @@
         android:paddingBottom="2dp"
         android:textColor="@color/colorWhite"
         android:textSize="10sp"
+        android:text="123123"
         android:textStyle="bold"
         android:visibility="visible" />
 

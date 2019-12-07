@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.fluid.R;
-import com.example.fluid.ui.adapters.AlertDialogAdapter;
 import com.example.fluid.ui.listeners.MyAlertActionListener;
 import com.example.fluid.model.pojo.Appointement;
 

@@ -16,23 +16,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.GoogleBrowserClientRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.people.v1.PeopleService;
 import com.google.api.services.people.v1.model.Person;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
     private final String TAG = "LoginActivity";
@@ -47,20 +43,23 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 // Configure sign-in to request the user's ID, email address, and basic
 // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("574842241815-stc69a4n3pctnmp0dvukd7dpv73o6r4a.apps.googleusercontent.com")
-                .build();
-// Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        Scope myScope = new Scope("https://www.googleapis.com/auth/user.birthday.read");
+        Scope myScope2 = new Scope(Scopes.PLUS_ME);
+        Scope myScope3 = new Scope(Scopes.PROFILE); //get name and id
 
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(myScope, myScope2)
+                .requestIdToken("574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com")
+                .requestEmail()
+                .requestProfile()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         loginWithGoogleAccountBtn = findViewById(R.id.loginWithGoogleAccountBtn);
         loginWithGoogleAccountBtn.setSize(SignInButton.SIZE_STANDARD);
         loginWithGoogleAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn();
-
-
             }
 
         });
@@ -76,9 +75,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-            Toast.makeText(this, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId(), Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId()+ "account image url "+account.getPhotoUrl());
             try {
-                settt(account);
+                getAccountDetails(account);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -86,16 +85,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void settt(final GoogleSignInAccount account) throws IOException {
+    public void getAccountDetails(final GoogleSignInAccount account) throws IOException {
         Thread myThread = new Thread() {
             @Override
             public void run() {
-
-
                 HttpTransport httpTransport = new NetHttpTransport();
                 JacksonFactory jsonFactory = new JacksonFactory();
                 String clientId = "574842241815-20po4mvnj6ndc5cecig7sh3a0vvd5euc.apps.googleusercontent.com";
-                String clientSecret = "Lkq4-hBzrBw1EQ6kYW-eA-2A";
+                String clientSecret = "AIzaSyATNt_O5qL5ovukfRVr4jjj4bY7ShnpUPk";
 
                 GoogleCredential credential = new GoogleCredential.Builder()
                         .setTransport(httpTransport)
@@ -108,9 +105,9 @@ public class LoginActivity extends AppCompatActivity {
                                 build();
                 try {
 
-                    Log.i(TAG,"account token"+account.getIdToken());
-                    Person profile = peopleService.people().get("people/" + account.getId())
-                            .setPersonFields("names,emailAddresses")
+                    Log.i(TAG, "account token : " + account.getIdToken());
+                    Person profile = peopleService.people().get("people/me")
+                            .setPersonFields("birthdays,names,genders")
                             .execute();
 
                     Log.i(TAG, profile.getEmailAddresses().get(0).getValue());
@@ -123,10 +120,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
-
-
     private void redirectToMain() {
-
+        finish();
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
     }
@@ -134,9 +129,12 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            PreferenceController.getInstance(this).persist(PreferenceController.PREF_EMAIL, AccountManager.KEY_ACCOUNT_NAME);
-            Toast.makeText(this, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId(), Toast.LENGTH_SHORT).show();
+            PreferenceController.getInstance(this).persist(PreferenceController.PREF_EMAIL, account.getEmail());
+            PreferenceController.getInstance(this).persist(PreferenceController.PREF_USER_NAME,account.getDisplayName());
+            PreferenceController.getInstance(this).persist(PreferenceController.PREF_IMAGE_PROFILE_URL,account.getPhotoUrl().getPath());
+            Toast.makeText(this, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId() +" image profile "+account.getPhotoUrl().getPath(), Toast.LENGTH_SHORT).show();
 
+            redirectToMain();
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.

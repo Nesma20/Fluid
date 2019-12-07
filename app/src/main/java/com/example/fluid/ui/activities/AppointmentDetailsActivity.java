@@ -14,6 +14,7 @@ import com.example.fluid.R;
 import com.example.fluid.model.pojo.Appointement;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
@@ -51,7 +52,9 @@ TextView callingTimeTxt;
         if(!appointement.getArrivalTime().isEmpty()) {
 
             LocalDateTime localDateTime = LocalDateTime.parse(appointement.getArrivalTime(), formatter);
-            arrivalTimeTxt.setText(localDateTime.getHour()+":"+localDateTime.getMinute());
+            arrivalTimeTxt.setText(localDateTime.format(DateTimeFormatter.ofPattern("HH:mm a")));
+
+
         }
         else {
             arrivalTimeTxt.setText("");
@@ -60,7 +63,7 @@ TextView callingTimeTxt;
         if(!appointement.getExpectedTime().isEmpty()) {
 
             LocalDateTime localDateTime = LocalDateTime.parse(appointement.getExpectedTime(), formatter);
-            expectedTimeTxt.setText(localDateTime.getHour()+":"+localDateTime.getMinute());
+            expectedTimeTxt.setText(localDateTime.format(DateTimeFormatter.ofPattern("HH:mm a")));
         }
         else
         {
@@ -70,7 +73,7 @@ TextView callingTimeTxt;
         if(!appointement.getCallingTime().isEmpty()) {
 
             LocalDateTime localDateTime = LocalDateTime.parse(appointement.getCallingTime(), formatter);
-            callingTimeTxt.setText(localDateTime.getHour()+":"+localDateTime.getMinute());
+            callingTimeTxt.setText(localDateTime.format(DateTimeFormatter.ofPattern("HH:mm a")));
         }
         else{
             callingTimeTxt.setText("");
@@ -79,7 +82,7 @@ TextView callingTimeTxt;
         if(!appointement.getScheduledTime().isEmpty()) {
 
             LocalDateTime localDateTime = LocalDateTime.parse(appointement.getScheduledTime(), formatter);
-            scheduledTimeTxt.setText(localDateTime.getHour()+":"+localDateTime.getMinute());
+            scheduledTimeTxt.setText(localDateTime.format(DateTimeFormatter.ofPattern("HH:mm a")));
         }
         else{
             scheduledTimeTxt.setText("");
