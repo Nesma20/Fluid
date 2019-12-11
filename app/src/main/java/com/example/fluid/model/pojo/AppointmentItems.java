@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Items {
+public class AppointmentItems {
 
 
         @SerializedName("items")
@@ -19,6 +19,4 @@ public class Items {
         public void setItems(List<Appointement> items) {
             this.items = items;
         }
-
-
 }

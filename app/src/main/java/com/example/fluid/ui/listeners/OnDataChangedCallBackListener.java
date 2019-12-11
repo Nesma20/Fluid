@@ -1,5 +1,5 @@
 package com.example.fluid.ui.listeners;
 
-public interface OnDataChangedCallBackListener {
-    public void onResponse(boolean isDataChanged);
+public interface OnDataChangedCallBackListener<T> {
+    public void onResponse(T dataChanged);
 }

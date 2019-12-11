@@ -21,10 +21,10 @@ public class HomeViewModel extends ViewModel {
         return myliveData;
     }
     public void updateWithCalling(final String clinicCode){
-        appointmentRepository.callPatient(clinicCode, new OnDataChangedCallBackListener() {
+        appointmentRepository.callPatient(clinicCode, new OnDataChangedCallBackListener<Boolean>() {
             @Override
-            public void onResponse(boolean isDataChanged) {
-                if(isDataChanged)
+            public void onResponse(Boolean dataChanged) {
+                if(dataChanged.booleanValue())
                     getAllItems(clinicCode);
             }
         });
@@ -32,29 +32,30 @@ public class HomeViewModel extends ViewModel {
 
     }
     public void updateWithCheckIn(final String clinicCode, String slotId){
-        appointmentRepository.checkIn(slotId, new OnDataChangedCallBackListener() {
+        appointmentRepository.checkIn(slotId, new OnDataChangedCallBackListener<Boolean>() {
             @Override
-            public void onResponse(boolean isDataChanged) {
-                if(isDataChanged)
+            public void onResponse(Boolean dataChanged) {
+                if(dataChanged.booleanValue())
                     getAllItems(clinicCode);
             }
         });
 
     }
     public void updateWithCheckOut(final String clinicCode, String slotId){
-        appointmentRepository.checkOut(slotId,new OnDataChangedCallBackListener(){
+        appointmentRepository.checkOut(slotId,new OnDataChangedCallBackListener<Boolean>(){
             @Override
-            public void onResponse(boolean isDataChanged) {
-                if(isDataChanged)
+            public void onResponse(Boolean dataChanged) {
+                if(dataChanged.booleanValue())
                     getAllItems(clinicCode);
             }
         });
 
     }
     public void confirmArrival(final String clinicCode,String slotId){
-        appointmentRepository.confirmArrive(slotId, new OnDataChangedCallBackListener() {
+        appointmentRepository.confirmArrive(slotId, new OnDataChangedCallBackListener<Boolean>() {
             @Override
-            public void onResponse(boolean isDataChanged) {
+            public void onResponse(Boolean dataChanged) {
+                if(dataChanged)
                 getAllItems(clinicCode);
             }
         });

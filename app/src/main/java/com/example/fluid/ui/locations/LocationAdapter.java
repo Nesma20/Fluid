@@ -10,16 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fluid.R;
+import com.example.fluid.model.pojo.Location;
 import com.example.fluid.ui.home.AppointmentListAdapter;
 
 import java.util.List;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyViewHolder> {
 
-    List<String> locations;
+    List<Location> locations;
     Context mContext;
 
-    public LocationAdapter(Context mContext,List<String> locations){
+    public LocationAdapter(Context mContext,List<Location> locations){
         this.mContext = mContext ;
         this.locations = locations ;
 
@@ -34,7 +35,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-       String location = locations.get(position);
+       String location = locations.get(position).getFacilityId();
        holder.locationName.setText(location);
     }
 

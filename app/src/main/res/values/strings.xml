@@ -20,21 +20,25 @@
     <string name="choose_patient">Choose Patient</string>
     <string name="customer_MRN_txt">MRN</string>
     <string name="name_txt">name</string>
-    <string name="scheduled_time_txt">Scheduled Time:</string>
-    <string name="expected_time_txt">Expected Time:</string>
-    <string name="checkin_time_txt">CheckIn Time:</string>
-    <string name="arrival_time_txt">Arrival Time:</string>
-    <string name="calling_time_txt">Calling Time:</string>
+    <string name="scheduled_time_txt">Scheduled time</string>
+    <string name="expected_time_txt">Expected time</string>
+    <string name="checkin_time_txt">CheckIn time</string>
+    <string name="arrival_time_txt">Arrival time</string>
+    <string name="calling_time_txt">Calling time</string>
+    <string name="when_there_is_no_time_txt">Not yet</string>
+    <string name="when_there_is_no_scheduled_time">Not booked yet</string>
     <string name="customer_name_txt">customer name</string>
     <string name="customer_picture">customer picture</string>
     <!-- strings for login page -->
     <string name="prompt_email">Mail</string>
     <string name="prompt_password">Password</string>
-    <string name="welcome_back_txt">Welcome back!</string>
+    <string name="welcome_back_txt">Welcome To Fluid!</string>
     <string name="login_with_google_account">Log in with google account</string>
     <string name="no_internet_image">no internet image</string>
     <string name="Oh_no_string">Oh no!</string>
     <string name="no_internet_txt">No internet found. Check your internet connection and try again.</string>
     <string name="retry_btn">Retry</string>
+    <string name="error_while_login">Error While log in, Please retry</string>
     <string name="no_location_available">There is No current location available</string>
+
 </resources>

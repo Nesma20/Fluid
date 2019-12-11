@@ -3,6 +3,7 @@ package com.example.fluid.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fluid.R;
@@ -45,6 +47,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         return new myViewHolder(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull myViewHolder holder, int position) {
         final Appointement appointement = myItems.get(position);
@@ -74,13 +77,23 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             holder.patientStateImage.setImageResource(R.drawable.ic_start);
             holder.patientStateImage.setColorFilter(R.color.colorAccent);
         }
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        if(appointement.getScheduledTime().isEmpty()) {
+            holder.scheduledTimeTxt.setVisibility(View.GONE);
+        holder.scheduledIcon.setVisibility(View.GONE);
+        }
+        else {
+            holder.scheduledIcon.setVisibility(View.VISIBLE);
+            holder.scheduledTimeTxt.setVisibility(View.VISIBLE);
+            holder.scheduledTimeTxt.setText(StringUtil.displayTime(appointement.getScheduledTime()));
+        }
+
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 Intent intent = new Intent(mContext.getApplicationContext(), AppointmentDetailsActivity.class);
                 intent.putExtra(APPOINTMENT, (Parcelable) appointement);
                 mContext.startActivity(intent);
-                return false;
             }
         });
 
@@ -99,7 +112,8 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         TextView patientNameTxt;
         ImageView patientStateImage;
         ImageView patientAvtarImage;
-
+        TextView scheduledTimeTxt;
+        ImageView scheduledIcon ;
         public myViewHolder(View itemView) {
             super(itemView);
 
@@ -107,6 +121,8 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             patientNameTxt = itemView.findViewById(R.id.customer_name_text);
             patientStateImage = itemView.findViewById(R.id.customer_state_img);
             patientAvtarImage = itemView.findViewById(R.id.customerAvatar);
+            scheduledTimeTxt = itemView.findViewById(R.id.txt_scheduled_time_in_card);
+            scheduledIcon = itemView.findViewById(R.id.imageView);
         }
 
 

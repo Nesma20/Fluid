@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,11 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.fluid.R;
-import com.example.fluid.ui.activities.MainActivity;
 import com.example.fluid.ui.dialogs.CustomAlertDialog;
 import com.example.fluid.ui.listeners.MyAlertActionListener;
-import com.example.fluid.ui.listeners.MyTabHandler;
-import com.example.fluid.ui.listeners.OnPageChangedListener;
 import com.example.fluid.ui.listeners.UpdateEventListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.utils.CheckForNetwork;
@@ -32,12 +28,13 @@ import com.example.fluid.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements UpdateEventListener, MyAlertActionListener, OnPageChangedListener {
+public class HomeFragment extends Fragment implements UpdateEventListener, MyAlertActionListener {
     private HomeViewModel homeViewModel;
     private List<Appointement> myList = new ArrayList<>();
     private AppointmentListAdapter myAdapter;
     private View view;
     Appointement itemStarted;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean isAppointmentStarted = false;
     private RecyclerView myListView;
@@ -97,14 +94,18 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-        if (myList.size() == 0 && isFragmentVisible)
-            onPageChange();
+        if (myList.size() == 0 && isFragmentVisible) {
 
+            onDataChanged();
+
+        }
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if(isFragmentVisible)
-                onPageChange();
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    homeViewModel.getAllItems(clinicCode);
+
                 mSwipeRefreshLayout.setRefreshing(false);
 
             }
@@ -156,6 +157,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
             }
         if (itemsList!=null&&itemsList.size()>0)
         alertDialog = new CustomAlertDialog(getContext(), itemsList, this, state);
+       alertDialog.getWindow().setLayout(getView().getWidth(),getView().getHeight()/2);
         alertDialog.show();
     }
 
@@ -219,14 +221,18 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
     Activity activity1;
 
-    @Override
-    public void onPageChange() {
+
+    public void onDataChanged() {
+        mListener.allowProgressBarToBeVisible();
+
         if (getActivity() != null)
+
             if (CheckForNetwork.isConnectionOn(activity1)) {
+
                 homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
                     @Override
                     public void onChanged(List<Appointement> items) {
-                        mSwipeRefreshLayout.setRefreshing(false);
+
                         myList = items;
                         numOfCalls = 0;
                         isAppointmentStarted = false;
@@ -241,10 +247,14 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
                         mListener.onIconChanged(isAppointmentStarted);
                         Log.i(TAG, "observe data");
                         Log.i(TAG, "number of calls" + numOfCalls);
+
                         myAdapter.setItems(myList);
+
                         setAdapterTorecyclerView();
                         Log.i(TAG, "from clinic location " + clinicCode);
                         mListener.notifyByListSize(items.size());
+                        mListener.allowProgressBarToBeGone();
+
                     }
                 });
 
@@ -252,16 +262,17 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
                 mListener.onNoDataReturned();
             }
 
+
     }
 
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onIconChanged(boolean isAppointmentStarted);
-
         void onNoDataReturned();
-
         void notifyByListSize(int listSize);
+        void allowProgressBarToBeVisible();
+        void allowProgressBarToBeGone();
 
     }
 
@@ -269,7 +280,12 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
         isFragmentVisible = menuVisible;
-        if (getContext() != null && menuVisible && myList.size() == 0)
-            onPageChange();
+        if (getContext() != null && menuVisible )
+        {
+            mListener.allowProgressBarToBeVisible();
+            onDataChanged();
+            mListener.allowProgressBarToBeGone();
+        }
     }
+
 }

@@ -9,7 +9,7 @@
     <dimen name="customer_text_item">20sp</dimen>
     <dimen name="default_margin">16dp</dimen>
     <dimen name="design_fab_image_size" tools:override="true">40dp</dimen>
-    <dimen name="button_login_padding">10dp</dimen>
+    <dimen name="button_login_padding">16dp</dimen>
     <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="time_size">20sp</dimen>

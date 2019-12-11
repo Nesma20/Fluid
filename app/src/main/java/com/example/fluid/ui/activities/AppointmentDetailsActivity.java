@@ -1,9 +1,10 @@
 package com.example.fluid.ui.activities;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,23 +14,21 @@ import android.widget.TextView;
 import com.example.fluid.R;
 import com.example.fluid.model.pojo.Appointement;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
-
 public class AppointmentDetailsActivity extends BaseActivity  {
 private final String TAG = "AppointmentDetails";
 private final String APPOINTMENT = "appointment";
-ImageView customerImageView;
-TextView mRNTxt;
-TextView customerNameTxt;
-TextView scheduledTimeTxt;
-TextView expectedTimeTxt;
-TextView arrivalTimeTxt;
-TextView callingTimeTxt;
+private ImageView customerImageView;
+private TextView mRNTxt;
+private TextView customerNameTxt;
+private TextView scheduledTimeTxt;
+private TextView expectedTimeTxt;
+private TextView arrivalTimeTxt;
+private TextView callingTimeTxt;
+AppointmentDetailsViewModel appointmentDetailsViewModel = new AppointmentDetailsViewModel();
+
+    private final int flag_no_time = 1;
+    private final int flag_no_schedule_time = 2;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,51 +42,45 @@ TextView callingTimeTxt;
         mRNTxt.setText(appointement.getMRN());
         String languageName = getResources().getConfiguration().locale.getDisplayName();
         if (languageName.contains("English")) {
-            customerNameTxt.setText(appointement.getEnglishName());
+
+            customerNameTxt.setText(appointmentDetailsViewModel.capitalizeName(appointement.getEnglishName()));
 
         } else if (languageName.contains("العربية") || languageName.contains("Arabic")) {
             customerNameTxt.setText(appointement.getArabicName());
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss a", Locale.ENGLISH);
+
         if(!appointement.getArrivalTime().isEmpty()) {
-
-            LocalDateTime localDateTime = LocalDateTime.parse(appointement.getArrivalTime(), formatter);
-            arrivalTimeTxt.setText(localDateTime.format(DateTimeFormatter.ofPattern("HH:mm a")));
-
+            arrivalTimeTxt.setText(appointmentDetailsViewModel.displayTime(appointement.getArrivalTime()));
 
         }
         else {
-            arrivalTimeTxt.setText("");
+            changeColorFontAndTextOfTxtView(arrivalTimeTxt,flag_no_time);
 
         }
         if(!appointement.getExpectedTime().isEmpty()) {
-
-            LocalDateTime localDateTime = LocalDateTime.parse(appointement.getExpectedTime(), formatter);
-            expectedTimeTxt.setText(localDateTime.format(DateTimeFormatter.ofPattern("HH:mm a")));
+            expectedTimeTxt.setText(appointmentDetailsViewModel.displayTime(appointement.getExpectedTime()));
         }
         else
         {
-            expectedTimeTxt.setText("");
+            changeColorFontAndTextOfTxtView(expectedTimeTxt,flag_no_time);
 
         }
         if(!appointement.getCallingTime().isEmpty()) {
-
-            LocalDateTime localDateTime = LocalDateTime.parse(appointement.getCallingTime(), formatter);
-            callingTimeTxt.setText(localDateTime.format(DateTimeFormatter.ofPattern("HH:mm a")));
+            callingTimeTxt.setText(appointmentDetailsViewModel.displayTime(appointement.getCallingTime()));
         }
         else{
-            callingTimeTxt.setText("");
+            changeColorFontAndTextOfTxtView(callingTimeTxt,flag_no_time);
 
         }
         if(!appointement.getScheduledTime().isEmpty()) {
 
-            LocalDateTime localDateTime = LocalDateTime.parse(appointement.getScheduledTime(), formatter);
-            scheduledTimeTxt.setText(localDateTime.format(DateTimeFormatter.ofPattern("HH:mm a")));
+            scheduledTimeTxt.setText(appointmentDetailsViewModel.displayTime(appointement.getScheduledTime()));
         }
         else{
-            scheduledTimeTxt.setText("");
+            changeColorFontAndTextOfTxtView(scheduledTimeTxt,flag_no_schedule_time);
         }
     }
+
     public void setUpViews(){
      customerImageView = findViewById(R.id.customer_img_view);
      mRNTxt = findViewById(R.id.customer_mrn);
@@ -97,5 +90,15 @@ TextView callingTimeTxt;
      arrivalTimeTxt = findViewById(R.id.arrive_time_txt);
      callingTimeTxt = findViewById(R.id.called_time_txt);
 
+    }
+    public void changeColorFontAndTextOfTxtView(TextView mTxtView,int flag){
+        int COLOR_WHE_NO_TIME_FOUND = Color.GRAY;
+
+        if(flag == 1)
+        mTxtView.setText(getResources().getString(R.string.when_there_is_no_time_txt));
+        else
+            mTxtView.setText(getResources().getString(R.string.when_there_is_no_scheduled_time));
+        mTxtView.setTextSize(15);
+        mTxtView.setTextColor(COLOR_WHE_NO_TIME_FOUND);
     }
 }

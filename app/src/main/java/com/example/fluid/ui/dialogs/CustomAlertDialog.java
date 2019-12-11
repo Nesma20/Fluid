@@ -40,6 +40,7 @@ public class CustomAlertDialog extends Dialog{
         setContentView(R.layout.alert_dialog_layout);
         Window window = getWindow();
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
         mRecyclerView = findViewById(R.id.alert_recyclerview);
         alertDialogAdapter = new AlertDialogAdapter(context,items,myAlertActionListener,state);
         mRecyclerView.setAdapter(alertDialogAdapter);
