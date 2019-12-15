@@ -20,8 +20,8 @@ public class HomeViewModel extends ViewModel {
         itemArrayList = (ArrayList<Appointement>) myliveData.getValue();
         return myliveData;
     }
-    public void updateWithCalling(final String clinicCode){
-        appointmentRepository.callPatient(clinicCode, new OnDataChangedCallBackListener<Boolean>() {
+    public void updateWithCalling(final String clinicCode,final String sessionId){
+        appointmentRepository.callPatient(sessionId, new OnDataChangedCallBackListener<Boolean>() {
             @Override
             public void onResponse(Boolean dataChanged) {
                 if(dataChanged.booleanValue())

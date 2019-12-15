@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.example.fluid.ui.listeners.UpdateEventListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
+import com.example.fluid.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,9 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     private boolean isAppointmentStarted = false;
     private RecyclerView myListView;
     private String clinicCode;
+    private String sessionId;
     private static final String ARG_LOCATION_CODE = "LOCATION_CODE";
+    private static final String ARG_SESSION_ID = "SESSION_ID";
     private int numOfCalls = 0;
     private static String TAG = "AppointmentListFragment";
     private OnFragmentInteractionListener mListener;
@@ -52,11 +56,12 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     }
 
 
-    public static HomeFragment newInstance(String clinicCode) {
+    public static HomeFragment newInstance(String clinicCode, String sessionId) {
         HomeFragment fragment = new HomeFragment();
         Log.i(TAG, "new Instance method");
         Bundle args = new Bundle();
         args.putString(ARG_LOCATION_CODE, clinicCode);
+        args.putString(ARG_SESSION_ID,sessionId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,6 +72,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         Log.i(TAG, "onCreate method");
         if (getArguments() != null) {
             clinicCode = getArguments().getString(ARG_LOCATION_CODE);
+            sessionId = getArguments().getString(ARG_SESSION_ID);
         }
 
     }
@@ -140,14 +146,14 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
         List<Appointement> itemsList = new ArrayList<>();
         if (state.equals(Constants.STARTING_STATE)) {
-            for (int i = 0; i < numOfCalls; i++) {
+            for (int i = 0; i < myList.size(); i++) {
 
                 if (myList.get(i).getCheckinTime().isEmpty()
                         && !myList.get(i).getCallingTime().isEmpty()) {
                     itemsList.add(myList.get(i));
                 }
             }
-            numOfCalls--;
+
 
         } else if (state.equals(Constants.ARRIVED_STATE))
             for (int i = 0; i < myList.size(); i++) {
@@ -164,7 +170,9 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     @Override
     public void updateData(Appointement appointement, String state) {
         if (state.equals(Constants.STARTING_STATE)) {
+            numOfCalls--;
             homeViewModel.updateWithCheckIn(clinicCode, appointement.getSlotId());
+
 
         } else if (state.equals((Constants.ARRIVED_STATE))) {
             homeViewModel.confirmArrival(clinicCode, appointement.getSlotId());
@@ -205,11 +213,12 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
     @Override
     public void callPatient() {
-        homeViewModel.updateWithCalling(clinicCode);
+        homeViewModel.updateWithCalling(clinicCode,sessionId);
     }
 
     @Override
     public void checkOutPatient() {
+        Toast.makeText(getContext(),"slote id" +itemStarted.getSlotId(),Toast.LENGTH_SHORT).show();
         homeViewModel.updateWithCheckOut(clinicCode, itemStarted.getSlotId());
     }
 

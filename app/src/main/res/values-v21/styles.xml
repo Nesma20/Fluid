@@ -6,6 +6,5 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
     <style name="Theme.MaterialComponents.NoActionBar">
-
     </style>
 </resources>

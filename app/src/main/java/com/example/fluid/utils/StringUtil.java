@@ -36,18 +36,34 @@ public class StringUtil {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String displayTime(String time)  {
         String amOrPmTxt = "";
+        int hours;
+        int minutes;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         try {
             Date date = simpleDateFormat.parse(time);
             Log.i("StringUtil",date.getHours()+" date hours");
 
-            if(date.getHours()>12) {
+            if(date.getHours()> 12) {
                 amOrPmTxt = "PM";
+
+                hours = date.getHours() %12;
+
+            }
+
+            else if(date.getHours() == 12)
+            {
+                amOrPmTxt = "PM";
+                hours = date.getHours();
             }
             else{
                 amOrPmTxt = "AM";
+                hours = date.getHours();
             }
-            return date.getHours()%12 + ":"+ date.getMinutes() +" "+amOrPmTxt;
+            if(date.getMinutes() ==0)
+            return hours + ":" + date.getMinutes() + "0" +" "+amOrPmTxt;
+            else
+                return hours + ":" + date.getMinutes() + " "+amOrPmTxt;
+
         } catch (ParseException e) {
             e.printStackTrace();
         }

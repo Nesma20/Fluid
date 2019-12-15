@@ -48,6 +48,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        loginWithGoogleAccountBtn =(SignInButton) findViewById(R.id.login_btn);
+
+
 // Configure sign-in to request the user's ID, email address, and basic
 // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
 //        Scope myScope = new Scope("https://www.googleapis.com/auth/user.birthday.read");
@@ -59,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
                 .requestProfile()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        loginWithGoogleAccountBtn = findViewById(R.id.loginWithGoogleAccountBtn);
         loginWithGoogleAccountBtn.setSize(SignInButton.SIZE_STANDARD);
         loginWithGoogleAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override

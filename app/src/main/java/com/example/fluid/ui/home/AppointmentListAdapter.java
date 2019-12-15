@@ -2,7 +2,10 @@ package com.example.fluid.ui.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -65,17 +68,25 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         } else {
             holder.patientAvtarImage.setImageResource(R.drawable.man);
         }
+        if(appointement.getArrivalTime().isEmpty() && appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty())
+        {
+
+            holder.patientStateImage.setImageResource(R.drawable.ic_chair);
+
+        }
         if (!appointement.getArrivalTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_arrive);
-            holder.patientStateImage.setColorFilter(R.color.colorAccent, PorterDuff.Mode.SRC_IN);
+            holder.patientStateImage.setColorFilter(Color.argb(255,0,175,254));
+
         }
         if (!appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_call);
+            holder.patientStateImage.setColorFilter(Color.argb(255,0,175,254));
 
-            holder.patientStateImage.setColorFilter(R.color.colorAccent);
         } else if (!appointement.getCheckinTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_start);
-            holder.patientStateImage.setColorFilter(R.color.colorAccent);
+            holder.patientStateImage.setColorFilter(Color.argb(255,0,175,254));
+
         }
         if(appointement.getScheduledTime().isEmpty()) {
             holder.scheduledTimeTxt.setVisibility(View.GONE);
@@ -106,7 +117,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     }
 
 
-    class myViewHolder extends RecyclerView.ViewHolder{
+    public class myViewHolder extends RecyclerView.ViewHolder{
 
         TextView mRNTxt;
         TextView patientNameTxt;
@@ -127,5 +138,13 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
 
 
 
+    }
+    public void applyThemeToDrawable(Drawable image) {
+        if (image != null) {
+            PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(Color.argb(255,0,175,254),
+                    PorterDuff.Mode.SRC_ATOP);
+
+            image.setColorFilter(porterDuffColorFilter);
+        }
     }
 }

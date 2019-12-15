@@ -92,11 +92,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        if (!isUserLoggedIn()) {
-            redirectToLogin();
-        }
-
-
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -130,11 +125,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             mainViewModel.getLocationData(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL), new OnDataChangedCallBackListener<LocationList>() {
                 @Override
                 public void onResponse(LocationList dataChanged) {
-                    if(dataChanged.getItems() != null) {
+                    if (dataChanged.getItems() != null) {
                         locationList = (ArrayList<Location>) dataChanged.getItems();
                         setupViewPager(mViewPager);
-                    }
-                    else {
+                    } else {
                         locationList = null;
                         redirectTONoLocationAvailableFragment();
 
@@ -232,35 +226,31 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void setupViewPager(final ViewPager myViewPager) {
 
-            enableButtonsAndLayoutToBeVisible();
-            if(noLocationAvailableFragment != null) {
-                transaction = manager.beginTransaction();
-                transaction.remove(noLocationAvailableFragment);
-                transaction.commit();
-                manager.popBackStack();
-            }
-            myCallListenerList = new ArrayList<>();
-            HomeFragment homeFragment;
-            mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-            UpdateEventListener listener;
-
-            for (int i = 0; i < locationList.size(); i++) {
-                homeFragment = mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId()), locationList.get(i).getFacilityId());
-                myViewPager.setOffscreenPageLimit(1);
-                listener = homeFragment;
-                myCallListenerList.add(listener);
-
-            }
-            myViewPager.setAdapter(mViewPagerAdapter);
-
-            mTabLayout.setupWithViewPager(myViewPager);
-            for(int i=0 ;i<locationList.size();i++){
-                if (mTabLayout.getTabAt(i).getCustomView() == null)
-                    mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(i).getCount())));
-            }
-
+        enableButtonsAndLayoutToBeVisible();
+        if (noLocationAvailableFragment != null) {
+            transaction = manager.beginTransaction();
+            transaction.remove(noLocationAvailableFragment);
+            transaction.commit();
+            manager.popBackStack();
         }
+        myCallListenerList = new ArrayList<>();
+        HomeFragment homeFragment;
+        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        UpdateEventListener listener;
 
+        for (int i = 0; i < locationList.size(); i++) {
+            homeFragment = mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId(), locationList.get(i).getSessionId()), locationList.get(i).getFacilityId());
+            myViewPager.setOffscreenPageLimit(1);
+            listener = homeFragment;
+            myCallListenerList.add(listener);
+        }
+        myViewPager.setAdapter(mViewPagerAdapter);
+        mTabLayout.setupWithViewPager(myViewPager);
+        for (int i = 0; i < locationList.size(); i++) {
+            if (mTabLayout.getTabAt(i).getCustomView() == null)
+                mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(i).getCount())));
+        }
+    }
     private View updateTabTextView(int pos, final int listSize) {
         customTabView = getLayoutInflater().inflate(R.layout.location_tab, null);
         tabTitle = customTabView.findViewById(R.id.location_tab_txt_view);
@@ -317,7 +307,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             } else {
                 PreferenceController.getInstance(this).persist(PreferenceController.LANGUAGE, Constants.ARABIC);
                 mTabLayout.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-             }
+            }
             finish();
             startActivity(new Intent(this, MainActivity.class));
             // recreate();
@@ -326,14 +316,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-    private boolean isUserLoggedIn() {
-        if (mGoogleSignInClient == null && PreferenceController.getInstance(this).get(PreferenceController.PREF_EMAIL).length() == 0)
-            return false;
-        else {
-            return true;
-        }
-
-    }
 
     public void signOut() {
         signOutFromGoogle();
@@ -368,7 +350,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_start));
             startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
-
+            callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+            callFab.setEnabled(true);
             this.isAppointmentStarted = true;
 
         }
@@ -401,21 +384,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void redirectTONoLocationAvailableFragment() {
-       hideButtonAndTabLayout();
-       if(!noLocationAvailableFragment.isVisible())
-        transaction.add(R.id.frame_layout, noLocationAvailableFragment).commit();
+        hideButtonAndTabLayout();
+        if (!noLocationAvailableFragment.isVisible())
+            transaction.add(R.id.frame_layout, noLocationAvailableFragment).commit();
 
     }
+
     @SuppressLint("RestrictedApi")
-    private void hideButtonAndTabLayout(){
+    private void hideButtonAndTabLayout() {
         callFab.setVisibility(View.GONE);
         arrivalFab.setVisibility(View.GONE);
         startOrEndFab.setVisibility(View.GONE);
         mTabLayout.setVisibility(View.GONE);
     }
+
     @SuppressLint("RestrictedApi")
 
-    private void enableButtonsAndLayoutToBeVisible(){
+    private void enableButtonsAndLayoutToBeVisible() {
         callFab.setVisibility(View.VISIBLE);
         arrivalFab.setVisibility(View.VISIBLE);
         startOrEndFab.setVisibility(View.VISIBLE);
@@ -443,6 +428,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         mainViewModel.clearDataFromSharedPreference();
                     }
                 });
+        mGoogleSignInClient = null;
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
 

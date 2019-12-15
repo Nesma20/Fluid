@@ -40,5 +40,6 @@
     <string name="retry_btn">Retry</string>
     <string name="error_while_login">Error While log in, Please retry</string>
     <string name="no_location_available">There is No current location available</string>
+    <string name="copy_write_theta_techno">POWERED BY THETA TECHNO</string>
 
 </resources>
