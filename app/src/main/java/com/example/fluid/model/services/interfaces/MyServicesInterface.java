@@ -14,7 +14,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
-public interface GetAppointmentServiceInterface  {
+public interface MyServicesInterface {
     @GET("/ords/pf/api/getClinicSchedule/{location_code}")
     Call<AppointmentItems> getAppointementData(@Path("location_code") String code);
 

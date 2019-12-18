@@ -33,11 +33,11 @@ public class StringUtil {
 
         return builder.toString();
     }
-    @RequiresApi(api = Build.VERSION_CODES.O)
+
     public static String displayTime(String time)  {
         String amOrPmTxt = "";
-        int hours;
-        int minutes;
+        String hours="";
+        String minutes="";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         try {
             Date date = simpleDateFormat.parse(time);
@@ -45,24 +45,34 @@ public class StringUtil {
 
             if(date.getHours()> 12) {
                 amOrPmTxt = "PM";
-
-                hours = date.getHours() %12;
-
+               if((date.getHours() %12) >=1 && (date.getHours()%12) <10)
+                hours = 0 +String.valueOf(date.getHours() %12);
+               else
+                   hours = String.valueOf(date.getHours() %12);
             }
 
             else if(date.getHours() == 12)
             {
                 amOrPmTxt = "PM";
-                hours = date.getHours();
+                hours = String.valueOf(date.getHours());
             }
-            else{
+            else if(date.getHours()<12 && date.getHours()>=10){
                 amOrPmTxt = "AM";
-                hours = date.getHours();
+
+                hours = String.valueOf(date.getHours());
             }
-            if(date.getMinutes() ==0)
-            return hours + ":" + date.getMinutes() + "0" +" "+amOrPmTxt;
+            else if (date.getMinutes() >=0 && date.getHours()<10)
+            {
+                amOrPmTxt = "AM";
+
+                hours = 0+ String.valueOf(date.getHours());
+            }
+
+            if(date.getMinutes() >=0 && date.getMinutes() <10)
+                minutes = 0+ String.valueOf(date.getMinutes());
             else
-                return hours + ":" + date.getMinutes() + " "+amOrPmTxt;
+                minutes = String.valueOf(date.getMinutes());
+            return hours + ":" + minutes +" "+amOrPmTxt;
 
         } catch (ParseException e) {
             e.printStackTrace();

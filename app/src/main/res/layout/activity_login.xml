@@ -4,16 +4,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/colorWhite"
     android:id="@+id/login_layout"
+    android:background="@color/colorWhite"
     android:layout_height="match_parent">
 
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:id="@+id/login_toolbar"-->
+<!--        android:background="@color/colorPrimary"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"/>-->
 
     <ImageView
         android:id="@+id/imageView2"
+        android:contentDescription="@string/nurse_image"
+        android:layout_marginTop="@dimen/margin_24"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -33,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"></TextView>
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"/>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/login_btn"

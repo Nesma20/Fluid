@@ -2,6 +2,7 @@ package com.example.fluid.ui.home;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -21,10 +23,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.fluid.R;
 import com.example.fluid.ui.dialogs.CustomAlertDialog;
 import com.example.fluid.ui.listeners.MyAlertActionListener;
+import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.ui.listeners.UpdateEventListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
+import com.example.fluid.utils.PreferenceController;
 import com.example.fluid.utils.StringUtil;
 
 import java.util.ArrayList;
@@ -36,7 +40,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     private AppointmentListAdapter myAdapter;
     private View view;
     Appointement itemStarted;
-
+    Activity activity1;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean isAppointmentStarted = false;
     private RecyclerView myListView;
@@ -61,7 +65,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         Log.i(TAG, "new Instance method");
         Bundle args = new Bundle();
         args.putString(ARG_LOCATION_CODE, clinicCode);
-        args.putString(ARG_SESSION_ID,sessionId);
+        args.putString(ARG_SESSION_ID, sessionId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -108,11 +112,17 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(isFragmentVisible)
+                if (isFragmentVisible)
+
+                if(checkForNetworkConnection()) {
                     mSwipeRefreshLayout.setRefreshing(true);
                     homeViewModel.getAllItems(clinicCode);
-
-                mSwipeRefreshLayout.setRefreshing(false);
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+                else {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mListener.onNoDataReturned();
+                }
 
             }
         });
@@ -135,7 +145,14 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
     private void checkInAction() {
         if (numOfCalls == 1) {
-            homeViewModel.updateWithCheckIn(clinicCode, myList.get(--numOfCalls).getSlotId());
+
+            for (int counterToFindTheCalledOne = 0; counterToFindTheCalledOne < myList.size(); counterToFindTheCalledOne++) {
+                if (!myList.get(counterToFindTheCalledOne).getCallingTime().isEmpty()) {
+                    updateData(myList.get(counterToFindTheCalledOne), Constants.STARTING_STATE);
+                    break;
+                }
+
+            }
         } else if (numOfCalls > 1) {
 
             buildAlertWithList(Constants.STARTING_STATE);
@@ -154,32 +171,58 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
                 }
             }
 
-
         } else if (state.equals(Constants.ARRIVED_STATE))
             for (int i = 0; i < myList.size(); i++) {
                 if (myList.get(i).getArrivalTime().isEmpty()) {
                     itemsList.add(myList.get(i));
                 }
             }
-        if (itemsList!=null&&itemsList.size()>0)
-        alertDialog = new CustomAlertDialog(getContext(), itemsList, this, state);
-       alertDialog.getWindow().setLayout(getView().getWidth(),getView().getHeight()/2);
-        alertDialog.show();
+        if (itemsList.size() > 0) {
+            alertDialog = new CustomAlertDialog(getContext(), itemsList, this, state);
+            alertDialog.getWindow().setLayout(getView().getWidth(), getView().getHeight() / 2);
+            alertDialog.show();
+
+        } else {
+            // TODO : alert for that all customers already arrived.
+            mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_all_customers_arrived));
+        }
+
     }
 
     @Override
-    public void updateData(Appointement appointement, String state) {
+    public void updateData(Appointement appointement, final String state) {
         if (state.equals(Constants.STARTING_STATE)) {
-            numOfCalls--;
-            homeViewModel.updateWithCheckIn(clinicCode, appointement.getSlotId());
 
+            homeViewModel.updateWithCheckIn(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+                @Override
+                public void onResponse(Boolean dataChanged) {
+                    if (dataChanged.booleanValue()) {
+                        homeViewModel.getAllItems(clinicCode);
+                        mListener.animateStartOrFinishButton(state);
+                        numOfCalls--;
+                    } else {
+                        mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                    }
+
+                }
+            });
 
         } else if (state.equals((Constants.ARRIVED_STATE))) {
-            homeViewModel.confirmArrival(clinicCode, appointement.getSlotId());
+            homeViewModel.confirmArrival(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+                @Override
+                public void onResponse(Boolean dataChanged) {
+                    if (dataChanged.booleanValue()) {
+                        //refresh data
+                        homeViewModel.getAllItems(clinicCode);
+                    } else {
+                        mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                    }
+                }
+            });
         }
-        alertDialog.dismiss();
+        if (alertDialog != null)
+            alertDialog.dismiss();
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -213,13 +256,35 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
     @Override
     public void callPatient() {
-        homeViewModel.updateWithCalling(clinicCode,sessionId);
+        homeViewModel.updateWithCalling(sessionId, new OnDataChangedCallBackListener<Boolean>() {
+            @Override
+            public void onResponse(Boolean dataChanged) {
+                if (dataChanged.booleanValue()) {
+                    // refresh data
+                    homeViewModel.getAllItems(clinicCode);
+
+                } else {
+                    mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                }
+            }
+        });
     }
 
     @Override
     public void checkOutPatient() {
-        Toast.makeText(getContext(),"slote id" +itemStarted.getSlotId(),Toast.LENGTH_SHORT).show();
-        homeViewModel.updateWithCheckOut(clinicCode, itemStarted.getSlotId());
+        homeViewModel.updateWithCheckOut(itemStarted.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+            @Override
+            public void onResponse(Boolean dataChanged) {
+                if (dataChanged.booleanValue()) {
+                    // animate the button
+                    mListener.animateStartOrFinishButton(Constants.ENDING_STATE);
+                    // refresh data
+                    homeViewModel.getAllItems(clinicCode);
+                } else {
+                    mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                }
+            }
+        });
     }
 
     @Override
@@ -228,8 +293,12 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         activity1 = activity;
     }
 
-    Activity activity1;
-
+    private boolean checkForNetworkConnection() {
+        if (CheckForNetwork.isConnectionOn(activity1))
+            return true;
+        else
+            return false;
+    }
 
     public void onDataChanged() {
         mListener.allowProgressBarToBeVisible();
@@ -237,11 +306,11 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         if (getActivity() != null)
 
             if (CheckForNetwork.isConnectionOn(activity1)) {
+                mListener.allowProgressBarToBeGone();
 
                 homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
                     @Override
                     public void onChanged(List<Appointement> items) {
-
                         myList = items;
                         numOfCalls = 0;
                         isAppointmentStarted = false;
@@ -253,16 +322,11 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
                                 itemStarted = myList.get(i);
                             }
                         }
+                        mListener.onCallCustomer(numOfCalls);
                         mListener.onIconChanged(isAppointmentStarted);
-                        Log.i(TAG, "observe data");
-                        Log.i(TAG, "number of calls" + numOfCalls);
-
                         myAdapter.setItems(myList);
-
                         setAdapterTorecyclerView();
-                        Log.i(TAG, "from clinic location " + clinicCode);
                         mListener.notifyByListSize(items.size());
-                        mListener.allowProgressBarToBeGone();
 
                     }
                 });
@@ -278,10 +342,20 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onIconChanged(boolean isAppointmentStarted);
+
+        void onCallCustomer(int numOfCalls);
+
         void onNoDataReturned();
+
         void notifyByListSize(int listSize);
+
         void allowProgressBarToBeVisible();
+
         void allowProgressBarToBeGone();
+
+        void animateStartOrFinishButton(String state);
+
+        void showAlertWithMessage(String message);
 
     }
 
@@ -289,8 +363,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
         isFragmentVisible = menuVisible;
-        if (getContext() != null && menuVisible )
-        {
+        if (getContext() != null && menuVisible) {
             mListener.allowProgressBarToBeVisible();
             onDataChanged();
             mListener.allowProgressBarToBeGone();

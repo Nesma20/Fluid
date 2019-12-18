@@ -25,7 +25,7 @@ UserRepository userRepository = new UserRepository();
         userRepository.getLocationList(email, new OnDataChangedCallBackListener<LocationList>() {
             @Override
             public void onResponse(LocationList dataChanged) {
-                if (dataChanged.getItems()!= null) {
+                if (dataChanged !=null && dataChanged.getItems()!= null) {
                 for (Location location : dataChanged.getItems()) {
                     Log.i("MainActivity", "facility id : " + location.getFacilityId());
                     Log.i("MainActivity", "session id " + location.getSessionId());

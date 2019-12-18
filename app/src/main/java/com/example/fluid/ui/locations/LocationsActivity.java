@@ -1,5 +1,6 @@
 package com.example.fluid.ui.locations;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,11 +23,13 @@ List<Location> locations;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_locations);
+        setTitle(getString(R.string.locations_activity));
         Intent intent = getIntent();
         locations = intent.getParcelableArrayListExtra(MainActivity.LOCATIONS);
         mLocationRecyclerView = findViewById(R.id.locations_recycler_view);
         mLocationAdapter = new LocationAdapter(this,locations);
         mLocationRecyclerView.setAdapter(mLocationAdapter);
-        mLocationRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        GridLayoutManager mGridLayoutManager = new GridLayoutManager(LocationsActivity.this, 2);
+        mLocationRecyclerView.setLayoutManager(mGridLayoutManager);
     }
 }

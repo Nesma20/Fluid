@@ -1,21 +1,14 @@
 package com.example.fluid.model.services.repositories;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.example.fluid.model.pojo.Location;
 import com.example.fluid.model.pojo.LocationList;
 import com.example.fluid.model.pojo.ReturnedStatus;
 import com.example.fluid.model.pojo.User;
-import com.example.fluid.model.services.interfaces.GetAppointmentServiceInterface;
+import com.example.fluid.model.services.interfaces.MyServicesInterface;
 import com.example.fluid.model.services.interfaces.RetrofitInstance;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.ui.listeners.UserHandler;
 import com.example.fluid.utils.Constants;
 
-import java.io.IOException;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,8 +21,8 @@ public class UserRepository {
     LocationList locationList = new LocationList();
     public void createNewUser(final User user, final UserHandler userHandler){
 
-        GetAppointmentServiceInterface getAppointmentServiceInterface = RetrofitInstance.getService();
-        Call<ReturnedStatus> call = getAppointmentServiceInterface.createUser(user);
+        MyServicesInterface myServicesInterface = RetrofitInstance.getService();
+        Call<ReturnedStatus> call = myServicesInterface.createUser(user);
         call.enqueue(new Callback<ReturnedStatus>() {
 
             @Override
@@ -37,6 +30,10 @@ public class UserRepository {
                 if (response.code() == Constants.STATE_OK) {
 
                     status = response.body();
+                    userHandler.onUserAddedHandler(status);
+                }
+                else
+                {
                     userHandler.onUserAddedHandler(status);
                 }
             }
@@ -54,8 +51,8 @@ public class UserRepository {
     }
     public void getLocationList (final String email, final OnDataChangedCallBackListener<LocationList> onDataChangedCallBackListener){
 
-        GetAppointmentServiceInterface getAppointmentServiceInterface = RetrofitInstance.getService();
-        Call<LocationList> call = getAppointmentServiceInterface.getLocationList(email);
+        MyServicesInterface myServicesInterface = RetrofitInstance.getService();
+        Call<LocationList> call = myServicesInterface.getLocationList(email);
         call.enqueue(new Callback<LocationList>() {
 
             @Override
@@ -64,7 +61,6 @@ public class UserRepository {
 
                    locationList =response.body();
                    onDataChangedCallBackListener.onResponse(response.body());
-
                 }
             }
 

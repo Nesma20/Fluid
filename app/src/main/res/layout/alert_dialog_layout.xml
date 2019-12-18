@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:background="@color/colorWhite"
-    android:layout_height="500dp">
+    android:padding="@dimen/margin_8"
+    android:layout_height="400dp">
 
     <TextView
         android:layout_margin="@dimen/default_margin"
@@ -15,10 +15,12 @@
         android:text="@string/choose_patient" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_width="match_parent"
         android:id="@+id/alert_recyclerview"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+    />
 
 
 </LinearLayout>

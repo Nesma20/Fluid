@@ -40,15 +40,18 @@ import java.io.IOException;
 public class LoginActivity extends AppCompatActivity {
     private final String TAG = "LoginActivity";
     private SignInButton loginWithGoogleAccountBtn;
+
     private static final int RC_SIGN_IN = 1;
     GoogleSignInClient mGoogleSignInClient;
-    UserViewModel userViewModel=new UserViewModel();
+    UserViewModel userViewModel = new UserViewModel();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginWithGoogleAccountBtn =(SignInButton) findViewById(R.id.login_btn);
+
+        loginWithGoogleAccountBtn = findViewById(R.id.login_btn);
+        setTitle(getString(R.string.login));
 
 
 // Configure sign-in to request the user's ID, email address, and basic
@@ -82,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-            Log.i(TAG, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId()+ "account image url "+account.getPhotoUrl().getPath());
+            Log.i(TAG, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId() + "account image url " + account.getPhotoUrl().getPath());
 //            try {
 ////                getAccountDetails(account);
 //            } catch (IOException e) {
@@ -125,25 +128,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
+    String token = "";
+
     private void redirectToMain() {
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
 
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-
-                        // Log and toast
-
-                        Log.i(TAG, "device token : " +token);
-                        Toast.makeText(LoginActivity.this,"device token : " +token , Toast.LENGTH_SHORT).show();
-                    }
-                });
 
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
@@ -153,29 +142,46 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+           final GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
-          userViewModel.createUser(account.getEmail(), account.getGivenName(), account.getFamilyName(), account.getPhotoUrl().getPath(), account.getDisplayName(), new OnDataChangedCallBackListener<Boolean>() {
-//                      @Override
-//                      public void onUserAddedHandler(ReturnedStatus userId) {
-//                     Log.i(TAG, " status code : "+userId);
-//                     Toast.makeText(LoginActivity.this,"status code "+userId.getReturnStatus().intValue(),Toast.LENGTH_SHORT).show();
-//                     userViewModel.checkOnReturnedStatus(userId);
-//
-//                      }
-//                  });
+            FirebaseInstanceId.getInstance().getInstanceId()
+                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            if (!task.isSuccessful()) {
+                                Log.w(TAG, "getInstanceId failed", task.getException());
+                                return;
+                            }
+                            // Get new Instance ID token
+                            token = task.getResult().getToken();
+                            // Log
+                            Log.i(TAG, "device token : " + token);
+                            Log.i(TAG, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId() + "account image url " + account.getPhotoUrl().getPath());
+                           userViewModel.getIpAndPortToCreateRetrofitInstance(new OnDataChangedCallBackListener<Boolean>() {
+                               @Override
+                               public void onResponse(Boolean dataChanged) {
+                                   if(dataChanged.booleanValue())
+                                   userViewModel.createUser(account.getEmail(), account.getGivenName(), account.getFamilyName(),
+                                           account.getPhotoUrl().getPath(), account.getDisplayName(), token,
+                                           new OnDataChangedCallBackListener<Boolean>() {
+                                               @Override
+                                               public void onResponse(Boolean dataChanged) {
+                                                   if (dataChanged.booleanValue()) {
+                                                       redirectToMain();
+                                                   } else {
+                                                       Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_while_login), Toast.LENGTH_SHORT).show();
 
-              @Override
-              public void onResponse(Boolean dataChanged) {
-                  if(dataChanged.booleanValue()){
-                      redirectToMain();
-                  }
-                  else {
-                      Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_while_login), Toast.LENGTH_SHORT).show();
+                                                   }
+                                               }
+                                           });
 
-                  }
-              }
-          });
+                               }
+                           });
+
+                        }
+                           });
+
+
 
 
         } catch (ApiException e) {

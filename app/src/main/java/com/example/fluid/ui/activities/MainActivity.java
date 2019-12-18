@@ -1,6 +1,7 @@
 package com.example.fluid.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.AnimationDrawable;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,9 +20,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -39,6 +43,7 @@ import com.example.fluid.ui.locations.LocationsActivity;
 import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
 import com.example.fluid.utils.PreferenceController;
+import com.example.fluid.utils.StringUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -80,6 +85,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     TextView mUserNameTxtView;
     FragmentManager manager;
     FragmentTransaction transaction;
+    AlertDialog alertDialog;
+    private static final int DRAWABLE_RESOURCE_FOR_START_STATE = R.drawable.animation_fab_finish;
+    private static final int COLOR_ID_FOR_START_STATE = R.color.colorAccent;
+    private static final int DRAWABLE_RESOURCE_FOR_FINISH_STATE = R.drawable.animation_fab_start;
+    private static final int COLOR_ID_FOR_FINISH_STATE = R.color.colorPrimary;
+    private int numOfCalls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,26 +121,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mImageView = header.findViewById(R.id.userImageView);
         mUserNameTxtView = header.findViewById(R.id.userNameTxt);
         mEmailTxtView = header.findViewById(R.id.emailTxtView);
-        mUserNameTxtView.setText(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_USER_NAME));
-        mEmailTxtView.setText(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL));
         noLocationAvailableFragment = NoLocationAvailableFragment.newInstance();
 
-        Glide.with(this)
-                .load(Constants.BASE_GOOGLE_URL_FOR_IMAGES + mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_IMAGE_PROFILE_URL))
-                .circleCrop()
-                .into(mImageView);
 
         if (!CheckForNetwork.isConnectionOn(this)) {
             redirectToNoInternetConnection();
         } else {
+            mProgressBar.setVisibility(View.VISIBLE);
             mainViewModel.getLocationData(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL), new OnDataChangedCallBackListener<LocationList>() {
                 @Override
                 public void onResponse(LocationList dataChanged) {
-                    if (dataChanged.getItems() != null) {
+                    mProgressBar.setVisibility(View.GONE);
+                    if (dataChanged != null && dataChanged.getItems() != null) {
                         locationList = (ArrayList<Location>) dataChanged.getItems();
+                        displayUserInfo();
                         setupViewPager(mViewPager);
                     } else {
-                        locationList = null;
+
                         redirectTONoLocationAvailableFragment();
 
                     }
@@ -143,10 +151,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         callFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("MainActivity", mViewPager.getCurrentItem() + " current fragment");
 
                 if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
-                    myCallListenerList.get(mViewPager.getCurrentItem()).callPatient();
+
+                    if (isAppointmentStarted)
+                        myCallListenerList.get(mViewPager.getCurrentItem()).callPatient();
+                    else {
+                        // alert with title can't call while there is a customer didn't check out yet
+                        showAlertWithMessage(getResources().getString(R.string.error_call_when_there_is_customer_checked_in));
+                    }
                 } else {
                     redirectToNoInternetConnection();
                 }
@@ -168,22 +181,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onClick(View v) {
                 if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
+                    if (numOfCalls > 0) {
+                        if (isAppointmentStarted) {
+                            myCallListenerList.get(mViewPager.getCurrentItem()).checkInPatient();
 
-                    if (isAppointmentStarted) {
-                        myCallListenerList.get(mViewPager.getCurrentItem()).checkInPatient();
+                        } else {
+                           myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
 
-                    } else {
-
-                        startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_start));
-                        startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary)));
-
-                        myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
-                        callFab.setEnabled(true);
-                        callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary)));
-                        animateStartOrEndBtn();
-                        startOrEndAnimation.stop();
+                        }
                     }
-
+                    else {
+                        // TODO: alert with there is no customer called to be checked in.
+                        showAlertWithMessage(getResources().getString(R.string.error_no_customer_called));
+                    }
                 } else {
                     redirectToNoInternetConnection();
                 }
@@ -191,6 +201,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         });
 
+    }
+
+    private void displayUserInfo() {
+        mUserNameTxtView.setText(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_USER_NAME));
+        mEmailTxtView.setText(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL));
+        Glide.with(this)
+                .load(Constants.BASE_GOOGLE_URL_FOR_IMAGES + mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_IMAGE_PROFILE_URL))
+                .circleCrop()
+                .into(mImageView);
     }
 
     @Override
@@ -202,17 +221,28 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void checkOnTheCurrentLanguage() {
         if (PreferenceController.getInstance(this).get(PreferenceController.LANGUAGE).equals(Constants.ARABIC)) {
             navigationView.getMenu().findItem(R.id.language_reference).setTitle(R.string.menu_english_language);
-            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+//            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         } else if (PreferenceController.getInstance(this).get(PreferenceController.LANGUAGE).equals(Constants.ENGLISH)) {
             navigationView.getMenu().findItem(R.id.language_reference).setTitle(R.string.menu_arabic_language);
-            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+//            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+
         }
     }
 
-    private void animateStartOrEndBtn() {
-        startOrEndFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.animation_fab_with_rotation));
-        startOrEndAnimation = (AnimationDrawable) startOrEndFab.getDrawable();
-        startOrEndAnimation.start();
+    private void animateStartOrEndBtn(String state) {
+
+        if (state == Constants.STARTING_STATE) {
+            changeColorAndSrcOfStartAndEndButton(DRAWABLE_RESOURCE_FOR_START_STATE, COLOR_ID_FOR_START_STATE);
+            startOrEndFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.animation_start_to_finish_fab_with_rotation));
+
+        }
+        else if (state == Constants.ENDING_STATE) {
+            changeColorAndSrcOfStartAndEndButton(DRAWABLE_RESOURCE_FOR_FINISH_STATE, COLOR_ID_FOR_FINISH_STATE);
+
+            startOrEndFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.animation_finish_to_start_fab_with_rotation));
+
+        }
+
     }
 
     public void initializeViews() {
@@ -227,7 +257,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void setupViewPager(final ViewPager myViewPager) {
 
         enableButtonsAndLayoutToBeVisible();
-        if (noLocationAvailableFragment != null) {
+        if (noLocationAvailableFragment != null && noLocationAvailableFragment.isVisible()) {
             transaction = manager.beginTransaction();
             transaction.remove(noLocationAvailableFragment);
             transaction.commit();
@@ -251,6 +281,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(i).getCount())));
         }
     }
+
     private View updateTabTextView(int pos, final int listSize) {
         customTabView = getLayoutInflater().inflate(R.layout.location_tab, null);
         tabTitle = customTabView.findViewById(R.id.location_tab_txt_view);
@@ -332,7 +363,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void redirectToNoInternetConnection() {
         Intent intent = new Intent(MainActivity.this, NoInternetConnectionActivity.class);
         startActivity(intent);
-        finish();
 
     }
 
@@ -340,23 +370,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void onIconChanged(boolean isAppointmentStarted) {
         this.isAppointmentStarted = isAppointmentStarted;
         if (this.isAppointmentStarted) {
-            startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_finish));
-            callFab.setEnabled(false);
-            callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.darkGrey)));
-            startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent)));
-            animateStartOrEndBtn();
-            startOrEndAnimation.stop();
+            changeColorAndSrcOfStartAndEndButton(DRAWABLE_RESOURCE_FOR_START_STATE, COLOR_ID_FOR_START_STATE);
             this.isAppointmentStarted = false;
         } else {
-            startOrEndFab.setImageDrawable(getResources().getDrawable(R.drawable.animation_fab_start));
-            startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
-            callFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
-            callFab.setEnabled(true);
+            changeColorAndSrcOfStartAndEndButton(DRAWABLE_RESOURCE_FOR_FINISH_STATE, COLOR_ID_FOR_FINISH_STATE);
+
             this.isAppointmentStarted = true;
 
         }
     }
 
+    @Override
+    public void onCallCustomer(int numOfCalls) {
+        this.numOfCalls = numOfCalls;
+    }
 
     @Override
     public void onNoDataReturned() {
@@ -386,7 +413,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void redirectTONoLocationAvailableFragment() {
         hideButtonAndTabLayout();
         if (!noLocationAvailableFragment.isVisible())
-            transaction.add(R.id.frame_layout, noLocationAvailableFragment).commit();
+            transaction.add(R.id.frame_layout, noLocationAvailableFragment).commitAllowingStateLoss();
 
     }
 
@@ -415,8 +442,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 updateEventListener = null;
             }
         myCallListenerList = null;
-
-
     }
 
     private void signOutFromGoogle() {
@@ -433,8 +458,36 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
+    public void animateStartOrFinishButton(String state) {
+
+        animateStartOrEndBtn(state);
+
+    }
+
+
+    public void changeColorAndSrcOfStartAndEndButton(int drawableId, int colorId) {
+       startOrEndFab.setImageDrawable(getResources().getDrawable(drawableId));
+        startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, colorId)));
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    public void showAlertWithMessage(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog = builder.create();
+        alertDialog.show();
+
     }
 }
 

@@ -36,7 +36,44 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "574842241815-ghi8kcinh8cogrdbrjfn1bk68204gdg8.apps.googleusercontent.com",
+              "client_id": "574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574842241815:android:57050b7344d990d1a52d52",
+        "android_client_info": {
+          "package_name": "com.example.itadminapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574842241815-9aqd2vngcidp2ontr4bomf2rj840ij8l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.itadminapp",
+            "certificate_hash": "db6856b6a73bd5147b170b003234266a7da195bb"
+          }
+        },
+        {
+          "client_id": "574842241815-20po4mvnj6ndc5cecig7sh3a0vvd5euc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATNt_O5qL5ovukfRVr4jjj4bY7ShnpUPk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

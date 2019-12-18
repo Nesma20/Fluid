@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.example.fluid.R;
 import com.example.fluid.utils.App;
@@ -21,8 +22,6 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-
     }
 
     public void redirectToLogin() {
@@ -58,8 +57,6 @@ public class SplashActivity extends BaseActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
-
                 if (CheckForNetwork.isConnectionOn(SplashActivity.this)) {
                     if (isUserLoggedIn()) {
                         redirectToMain();
@@ -74,6 +71,7 @@ public class SplashActivity extends BaseActivity {
             }
 
             private boolean isUserLoggedIn() {
+                Log.i("splash",PreferenceController.getInstance(App.getContext()).get(PreferenceController.PREF_EMAIL));
                 if (PreferenceController.getInstance(App.getContext()).get(PreferenceController.PREF_EMAIL).isEmpty() )
                     return false;
                 else {

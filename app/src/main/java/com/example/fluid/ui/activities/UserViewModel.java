@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.fluid.model.pojo.ReturnedStatus;
 import com.example.fluid.model.pojo.User;
+import com.example.fluid.model.services.FirebaseDatabaseService;
 import com.example.fluid.model.services.repositories.UserRepository;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.ui.listeners.UserHandler;
@@ -16,8 +17,8 @@ public class UserViewModel {
     boolean isUserCreated = false;
     UserRepository userRepository = new UserRepository();
 
-    public void createUser(final String email, String firstName, String familyName, final String imageProfile, final String displayName, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
-        final User user = new User(email, firstName, familyName, "F");
+    public void createUser(final String email, String firstName, String familyName, final String imageProfile, final String displayName, final String token, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
+        final User user = new User(email, firstName, familyName, "F",token);
 
         userRepository.createNewUser(user, new UserHandler() {
             @Override
@@ -26,9 +27,17 @@ public class UserViewModel {
 
                 if (isUserCreated) {
                     saveDataInSharedPreference(email, displayName, imageProfile, returnedStatus.getReturnStatus().intValue());
+
                 }
-                Log.i("LoginActivity", "status " + returnedStatus.getReturnStatus().intValue());
                 onDataChangedCallBackListener.onResponse(isUserCreated);
+            }
+        });
+    }
+    public void getIpAndPortToCreateRetrofitInstance(final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
+        FirebaseDatabaseService.getPortAndIpAddress(new OnDataChangedCallBackListener<Boolean>() {
+            @Override
+            public void onResponse(Boolean dataChanged) {
+                onDataChangedCallBackListener.onResponse(dataChanged);
             }
         });
     }
@@ -41,7 +50,7 @@ public class UserViewModel {
     }
 
     public boolean checkOnReturnedStatus(ReturnedStatus status) {
-        if (status.getReturnStatus().intValue() > 0) {
+        if (status !=null && status.getReturnStatus().intValue() > 0) {
             return true;
         } else {
             return false;

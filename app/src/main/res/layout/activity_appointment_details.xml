@@ -3,427 +3,304 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:id="@+id/appointment_details_layout"
     android:layout_height="fill_parent">
-
-
-    <ImageView
-        android:id="@+id/customer_img_view"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="24dp"
-        android:contentDescription="@string/customer_picture"
-        android:src="@drawable/user_avatar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/customer_name"
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/appointment_details_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/default_margin"
-        android:padding="10dp"
-        android:text="@string/customer_name_txt"
-
-        android:textAlignment="center"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="@dimen/location_text_size"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customer_img_view" />
-
-    <TextView
-        android:id="@+id/customer_mrn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/default_margin"
-        android:text="@string/customer_MRN_txt"
-        android:textSize="@dimen/location_text_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customer_name" />
+        android:layout_height="fill_parent"
+      >
+        <ImageView
+            android:id="@+id/customer_img_view"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:contentDescription="@string/customer_picture"
+            android:src="@drawable/user_avatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-<!--    <com.google.android.material.card.MaterialCardView-->
-<!--        android:id="@+id/materialCardView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="7dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_marginEnd="7dp"-->
-<!--        app:cardCornerRadius="10dp"-->
-<!--        app:cardElevation="5dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/customer_mrn">-->
+        <TextView
+            android:id="@+id/customer_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/default_margin"
+            android:padding="10dp"
+            android:text="@string/customer_name_txt"
 
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:padding="10dp">-->
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="@dimen/location_text_size"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/customer_img_view" />
 
-<!--            <View-->
-<!--                android:id="@+id/view3"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="2dp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:background="@color/colorAccent"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/scheduled_time_txt"-->
-<!--                tools:layout_editor_absoluteX="10dp" />-->
-
-<!--            <View-->
-<!--                android:id="@+id/view2"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="2dp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:background="@color/colorAccent"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/expected_time_txt"-->
-<!--                tools:layout_editor_absoluteX="10dp" /><![CDATA[-->
+        <TextView
+            android:id="@+id/customer_mrn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/default_margin"
+            android:text="@string/customer_MRN_txt"
+            android:textSize="@dimen/location_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/customer_name" />
 
 
-<!--            ="@+id/textView3" />-->
-
-<!--            ]]>-->
-
-<!--&lt;!&ndash;            <TextView&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:id="@+id/textView3"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:layout_width="wrap_content"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:layout_height="wrap_content"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:layout_marginTop="36dp"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:layout_weight="1"&ndash;&gt;-->
-
-<!--            &lt;!&ndash;                android:text="@string/expected_time_txt"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:textColor="@color/colorPrimaryDark"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:textSize="20sp"&ndash;&gt;-->
-
-<!--            &lt;!&ndash;                app:layout_constraintEnd_toEndOf="parent"&ndash;&gt;-->
-<!--            &lt;!&ndash;                app:layout_constraintHorizontal_bias="0.038"&ndash;&gt;-->
-<!--            &lt;!&ndash;                app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
-<!--            &lt;!&ndash;                app:layout_constraintTop_toTopOf="parent" />&ndash;&gt;-->
-
-<!--            &lt;!&ndash;            <TextView&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:id="@+id/expected_time_txt"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:layout_width="150dp"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:layout_height="wrap_content"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:background="@drawable/background_gradient_text"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:paddingStart="5dp"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:paddingTop="1dp"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:paddingEnd="5dp"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:paddingBottom="1dp"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:text="13:30"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:textAlignment="center"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:textColor="@color/colorWhite"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:textSize="20sp"&ndash;&gt;-->
-<!--            &lt;!&ndash;                android:textStyle="bold"&ndash;&gt;-->
-<!--            &lt;!&ndash;                app:layout_constraintBottom_toBottomOf="@+id/textView3"&ndash;&gt;-->
-<!--            &lt;!&ndash;                app:layout_constraintTop_toTopOf="@+id/textView3"&ndash;&gt;-->
-<!--            &lt;!&ndash;                tools:layout_editor_absoluteX="186dp" />&ndash;&gt;-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/textView2"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="16dp"-->
-<!--                android:text="@string/calling_time_txt"-->
-<!--                android:textColor="@color/colorPrimaryDark"-->
-<!--                android:textSize="20sp"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/textView10"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/view3" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/calling_time_txt"-->
-<!--                android:layout_width="150dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@drawable/background_gradient_text"-->
-<!--                android:paddingStart="5dp"-->
-<!--                android:paddingTop="1dp"-->
-<!--                android:paddingEnd="5dp"-->
-<!--                android:paddingBottom="1dp"-->
-<!--                android:text="@string/calling_time_txt"-->
-
-<!--                android:textAlignment="center"-->
-<!--                android:textColor="@color/colorWhite"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textStyle="bold"-->
-<!--                app:layout_constraintBottom_toBottomOf="@+id/textView2"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/scheduled_time_txt"-->
-<!--                app:layout_constraintTop_toTopOf="@+id/textView2" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/textView10"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="16dp"-->
-<!--                android:text="@string/scheduled_time_txt"-->
-<!--                android:textColor="@color/colorPrimaryDark"-->
-
-<!--                android:textSize="20sp"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/textView3"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/view2" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/scheduled_time_txt"-->
-<!--                android:layout_width="150dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@drawable/background_gradient_text"-->
-<!--                android:paddingStart="5dp"-->
-<!--                android:paddingTop="1dp"-->
-<!--                android:paddingEnd="5dp"-->
-<!--                android:paddingBottom="1dp"-->
-
-<!--                android:text="12:00"-->
-<!--                android:textAlignment="center"-->
-<!--                android:textColor="@color/colorWhite"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textStyle="bold"-->
-<!--                app:layout_constraintBottom_toBottomOf="@+id/textView10"-->
-<!--                app:layout_constraintTop_toTopOf="@+id/textView10"-->
-<!--                app:layout_constraintVertical_bias="1.0"-->
-<!--                tools:layout_editor_absoluteX="196dp" />-->
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-<!--    </com.google.android.material.card.MaterialCardView>-->
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
-
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
             android:layout_marginTop="@dimen/fab_margin"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:layout_marginEnd="@dimen/margin_8"
-            android:layout_marginBottom="@dimen/margin_8"
-            android:layout_weight="1">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="26dp"
-                tools:layout_editor_absoluteY="541dp">
-
-                <TextView
-                    android:id="@+id/calledTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/fab_margin"
-                    android:layout_marginTop="@dimen/margin_8"
-                    android:gravity="center_horizontal"
-                    android:text="@string/calling_time_txt"
-                    android:textSize="12sp"
-                    android:layout_marginBottom="2dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.423"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/called_time_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_8"
-                    android:layout_marginBottom="@dimen/margin_8"
-                    android:layout_weight="1"
-                    android:text="@string/calling_time_txt"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/time_size"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.506"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/calledTextView"
-                    app:layout_constraintVertical_bias="0.0" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/fab_margin"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:layout_marginStart="@dimen/margin_8"
-            android:layout_marginBottom="@dimen/margin_8"
-            android:layout_weight="1">
+                android:layout_marginStart="@dimen/fab_margin"
+                android:layout_marginEnd="@dimen/margin_8"
+                android:layout_marginBottom="@dimen/margin_8"
+                app:cardElevation="@dimen/cardview_default_elevation"
+                android:layout_weight="1">
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:layout_editor_absoluteX="26dp"
+                    tools:layout_editor_absoluteY="541dp">
+
+                    <TextView
+                        android:id="@+id/calledTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/fab_margin"
+                        android:layout_marginTop="@dimen/margin_8"
+                        android:gravity="center_horizontal"
+                        android:text="@string/calling_time_txt"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="2dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.423"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/called_time_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_8"
+                        android:layout_marginBottom="@dimen/margin_8"
+                        android:layout_weight="1"
+                        android:text="@string/calling_time_txt"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/time_size"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.506"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/calledTextView"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/fab_margin"
+                android:layout_marginStart="@dimen/margin_8"
+                android:layout_marginBottom="@dimen/margin_8"
+                app:cardElevation="@dimen/cardview_default_elevation"
+                android:layout_weight="1">
 
-                tools:layout_editor_absoluteX="26dp"
-                tools:layout_editor_absoluteY="541dp">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
 
-                <TextView
-                    android:id="@+id/textViewScheduled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_8"
-                    android:layout_marginTop="@dimen/margin_8"
-                    android:gravity="center_horizontal"
-                    android:text="@string/scheduled_time_txt"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.457"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    tools:layout_editor_absoluteX="26dp"
+                    tools:layout_editor_absoluteY="541dp">
 
-                <TextView
-                    android:id="@+id/scheduled_time_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="@dimen/margin_8"
-                    android:layout_weight="1"
-                    android:text="@string/scheduled_time_txt"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/time_size"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewScheduled" />
+                    <TextView
+                        android:id="@+id/textViewScheduled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:layout_marginTop="@dimen/margin_8"
+                        android:gravity="center_horizontal"
+                        android:text="@string/scheduled_time_txt"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.457"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/scheduled_time_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="@dimen/margin_8"
+                        android:layout_weight="1"
+                        android:text="@string/scheduled_time_txt"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/time_size"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textViewScheduled" />
 
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:layout_marginTop="@dimen/default_margin"
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customer_mrn">
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
+        <LinearLayout
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardArrivalView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:layout_marginEnd="@dimen/margin_8"
-            android:padding="@dimen/button_login_padding"
-            android:layout_weight="1"
-            >
+          android:paddingTop="@dimen/margin_8"
+            android:layout_marginTop="@dimen/default_margin"
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/default_margin"
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/customer_mrn">
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardArrivalView"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="26dp"
-                tools:layout_editor_absoluteY="541dp">
-
-                <TextView
-                    android:id="@+id/textArrival"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/arrival_time_txt"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.469"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/arrive_time_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_weight="1"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/time_size"
-                    android:textStyle="bold"
-                    android:layout_marginTop="@dimen/margin_8"
-                    android:layout_marginBottom="@dimen/margin_8"
-
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.518"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textArrival"
-                    app:layout_constraintVertical_bias="0.529" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardExpectedView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/margin_8"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:layout_weight="1"
-           >
+                android:layout_marginStart="@dimen/fab_margin"
+                android:layout_marginEnd="@dimen/margin_8"
+                android:layout_marginBottom="@dimen/margin_8"
+                app:cardElevation="@dimen/cardview_default_elevation"
+                android:padding="@dimen/button_login_padding"
+                android:layout_weight="1"
+                >
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:layout_editor_absoluteX="26dp"
+                    tools:layout_editor_absoluteY="541dp">
+
+                    <TextView
+                        android:id="@+id/textArrival"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/arrival_time_txt"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.469"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/arrive_time_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/time_size"
+                        android:textStyle="bold"
+                        android:layout_marginTop="@dimen/margin_8"
+                        android:layout_marginBottom="@dimen/margin_8"
+
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.518"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textArrival"
+                        app:layout_constraintVertical_bias="0.529" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardExpectedView"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="26dp"
-                tools:layout_editor_absoluteY="541dp">
+                android:layout_marginStart="@dimen/margin_8"
+                android:layout_marginEnd="@dimen/fab_margin"
+                android:layout_marginBottom="@dimen/margin_8"
+                app:cardElevation="@dimen/cardview_default_elevation"
+                android:layout_weight="1"
+                >
 
-                <TextView
-                    android:id="@+id/textViewExpected"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_8"
-                    android:layout_marginTop="@dimen/margin_8"
-                    android:text="@string/expected_time_txt"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.464"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/expected_time_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_8"
-                    android:layout_marginBottom="@dimen/margin_8"
-                    android:layout_weight="1"
-                    android:text="@string/expected_time_txt"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/time_size"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewExpected"
-                    app:layout_constraintVertical_bias="1.0" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:layout_editor_absoluteX="26dp"
+                    tools:layout_editor_absoluteY="541dp">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/textViewExpected"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:layout_marginTop="@dimen/margin_8"
+                        android:text="@string/expected_time_txt"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.464"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
-    <!--        </LinearLayout>-->
+                    <TextView
+                        android:id="@+id/expected_time_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_8"
+                        android:layout_marginBottom="@dimen/margin_8"
+                        android:layout_weight="1"
+                        android:text="@string/expected_time_txt"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/time_size"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textViewExpected"
+                        app:layout_constraintVertical_bias="1.0" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

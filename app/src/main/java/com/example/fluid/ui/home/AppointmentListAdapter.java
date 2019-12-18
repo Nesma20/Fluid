@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.fluid.R;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.ui.activities.AppointmentDetailsActivity;
@@ -50,7 +51,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         return new myViewHolder(view);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+
     @Override
     public void onBindViewHolder(@NonNull myViewHolder holder, int position) {
         final Appointement appointement = myItems.get(position);
@@ -62,42 +63,54 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         } else if (languageName.contains("العربية") || languageName.contains(Constants.ARABIC)) {
             holder.patientNameTxt.setText(appointement.getArabicName());
         }
-        if (appointement.getSexCode().contains("F")) {
 
-            holder.patientAvtarImage.setImageResource(R.drawable.ic_girl);
-        } else {
-            holder.patientAvtarImage.setImageResource(R.drawable.man);
+        if(!appointement.getImagePath().isEmpty())
+        Glide.with(mContext)
+                .load( PreferenceController.getInstance(mContext).get(Constants.IP)
+                        +":"+PreferenceController.getInstance(mContext).get(Constants.PORT)+ appointement.getImagePath())
+                .circleCrop()
+                .into(holder.patientAvtarImage);
+        else {
+            if (appointement.getSexCode().contains("F")) {
+
+                holder.patientAvtarImage.setImageResource(R.drawable.ic_girl);
+            } else {
+                holder.patientAvtarImage.setImageResource(R.drawable.man);
+            }
         }
-        if(appointement.getArrivalTime().isEmpty() && appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty())
-        {
+        if (appointement.getArrivalTime().isEmpty() && appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty()) {
 
             holder.patientStateImage.setImageResource(R.drawable.ic_chair);
 
         }
         if (!appointement.getArrivalTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_arrive);
-            holder.patientStateImage.setColorFilter(Color.argb(255,0,175,254));
+            holder.patientStateImage.setColorFilter(Color.argb(255, 0, 175, 254));
 
         }
         if (!appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_call);
-            holder.patientStateImage.setColorFilter(Color.argb(255,0,175,254));
+            holder.patientStateImage.setColorFilter(Color.argb(255, 0, 175, 254));
 
         } else if (!appointement.getCheckinTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_start);
-            holder.patientStateImage.setColorFilter(Color.argb(255,0,175,254));
+            holder.patientStateImage.setColorFilter(Color.argb(255, 0, 175, 254));
 
         }
-        if(appointement.getScheduledTime().isEmpty()) {
+        if (appointement.getScheduledTime().isEmpty()) {
             holder.scheduledTimeTxt.setVisibility(View.GONE);
-        holder.scheduledIcon.setVisibility(View.GONE);
+            holder.scheduledIcon.setVisibility(View.GONE);
+        } else {
+            if (appointement.getActiveBooking().equals(Constants.ACTIVE_BOOKING)) {
+                holder.scheduledIcon.setVisibility(View.VISIBLE);
+                holder.scheduledTimeTxt.setVisibility(View.VISIBLE);
+                holder.scheduledTimeTxt.setText(StringUtil.displayTime(appointement.getScheduledTime()));
+            }
+            else{
+                holder.scheduledTimeTxt.setVisibility(View.GONE);
+                holder.scheduledIcon.setVisibility(View.GONE);
+            }
         }
-        else {
-            holder.scheduledIcon.setVisibility(View.VISIBLE);
-            holder.scheduledTimeTxt.setVisibility(View.VISIBLE);
-            holder.scheduledTimeTxt.setText(StringUtil.displayTime(appointement.getScheduledTime()));
-        }
-
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +121,6 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             }
         });
 
-
     }
 
     @Override
@@ -118,7 +130,6 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
 
 
     public class myViewHolder extends RecyclerView.ViewHolder{
-
         TextView mRNTxt;
         TextView patientNameTxt;
         ImageView patientStateImage;
@@ -127,24 +138,15 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         ImageView scheduledIcon ;
         public myViewHolder(View itemView) {
             super(itemView);
-
             mRNTxt = itemView.findViewById(R.id.customer_id_txt);
             patientNameTxt = itemView.findViewById(R.id.customer_name_text);
             patientStateImage = itemView.findViewById(R.id.customer_state_img);
             patientAvtarImage = itemView.findViewById(R.id.customerAvatar);
             scheduledTimeTxt = itemView.findViewById(R.id.txt_scheduled_time_in_card);
             scheduledIcon = itemView.findViewById(R.id.imageView);
+
         }
 
-
-
     }
-    public void applyThemeToDrawable(Drawable image) {
-        if (image != null) {
-            PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(Color.argb(255,0,175,254),
-                    PorterDuff.Mode.SRC_ATOP);
 
-            image.setColorFilter(porterDuffColorFilter);
-        }
-    }
 }

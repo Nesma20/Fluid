@@ -1,18 +1,35 @@
 package com.example.fluid.model.pojo;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
     @SerializedName("email")
+    @Expose
     private String email;
     @SerializedName("firstName")
+    @Expose
     private String firstName;
     @SerializedName("familyName")
+    @Expose
     private String familyName;
     @SerializedName("gender")
+    @Expose
     private String gender;
     @SerializedName("id")
+    @Expose
     private String id;
+    @SerializedName("token")
+    @Expose
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public User(String email, String firstName, String familyName) {
         this.email = email;
@@ -23,11 +40,12 @@ public class User {
     public User() {
     }
 
-    public User(String email, String firstName, String familyName, String gender) {
+    public User(String email, String firstName, String familyName, String gender,String token) {
         this.email = email;
         this.firstName = firstName;
         this.familyName = familyName;
         this.gender = gender;
+        this.token = token;
     }
 
     public String getEmail() {

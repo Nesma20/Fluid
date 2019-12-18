@@ -11,6 +11,12 @@ public interface Constants {
     public static final String ENGLISH = "en";
     public static final String IP = "ip";
     public static final String PORT = "port";
+    public static final String BASE_URL = "base_url";
+    public static final String ACTIVE_BOOKING = "Y";
+    public static final String INACTIVE_BOOKING = "N";
+
+
+
 
 
 

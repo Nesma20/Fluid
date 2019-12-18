@@ -37,9 +37,42 @@ public class Appointement implements Parcelable {
     @SerializedName("slot_id")
     @Expose
     private String slotId;
+    @SerializedName("image_path")
+    @Expose
+    private String imagePath;
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     @SerializedName("is_followup")
     @Expose
     private String isFollowup;
+    @SerializedName("activeBooking")
+    @Expose
+    private String activeBooking;
+
+    public String getmRN() {
+        return mRN;
+    }
+
+    public void setmRN(String mRN) {
+        this.mRN = mRN;
+    }
+
+    public void setActiveBooking(String activeBooking) {
+        this.activeBooking = activeBooking;
+    }
+
+
+
+    public String getActiveBooking() {
+        return activeBooking;
+    }
 
     protected Appointement(Parcel in) {
         mRN = in.readString();

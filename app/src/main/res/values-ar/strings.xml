@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Fluid</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">اعدادات</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_profile_settings">اعدادات </string>
+    <string name="menu_locations">الاماكن التابع لها</string>
+    <string name="menu_english_language">الانجليزية</string>
+    <string name="menu_arabic_language">العربية</string>
+    <string name="language_preferences">Language Preferences</string>
+    <string name="menu_logout">خروج</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="choose_patient">اختر شخص</string>
+    <string name="customer_MRN_txt">رقم الملف الطبي</string>
+    <string name="name_txt">name</string>
+    <string name="scheduled_time_txt">Scheduled time</string>
+    <string name="expected_time_txt">الوقت المتوقع</string>
+    <string name="checkin_time_txt">وقت الدخول</string>
+    <string name="arrival_time_txt">وقت الوصول</string>
+    <string name="calling_time_txt">وقت الاستدعاء</string>
+    <string name="when_there_is_no_time_txt">Not yet.</string>
+    <string name="when_there_is_no_scheduled_time">Not booked.</string>
+    <string name="customer_name_txt">اسم العميل</string>
+    <string name="customer_picture">صورة العميل</string>
+    <!-- strings for login page -->
+    <string name="prompt_email">Mail</string>
+    <string name="prompt_password">Password</string>
+    <string name="welcome_back_txt">Welcome To Fluid!</string>
+    <string name="login_with_google_account">Log in with google account</string>
+    <string name="no_internet_image">no internet image</string>
+    <string name="Oh_no_string">خطأ</string>
+    <string name="no_internet_txt">No internet found. Check your internet connection and try again.</string>
+    <string name="retry_btn">Retry</string>
+    <string name="error_while_login">خطا عند الدخول, من فضلك حاول مرة اخريز</string>
+    <string name="no_location_available">There is NO current location available</string>
+    <string name="error_all_customers_arrived">خطا, جميع الاشخاص وصلوا.</string>
+    <string name="error_call_when_there_is_customer_checked_in">خطا, مازال هناك عميل لم يخرج بعد.</string>
+    <string name="error_connection_whle_retrieve_data">خطا في الاتصال, حاول مرة اخري</string>
+    <string name="error_no_data_returned">لا يوجد عملاء في المكان الحالي</string>
+    <string name="copy_write_theta_techno">POWERED BY THETA TECHNO</string>
+    <string name="ok">OK</string>
+    <string name="nurse_image">nurse image</string>
+    <string name="error_no_customer_called">خطا, لا يوجد عميل تم استدعاءه ليدخل</string>
+    <string name="Appointment_details">Appointment Details</string>
+
+</resources>

@@ -13,50 +13,46 @@ import java.util.List;
 public class HomeViewModel extends ViewModel {
     AppointmentRepository appointmentRepository = new AppointmentRepository();
     MutableLiveData myliveData = new MutableLiveData();
-
     ArrayList<Appointement> itemArrayList = new ArrayList<>();
     public LiveData<List<Appointement>> getAllItems(String clinicCode){
         myliveData = appointmentRepository.getAllData(clinicCode);
         itemArrayList = (ArrayList<Appointement>) myliveData.getValue();
         return myliveData;
     }
-    public void updateWithCalling(final String clinicCode,final String sessionId){
+    public void updateWithCalling(final String sessionId, final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
         appointmentRepository.callPatient(sessionId, new OnDataChangedCallBackListener<Boolean>() {
             @Override
             public void onResponse(Boolean dataChanged) {
-                if(dataChanged.booleanValue())
-                    getAllItems(clinicCode);
+                onDataChangedCallBackListener.onResponse(dataChanged);
             }
         });
 
 
     }
-    public void updateWithCheckIn(final String clinicCode, String slotId){
+    public void updateWithCheckIn(String slotId, final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
         appointmentRepository.checkIn(slotId, new OnDataChangedCallBackListener<Boolean>() {
             @Override
             public void onResponse(Boolean dataChanged) {
-                if(dataChanged.booleanValue())
-                    getAllItems(clinicCode);
+                    onDataChangedCallBackListener.onResponse(dataChanged);
             }
         });
 
     }
-    public void updateWithCheckOut(final String clinicCode, String slotId){
+    public void updateWithCheckOut( String slotId,final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
         appointmentRepository.checkOut(slotId,new OnDataChangedCallBackListener<Boolean>(){
             @Override
             public void onResponse(Boolean dataChanged) {
-                if(dataChanged.booleanValue())
-                    getAllItems(clinicCode);
+                onDataChangedCallBackListener.onResponse(dataChanged);
+
             }
         });
 
     }
-    public void confirmArrival(final String clinicCode,String slotId){
+    public void confirmArrival(String slotId, final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
         appointmentRepository.confirmArrive(slotId, new OnDataChangedCallBackListener<Boolean>() {
             @Override
             public void onResponse(Boolean dataChanged) {
-                if(dataChanged)
-                getAllItems(clinicCode);
+                onDataChangedCallBackListener.onResponse(dataChanged);
             }
         });
 

@@ -33,8 +33,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     // gradle for Retrofit and gson libraries
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     // gradle for circle image view
@@ -45,6 +45,8 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-plus:17.0.0'
+    implementation 'com.google.firebase:firebase-database:19.2.0'
+
     implementation 'com.google.apis:google-api-services-people:v1-rev506-1.25.0'
     implementation 'com.google.api-client:google-api-client-android:1.25.0'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'

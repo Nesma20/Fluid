@@ -14,5 +14,8 @@
     <dimen name="margin_8">8dp</dimen>
     <dimen name="time_size">20sp</dimen>
     <dimen name="margin_32">32dp</dimen>
+    <dimen name="cardview_elevation">10dp</dimen>
+    <dimen name="cardview_cornerRadius">5dp</dimen>
+    <dimen name="cardview_content_padding">4dp</dimen>
 
 </resources>

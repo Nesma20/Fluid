@@ -34,6 +34,7 @@ AppointmentDetailsViewModel appointmentDetailsViewModel = new AppointmentDetails
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_details);
+        setTitle(getString(R.string.Appointment_details));
         Intent intent = getIntent();
         Appointement appointement = intent.getParcelableExtra(APPOINTMENT);
         Log.i(TAG,appointement.getMRN());
@@ -98,7 +99,7 @@ AppointmentDetailsViewModel appointmentDetailsViewModel = new AppointmentDetails
         mTxtView.setText(getResources().getString(R.string.when_there_is_no_time_txt));
         else
             mTxtView.setText(getResources().getString(R.string.when_there_is_no_scheduled_time));
-        mTxtView.setTextSize(15);
+        mTxtView.setTextSize(12);
         mTxtView.setTextColor(COLOR_WHE_NO_TIME_FOUND);
     }
 }
