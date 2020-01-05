@@ -4,7 +4,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.contrib.DrawerActions;
 import androidx.test.espresso.contrib.NavigationViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -14,18 +13,12 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 
 import com.example.fluid.R;
-import com.example.fluid.ui.home.AppointmentListAdapter;
+import com.example.fluid.ui.activities.main.MainActivity;
 import com.example.fluid.utils.App;
 import com.example.fluid.utils.PreferenceController;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.Description;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +33,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.AllOf.allOf;
-import static org.junit.Assert.*;
+
 @RunWith(AndroidJUnit4ClassRunner.class)
 public class MainActivityTest {
 
@@ -102,7 +95,7 @@ public class MainActivityTest {
                 .perform(RecyclerViewActions.scrollToPosition(0));
 
         // Check that the item has the special text.
-        String middleElementText ="MRN1987";
+        String middleElementText ="MRN1985";
         onView(withText(middleElementText)).check(matches(isDisplayed()));
         onView(allOf(withId(R.id.customer_state_img))).check(matches(hasDrawable()));
 

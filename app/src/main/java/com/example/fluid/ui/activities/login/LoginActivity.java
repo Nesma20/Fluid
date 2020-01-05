@@ -1,6 +1,5 @@
-package com.example.fluid.ui.activities;
+package com.example.fluid.ui.activities.login;
 
-import android.accounts.AccountManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,18 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fluid.R;
-import com.example.fluid.model.pojo.ReturnedStatus;
+import com.example.fluid.ui.activities.main.MainActivity;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
-import com.example.fluid.ui.listeners.UserHandler;
-import com.example.fluid.utils.PreferenceController;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -44,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     GoogleSignInClient mGoogleSignInClient;
     UserViewModel userViewModel = new UserViewModel();
-
+    String token = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 //        Scope myScope2 = new Scope(Scopes.PLUS_ME);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestScopes(myScope, myScope2)
-                .requestIdToken("574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
                 .requestProfile()
                 .build();
@@ -80,20 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null) {
-            Log.i(TAG, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId() + "account image url " + account.getPhotoUrl().getPath());
-//            try {
-////                getAccountDetails(account);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            redirectToMain();
-        }
-    }
+
 
     public void getAccountDetails(final GoogleSignInAccount account) throws IOException {
         Thread myThread = new Thread() {
@@ -101,8 +83,8 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 HttpTransport httpTransport = new NetHttpTransport();
                 JacksonFactory jsonFactory = new JacksonFactory();
-                String clientId = "574842241815-20po4mvnj6ndc5cecig7sh3a0vvd5euc.apps.googleusercontent.com";
-                String clientSecret = "AIzaSyATNt_O5qL5ovukfRVr4jjj4bY7ShnpUPk";
+                String clientId = getString(R.string.client_id);
+                String clientSecret = getString(R.string.client_secret);
 
                 GoogleCredential credential = new GoogleCredential.Builder()
                         .setTransport(httpTransport)
@@ -129,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    String token = "";
+
 
     private void redirectToMain() {
 
@@ -157,29 +139,22 @@ public class LoginActivity extends AppCompatActivity {
                             // Log
                             Log.i(TAG, "device token : " + token);
                             Log.i(TAG, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId() + "account image url " + account.getPhotoUrl().getPath());
-                           userViewModel.getIpAndPortToCreateRetrofitInstance(new OnDataChangedCallBackListener<Boolean>() {
-                               @Override
-                               public void onResponse(Boolean dataChanged) {
-                                   if(dataChanged.booleanValue())
+
                                    userViewModel.createUser(account.getEmail(), account.getGivenName(), account.getFamilyName(),
                                            account.getPhotoUrl().getPath(), account.getDisplayName(), token,
                                            new OnDataChangedCallBackListener<Boolean>() {
                                                @Override
                                                public void onResponse(Boolean dataChanged) {
-                                                   if (dataChanged.booleanValue()) {
+//                                                   if (dataChanged.booleanValue()) {
                                                        redirectToMain();
-                                                   } else {
-                                                       Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_while_login), Toast.LENGTH_SHORT).show();
 
-                                                   }
                                                }
                                            });
 
                                }
                            });
 
-                        }
-                           });
+
 
 
 

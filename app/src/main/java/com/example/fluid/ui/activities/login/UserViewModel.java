@@ -1,4 +1,4 @@
-package com.example.fluid.ui.activities;
+package com.example.fluid.ui.activities.login;
 
 import android.util.Log;
 
@@ -25,23 +25,23 @@ public class UserViewModel {
             public void onUserAddedHandler(ReturnedStatus returnedStatus) {
                 isUserCreated = checkOnReturnedStatus(returnedStatus);
 
-                if (isUserCreated) {
-                    saveDataInSharedPreference(email, displayName, imageProfile, returnedStatus.getReturnStatus().intValue());
+               if (isUserCreated) {
+                    saveDataInSharedPreference(email, displayName, imageProfile,  3385);
 
-                }
+             }
                 onDataChangedCallBackListener.onResponse(isUserCreated);
             }
         });
     }
-    public void getIpAndPortToCreateRetrofitInstance(final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
-        FirebaseDatabaseService.getPortAndIpAddress(new OnDataChangedCallBackListener<Boolean>() {
-            @Override
-            public void onResponse(Boolean dataChanged) {
-                onDataChangedCallBackListener.onResponse(dataChanged);
-            }
-        });
-    }
 
+    public void getIpAndPortToCreateRetrofitInstance(final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
+//        FirebaseDatabaseService.getPortAndIpAddress(new OnDataChangedCallBackListener<Boolean>() {
+//            @Override
+//            public void onResponse(Boolean dataChanged) {
+//                onDataChangedCallBackListener.onResponse(dataChanged);
+//            }
+//        });
+    }
     private void saveDataInSharedPreference(String email, String displayName, String imageProfile, int id) {
         PreferenceController.getInstance(App.getContext()).persist(PreferenceController.PREF_EMAIL, email);
         PreferenceController.getInstance(App.getContext()).persist(PreferenceController.PREF_USER_NAME, displayName);

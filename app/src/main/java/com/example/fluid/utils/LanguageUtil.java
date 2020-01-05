@@ -41,7 +41,7 @@ public class LanguageUtil {
 //        Resources resources = context.getResources();
         Resources resources = App.getContext().getResources();
         Configuration config = resources.getConfiguration();
-        // 应用用户选择语言
+
         if (VersionUtils.isAfter24()) {
             return config.getLocales().get(0);
         } else {

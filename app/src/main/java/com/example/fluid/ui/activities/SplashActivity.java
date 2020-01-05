@@ -1,27 +1,36 @@
 package com.example.fluid.ui.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.example.fluid.R;
+import com.example.fluid.ui.activities.login.LoginActivity;
+import com.example.fluid.ui.activities.main.MainActivity;
 import com.example.fluid.utils.App;
 import com.example.fluid.utils.CheckForNetwork;
+import com.example.fluid.utils.Constants;
 import com.example.fluid.utils.PreferenceController;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import java.util.Locale;
+
 public class SplashActivity extends BaseActivity {
     GoogleSignInClient mGoogleSignInClient;
 
+   private static final String TAG ="SplashActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        Log.i(TAG,"language name from local default: "+ Locale.getDefault().getLanguage());
+
     }
 
     public void redirectToLogin() {
@@ -48,11 +57,12 @@ public class SplashActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.request_id_token))
                 .requestEmail()
                 .requestProfile()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -66,13 +76,13 @@ public class SplashActivity extends BaseActivity {
                 } else {
                     redirectToNoInternetConnection();
                 }
-
-
             }
 
             private boolean isUserLoggedIn() {
-                Log.i("splash",PreferenceController.getInstance(App.getContext()).get(PreferenceController.PREF_EMAIL));
-                if (PreferenceController.getInstance(App.getContext()).get(PreferenceController.PREF_EMAIL).isEmpty() )
+                Log.i(TAG,"email"+PreferenceController.getInstance(App.getContext()).get(PreferenceController.PREF_EMAIL));
+                Log.i(TAG,"base url"+PreferenceController.getInstance(App.getContext()).get(Constants.BASE_URL));
+                Log.i(TAG,"username"+PreferenceController.getInstance(App.getContext()).get(PreferenceController.PREF_USER_NAME));
+                if ( PreferenceController.getInstance(App.getContext()).get(PreferenceController.PREF_USER_NAME).isEmpty()  && PreferenceController.getInstance(App.getContext()).get(PreferenceController.PREF_EMAIL).isEmpty()  )
                     return false;
                 else {
                     return true;

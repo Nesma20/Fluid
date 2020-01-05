@@ -6,6 +6,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.fluid.ui.home.HomeFragment;
+import com.example.fluid.utils.App;
+import com.example.fluid.utils.Constants;
+import com.example.fluid.utils.PreferenceController;
 
 import java.util.ArrayList;
 import java.util.List;

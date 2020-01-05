@@ -15,24 +15,25 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface MyServicesInterface {
-    @GET("/ords/pf/api/getClinicSchedule/{location_code}")
+    @GET("/ords/fluid/api/getClinicSchedule/{location_code}")
     Call<AppointmentItems> getAppointementData(@Path("location_code") String code);
 
-    @PUT("/ords/pf/api/call/{location_code}")
+    @PUT("/ords/fluid/api/call/{location_code}")
     Call<ResponseBody> callPatient(@Path("location_code") String clinicCode);
 
-    @PUT("/ords/pf/api/checkin/{slot_id}")
+    @PUT("/ords/fluid/api/checkin/{slot_id}")
     Call<ResponseBody> checkIn(@Path("slot_id") String slot_id);
 
-    @PUT("/ords/pf/api/checkout/{slot_id}")
+    @PUT("/ords/fluid/api/checkout/{slot_id}")
     Call<ResponseBody> checkout(@Path("slot_id") String slot_id);
 
-    @PUT("/ords/pf/api/arrive/{slot_id}")
+    @PUT("/ords/fluid/api/arrive/{slot_id}")
     Call<ResponseBody> confirmArrive(@Path("slot_id") String slot_id);
 
-    @POST("/ords/pf/api/addUser")
+    @POST("/ords/fluid/api/addUser")
     Call<ReturnedStatus> createUser(@Body User user);
-    @GET("/ords/pf/api/getDispatcherLocations/{email}")
+
+    @GET("/ords/fluid/api/getDispatcherLocations/{email}")
     Call <LocationList> getLocationList(@Path("email") String email);
 
 }

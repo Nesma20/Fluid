@@ -1,7 +1,6 @@
-package com.example.fluid.ui.activities;
+package com.example.fluid.ui.activities.appointmentdetails;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,8 +12,9 @@ import android.widget.TextView;
 
 import com.example.fluid.R;
 import com.example.fluid.model.pojo.Appointement;
+import com.example.fluid.ui.activities.BaseActivity;
 
-public class AppointmentDetailsActivity extends BaseActivity  {
+public class AppointmentDetailsActivity extends BaseActivity {
 private final String TAG = "AppointmentDetails";
 private final String APPOINTMENT = "appointment";
 private ImageView customerImageView;

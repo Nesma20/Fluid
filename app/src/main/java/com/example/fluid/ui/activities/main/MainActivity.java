@@ -1,4 +1,4 @@
-package com.example.fluid.ui.activities;
+package com.example.fluid.ui.activities.main;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -6,28 +6,27 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +34,9 @@ import com.example.fluid.R;
 import com.example.fluid.model.pojo.Location;
 import com.example.fluid.model.pojo.LocationList;
 import com.example.fluid.ui.NoLocationAvailableFragment;
+import com.example.fluid.ui.activities.BaseActivity;
+import com.example.fluid.ui.activities.NoInternetConnectionActivity;
+import com.example.fluid.ui.activities.login.LoginActivity;
 import com.example.fluid.ui.adapters.ViewPagerAdapter;
 import com.example.fluid.ui.home.HomeFragment;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
@@ -43,9 +45,7 @@ import com.example.fluid.ui.locations.LocationsActivity;
 import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
 import com.example.fluid.utils.PreferenceController;
-import com.example.fluid.utils.StringUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -74,10 +74,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     TextView tabTitle;
     TextView tabCount;
     View customTabView;
+    ConstraintLayout noLocationAvailableConstraintLayout;
     AnimationDrawable startOrEndAnimation;
     public static final String LOCATIONS = "locations";
     public static final String TAG = "MainActivity";
-    MainViewModel mainViewModel = new MainViewModel();
+    MainViewModel mainViewModel ;
     NoLocationAvailableFragment noLocationAvailableFragment;
     // user data UI
     ImageView mImageView;
@@ -97,12 +98,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.request_id_token))
                 .requestEmail()
                 .requestProfile()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -134,11 +135,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     mProgressBar.setVisibility(View.GONE);
                     if (dataChanged != null && dataChanged.getItems() != null) {
                         locationList = (ArrayList<Location>) dataChanged.getItems();
+
                         displayUserInfo();
+                        disableNoLocationLayout();
                         setupViewPager(mViewPager);
+
                     } else {
 
-                        redirectTONoLocationAvailableFragment();
+                        enableLayoutForNoLocations();
+                        hideButtonAndTabLayout();
 
                     }
 
@@ -204,12 +209,29 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void displayUserInfo() {
-        mUserNameTxtView.setText(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_USER_NAME));
-        mEmailTxtView.setText(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL));
-        Glide.with(this)
-                .load(Constants.BASE_GOOGLE_URL_FOR_IMAGES + mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_IMAGE_PROFILE_URL))
-                .circleCrop()
-                .into(mImageView);
+        mainViewModel.getFullName().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String name) {
+                mUserNameTxtView.setText(name);
+            }
+        });
+        mainViewModel.getEmail().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String email) {
+                mEmailTxtView.setText(email);
+            }
+        });
+        mainViewModel.getImageUrl().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String imgUrl) {
+                // TODO: use glide to update image view src
+                Glide.with(MainActivity.this)
+                        .load(Constants.BASE_GOOGLE_URL_FOR_IMAGES +imgUrl)
+                        .circleCrop()
+                        .into(mImageView);
+            }
+        });
+
     }
 
     @Override
@@ -252,6 +274,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         callFab = findViewById(R.id.call_fab);
         arrivalFab = findViewById(R.id.confirm_arrive_fab);
         mProgressBar = findViewById(R.id.loading_data_progress_bar);
+        noLocationAvailableConstraintLayout = findViewById(R.id.noLocationAvaliable);
     }
 
     private void setupViewPager(final ViewPager myViewPager) {
@@ -410,10 +433,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mProgressBar.setVisibility(View.GONE);
     }
 
-    private void redirectTONoLocationAvailableFragment() {
-        hideButtonAndTabLayout();
-        if (!noLocationAvailableFragment.isVisible())
+    private void enableLayoutForNoLocations() {
+
+        noLocationAvailableConstraintLayout.setVisibility(View.VISIBLE);
+   /*     if (!noLocationAvailableFragment.isVisible())
             transaction.add(R.id.frame_layout, noLocationAvailableFragment).commitAllowingStateLoss();
+*/
+    }
+    private void disableNoLocationLayout(){
+        noLocationAvailableConstraintLayout.setVisibility(View.GONE);
 
     }
 

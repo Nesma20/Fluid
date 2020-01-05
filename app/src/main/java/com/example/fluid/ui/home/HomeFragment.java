@@ -340,7 +340,6 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onIconChanged(boolean isAppointmentStarted);
 
         void onCallCustomer(int numOfCalls);

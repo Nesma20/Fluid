@@ -48,6 +48,8 @@
     <string name="ok">OK</string>
     <string name="nurse_image">nurse image</string>
     <string name="error_no_customer_called">خطا, لا يوجد عميل تم استدعاءه ليدخل</string>
-    <string name="Appointment_details">Appointment Details</string>
+    <string name="login">الدخول</string>
+    <string name="locations_activity">الاماكن</string>
+    <string name="Appointment_details">تفاصيل الحجز</string>
 
 </resources>

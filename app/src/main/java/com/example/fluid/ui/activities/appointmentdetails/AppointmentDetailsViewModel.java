@@ -1,4 +1,4 @@
-package com.example.fluid.ui.activities;
+package com.example.fluid.ui.activities.appointmentdetails;
 
 import android.os.Build;
 

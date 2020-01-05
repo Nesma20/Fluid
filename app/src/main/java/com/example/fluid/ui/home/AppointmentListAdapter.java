@@ -3,10 +3,6 @@ package com.example.fluid.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,20 +11,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.fluid.R;
 import com.example.fluid.model.pojo.Appointement;
-import com.example.fluid.ui.activities.AppointmentDetailsActivity;
+import com.example.fluid.ui.activities.appointmentdetails.AppointmentDetailsActivity;
 import com.example.fluid.utils.PreferenceController;
 import com.example.fluid.utils.StringUtil;
 import com.example.fluid.utils.Constants;
 
 import java.util.List;
-
-import static com.example.fluid.utils.Constants.ENGLISH;
 
 public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentListAdapter.myViewHolder> {
     Context mContext;

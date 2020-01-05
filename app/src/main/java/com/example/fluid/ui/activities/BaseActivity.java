@@ -23,7 +23,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
     }
-
     @Override
     protected void attachBaseContext(Context newBase) {
         String lang;

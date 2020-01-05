@@ -52,4 +52,8 @@
     <string name="Appointment_details">Appointment Details</string>
     <string name="login">Log in</string>
     <string name="locations_activity">Locations</string>
+    <string name="web_client_id" translatable="false">574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com</string>
+    <string name="request_id_token" translatable="false">574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com</string>
+    <string name="client_id" translatable="false">574842241815-20po4mvnj6ndc5cecig7sh3a0vvd5euc.apps.googleusercontent.com</string>
+    <string name="client_secret" translatable="false">AIzaSyATNt_O5qL5ovukfRVr4jjj4bY7ShnpUPk</string>
 </resources>
