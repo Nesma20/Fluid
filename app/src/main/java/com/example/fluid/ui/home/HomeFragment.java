@@ -59,7 +59,6 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
     }
 
-
     public static HomeFragment newInstance(String clinicCode, String sessionId) {
         HomeFragment fragment = new HomeFragment();
         Log.i(TAG, "new Instance method");

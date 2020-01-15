@@ -1,17 +1,12 @@
 package com.example.fluid.ui.activities.login;
 
-import android.util.Log;
-
 import com.example.fluid.model.pojo.ReturnedStatus;
 import com.example.fluid.model.pojo.User;
-import com.example.fluid.model.services.FirebaseDatabaseService;
 import com.example.fluid.model.services.repositories.UserRepository;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.ui.listeners.UserHandler;
 import com.example.fluid.utils.App;
 import com.example.fluid.utils.PreferenceController;
-
-import java.io.IOException;
 
 public class UserViewModel {
     boolean isUserCreated = false;

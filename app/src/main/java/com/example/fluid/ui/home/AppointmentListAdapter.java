@@ -57,12 +57,19 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             holder.patientNameTxt.setText(appointement.getArabicName());
         }
 
-        if(!appointement.getImagePath().isEmpty())
+        if(!appointement.getImagePath().isEmpty() && appointement.getSexCode().contains("F"))
         Glide.with(mContext)
-                .load( PreferenceController.getInstance(mContext).get(Constants.IP)
-                        +":"+PreferenceController.getInstance(mContext).get(Constants.PORT)+ appointement.getImagePath())
+                .load( Constants.BASE_URL+ Constants.BASE_EXTENSION_FOR_PHOTOS + appointement.getImagePath())
                 .circleCrop()
+                .placeholder(R.drawable.ic_girl)
                 .into(holder.patientAvtarImage);
+        else if(!appointement.getImagePath().isEmpty() && appointement.getSexCode().contains("M")){
+            Glide.with(mContext)
+                    .load( Constants.BASE_URL+ Constants.BASE_EXTENSION_FOR_PHOTOS +appointement.getImagePath())
+                    .circleCrop()
+                    .placeholder(R.drawable.man)
+                    .into(holder.patientAvtarImage);
+        }
         else {
             if (appointement.getSexCode().contains("F")) {
 

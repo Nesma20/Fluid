@@ -23,21 +23,24 @@ import java.util.List;
 import java.util.Locale;
 
 public class AlertDialogAdapter extends RecyclerView.Adapter<AlertDialogAdapter.myViewHolder> {
-Context mContext;
-List<Appointement> items;
-String state;
-MyAlertActionListener myAlertActionListener;
-public AlertDialogAdapter(Context mContext, List<Appointement> items, MyAlertActionListener myAlertActionListener, String state){
-    this.mContext = mContext;
-    this.items = items;
-    this.myAlertActionListener =myAlertActionListener;
-    this.state = state;
-}
+    Context mContext;
+    List<Appointement> items;
+    String state;
+    MyAlertActionListener myAlertActionListener;
+
+    public AlertDialogAdapter(Context mContext, List<Appointement> items, MyAlertActionListener myAlertActionListener, String state) {
+        this.mContext = mContext;
+        this.items = items;
+        this.myAlertActionListener = myAlertActionListener;
+        this.state = state;
+    }
+
     @NonNull
     @Override
     public myViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.alert_dialog_list_item, parent, false);
-        return new myViewHolder(view)   ; }
+        return new myViewHolder(view);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull myViewHolder holder, int position) {
@@ -48,12 +51,19 @@ public AlertDialogAdapter(Context mContext, List<Appointement> items, MyAlertAct
         } else if (languageName.contains("العربية") || languageName.contains(Constants.ARABIC)) {
             holder.patientNameTxt.setText(appointement.getArabicName());
         }
-        if(!appointement.getImagePath().isEmpty())
+        if (!appointement.getImagePath().isEmpty() && appointement.getSexCode().contains("F"))
             Glide.with(mContext)
-                    .load( PreferenceController.getInstance(mContext).get(Constants.IP)
-                            +":"+PreferenceController.getInstance(mContext).get(Constants.PORT)+ appointement.getImagePath())
+                    .load(Constants.BASE_URL +Constants.BASE_EXTENSION_FOR_PHOTOS+ appointement.getImagePath())
                     .circleCrop()
+                    .placeholder(R.drawable.ic_girl)
                     .into(holder.patientImg);
+        else if(!appointement.getImagePath().isEmpty() && appointement.getSexCode().contains("M")){
+            Glide.with(mContext)
+                    .load(Constants.BASE_URL + Constants.BASE_EXTENSION_FOR_PHOTOS+ appointement.getImagePath())
+                    .circleCrop()
+                    .placeholder(R.drawable.man)
+                    .into(holder.patientImg);
+        }
         else {
             if (appointement.getSexCode().contains("F")) {
 
@@ -82,14 +92,13 @@ public AlertDialogAdapter(Context mContext, List<Appointement> items, MyAlertAct
 
         TextView patientNameTxt;
         ImageView patientImg;
+
         public myViewHolder(View itemView) {
             super(itemView);
             patientNameTxt = itemView.findViewById(R.id.patientNameTxt);
             patientImg = itemView.findViewById(R.id.img_customer_for_dialog);
 
         }
-
-
 
 
     }

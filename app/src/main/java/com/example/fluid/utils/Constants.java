@@ -11,7 +11,8 @@ public interface Constants {
     public static final String ENGLISH = "en";
     public static final String IP = "ip";
     public static final String PORT = "port";
-    public static final String BASE_URL = "base_url";
+    public static final String BASE_URL = "http://196.202.24.127:8080";
+    public static final String BASE_EXTENSION_FOR_PHOTOS = "/i/";
     public static final String ACTIVE_BOOKING = "Y";
     public static final String INACTIVE_BOOKING = "N";
 

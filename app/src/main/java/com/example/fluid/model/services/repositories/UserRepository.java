@@ -20,7 +20,6 @@ public class UserRepository {
    ReturnedStatus status = null;
     LocationList locationList = new LocationList();
     public void createNewUser(final User user, final UserHandler userHandler){
-
         MyServicesInterface myServicesInterface = RetrofitInstance.getService();
         Call<ReturnedStatus> call = myServicesInterface.createUser(user);
         call.enqueue(new Callback<ReturnedStatus>() {

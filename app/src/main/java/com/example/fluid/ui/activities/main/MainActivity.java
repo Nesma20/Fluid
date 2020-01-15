@@ -1,6 +1,8 @@
 package com.example.fluid.ui.activities.main;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -11,9 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -74,16 +78,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     TextView tabTitle;
     TextView tabCount;
     View customTabView;
-    ConstraintLayout noLocationAvailableConstraintLayout;
-    AnimationDrawable startOrEndAnimation;
-    public static final String LOCATIONS = "locations";
-    public static final String TAG = "MainActivity";
-    MainViewModel mainViewModel ;
-    NoLocationAvailableFragment noLocationAvailableFragment;
     // user data UI
     ImageView mImageView;
     TextView mEmailTxtView;
     TextView mUserNameTxtView;
+    ConstraintLayout noLocationAvailableConstraintLayout;
+    MainViewModel mainViewModel;
+    Button retryGetLocation;
     FragmentManager manager;
     FragmentTransaction transaction;
     AlertDialog alertDialog;
@@ -91,6 +92,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private static final int COLOR_ID_FOR_START_STATE = R.color.colorAccent;
     private static final int DRAWABLE_RESOURCE_FOR_FINISH_STATE = R.drawable.animation_fab_start;
     private static final int COLOR_ID_FOR_FINISH_STATE = R.color.colorPrimary;
+    public static final String LOCATIONS = "locations";
+    public static final String TAG = "MainActivity";
     private int numOfCalls;
 
     @Override
@@ -111,8 +114,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        manager = getSupportFragmentManager();
-        transaction = manager.beginTransaction();
+
         initializeViews();
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -122,36 +124,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mImageView = header.findViewById(R.id.userImageView);
         mUserNameTxtView = header.findViewById(R.id.userNameTxt);
         mEmailTxtView = header.findViewById(R.id.emailTxtView);
-        noLocationAvailableFragment = NoLocationAvailableFragment.newInstance();
 
-
-        if (!CheckForNetwork.isConnectionOn(this)) {
-            redirectToNoInternetConnection();
-        } else {
-            mProgressBar.setVisibility(View.VISIBLE);
-            mainViewModel.getLocationData(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL), new OnDataChangedCallBackListener<LocationList>() {
-                @Override
-                public void onResponse(LocationList dataChanged) {
-                    mProgressBar.setVisibility(View.GONE);
-                    if (dataChanged != null && dataChanged.getItems() != null) {
-                        locationList = (ArrayList<Location>) dataChanged.getItems();
-
-                        displayUserInfo();
-                        disableNoLocationLayout();
-                        setupViewPager(mViewPager);
-
-                    } else {
-
-                        enableLayoutForNoLocations();
-                        hideButtonAndTabLayout();
-
-                    }
-
-                }
-            });
-
-
-        }
+        displayUserInfo();
+        getAllLocations();
 
         callFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,7 +137,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     if (isAppointmentStarted)
                         myCallListenerList.get(mViewPager.getCurrentItem()).callPatient();
                     else {
-                        // alert with title can't call while there is a customer didn't check out yet
                         showAlertWithMessage(getResources().getString(R.string.error_call_when_there_is_customer_checked_in));
                     }
                 } else {
@@ -191,11 +165,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                             myCallListenerList.get(mViewPager.getCurrentItem()).checkInPatient();
 
                         } else {
-                           myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
+                            myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
 
                         }
-                    }
-                    else {
+                    } else {
                         // TODO: alert with there is no customer called to be checked in.
                         showAlertWithMessage(getResources().getString(R.string.error_no_customer_called));
                     }
@@ -205,7 +178,37 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
 
         });
+        retryGetLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    getAllLocations();
+            }
+        });
+    }
 
+    private void getAllLocations() {
+        if (!CheckForNetwork.isConnectionOn(this)) {
+            redirectToNoInternetConnection();
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mainViewModel.getLocationData(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL), new OnDataChangedCallBackListener<LocationList>() {
+                @Override
+                public void onResponse(LocationList dataChanged) {
+                    mProgressBar.setVisibility(View.GONE);
+                    if (dataChanged != null && dataChanged.getItems() != null) {
+                        locationList = (ArrayList<Location>) dataChanged.getItems();
+                        disableNoLocationLayout();
+                        setupViewPager(mViewPager);
+
+                    } else {
+                        enableLayoutForNoLocations();
+                        hideButtonAndTabLayout();
+
+                    }
+                }
+            });
+
+        }
     }
 
     private void displayUserInfo() {
@@ -226,7 +229,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public void onChanged(String imgUrl) {
                 // TODO: use glide to update image view src
                 Glide.with(MainActivity.this)
-                        .load(Constants.BASE_GOOGLE_URL_FOR_IMAGES +imgUrl)
+                        .load(Constants.BASE_GOOGLE_URL_FOR_IMAGES + imgUrl)
                         .circleCrop()
                         .into(mImageView);
             }
@@ -243,10 +246,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void checkOnTheCurrentLanguage() {
         if (PreferenceController.getInstance(this).get(PreferenceController.LANGUAGE).equals(Constants.ARABIC)) {
             navigationView.getMenu().findItem(R.id.language_reference).setTitle(R.string.menu_english_language);
-//            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         } else if (PreferenceController.getInstance(this).get(PreferenceController.LANGUAGE).equals(Constants.ENGLISH)) {
             navigationView.getMenu().findItem(R.id.language_reference).setTitle(R.string.menu_arabic_language);
-//            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 
         }
     }
@@ -257,8 +258,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             changeColorAndSrcOfStartAndEndButton(DRAWABLE_RESOURCE_FOR_START_STATE, COLOR_ID_FOR_START_STATE);
             startOrEndFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.animation_start_to_finish_fab_with_rotation));
 
-        }
-        else if (state == Constants.ENDING_STATE) {
+        } else if (state == Constants.ENDING_STATE) {
             changeColorAndSrcOfStartAndEndButton(DRAWABLE_RESOURCE_FOR_FINISH_STATE, COLOR_ID_FOR_FINISH_STATE);
 
             startOrEndFab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.animation_finish_to_start_fab_with_rotation));
@@ -275,17 +275,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         arrivalFab = findViewById(R.id.confirm_arrive_fab);
         mProgressBar = findViewById(R.id.loading_data_progress_bar);
         noLocationAvailableConstraintLayout = findViewById(R.id.noLocationAvaliable);
+        retryGetLocation = findViewById(R.id.retryBtn);
     }
 
     private void setupViewPager(final ViewPager myViewPager) {
-
         enableButtonsAndLayoutToBeVisible();
-        if (noLocationAvailableFragment != null && noLocationAvailableFragment.isVisible()) {
-            transaction = manager.beginTransaction();
-            transaction.remove(noLocationAvailableFragment);
-            transaction.commit();
-            manager.popBackStack();
-        }
         myCallListenerList = new ArrayList<>();
         HomeFragment homeFragment;
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -436,11 +430,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void enableLayoutForNoLocations() {
 
         noLocationAvailableConstraintLayout.setVisibility(View.VISIBLE);
-   /*     if (!noLocationAvailableFragment.isVisible())
-            transaction.add(R.id.frame_layout, noLocationAvailableFragment).commitAllowingStateLoss();
-*/
+
     }
-    private void disableNoLocationLayout(){
+
+    private void disableNoLocationLayout() {
         noLocationAvailableConstraintLayout.setVisibility(View.GONE);
 
     }
@@ -492,9 +485,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-
     public void changeColorAndSrcOfStartAndEndButton(int drawableId, int colorId) {
-       startOrEndFab.setImageDrawable(getResources().getDrawable(drawableId));
+        startOrEndFab.setImageDrawable(getResources().getDrawable(drawableId));
         startOrEndFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, colorId)));
     }
 
