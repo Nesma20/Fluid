@@ -195,15 +195,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 @Override
                 public void onResponse(LocationList dataChanged) {
                     mProgressBar.setVisibility(View.GONE);
-                    if (dataChanged != null && dataChanged.getItems() != null) {
+                    if(dataChanged != null){
+                    if (dataChanged.getItems() != null) {
                         locationList = (ArrayList<Location>) dataChanged.getItems();
                         disableNoLocationLayout();
                         setupViewPager(mViewPager);
 
-                    } else {
+                    } else if (dataChanged.getStatus().equals("no data found")) {
                         enableLayoutForNoLocations();
                         hideButtonAndTabLayout();
 
+                    }
+                    }
+                    else {
+                        //TODO :handle if there error in return response data was null or failure occured
                     }
                 }
             });
@@ -453,6 +458,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         arrivalFab.setVisibility(View.VISIBLE);
         startOrEndFab.setVisibility(View.VISIBLE);
         mTabLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void dismissFloatingButtons(){
+        callFab.setVisibility(View.GONE);
+        arrivalFab.setVisibility(View.GONE);
+        startOrEndFab.setVisibility(View.GONE);
+    }
+    @Override
+    public void enableFloatingButtons(){
+        callFab.setVisibility(View.VISIBLE);
+        arrivalFab.setVisibility(View.VISIBLE);
+        startOrEndFab.setVisibility(View.VISIBLE);
     }
 
     @Override

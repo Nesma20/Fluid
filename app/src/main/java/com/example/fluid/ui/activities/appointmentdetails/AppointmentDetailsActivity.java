@@ -10,9 +10,11 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.fluid.R;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.ui.activities.BaseActivity;
+import com.example.fluid.utils.Constants;
 
 public class AppointmentDetailsActivity extends BaseActivity {
 private final String TAG = "AppointmentDetails";
@@ -39,7 +41,28 @@ AppointmentDetailsViewModel appointmentDetailsViewModel = new AppointmentDetails
         Appointement appointement = intent.getParcelableExtra(APPOINTMENT);
         Log.i(TAG,appointement.getMRN());
         setUpViews();
-        customerImageView.setImageResource(R.drawable.user_avatar);
+        if(!appointement.getImagePath().isEmpty() && appointement.getSexCode().contains("F"))
+            Glide.with(this)
+                    .load( Constants.BASE_URL+ Constants.BASE_EXTENSION_FOR_PHOTOS + appointement.getImagePath())
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_girl)
+                    .into(customerImageView);
+        else if(!appointement.getImagePath().isEmpty() && appointement.getSexCode().contains("M")){
+            Glide.with(this)
+                    .load( Constants.BASE_URL+ Constants.BASE_EXTENSION_FOR_PHOTOS +appointement.getImagePath())
+                    .circleCrop()
+                    .placeholder(R.drawable.man)
+                    .into(customerImageView);
+        }
+        else {
+            if (appointement.getSexCode().contains(Constants.FEMALE)) {
+
+                customerImageView.setImageResource(R.drawable.ic_girl);
+            } else if(appointement.getSexCode().contains(Constants.MALE)) {
+                customerImageView.setImageResource(R.drawable.man);
+            }
+        }
+
         mRNTxt.setText(appointement.getMRN());
         String languageName = getResources().getConfiguration().locale.getDisplayName();
         if (languageName.contains("English")) {

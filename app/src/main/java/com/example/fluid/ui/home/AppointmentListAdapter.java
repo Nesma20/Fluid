@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.example.fluid.R;
@@ -27,8 +28,12 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     Context mContext;
     List<Appointement> myItems;
     private final String APPOINTMENT= "appointment";
+    CircularProgressDrawable circularProgressDrawable;
+    private final float STROKE_WIDTH = 5f;
+    private final float CENTER_RADIUS = 30f;
     public AppointmentListAdapter(Context context) {
         mContext = context;
+         circularProgressDrawable = new CircularProgressDrawable(mContext);
 
     }
 
@@ -57,24 +62,27 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             holder.patientNameTxt.setText(appointement.getArabicName());
         }
 
+        circularProgressDrawable.setStrokeWidth(STROKE_WIDTH);
+        circularProgressDrawable.setCenterRadius(CENTER_RADIUS);
+        circularProgressDrawable.start();
         if(!appointement.getImagePath().isEmpty() && appointement.getSexCode().contains("F"))
         Glide.with(mContext)
                 .load( Constants.BASE_URL+ Constants.BASE_EXTENSION_FOR_PHOTOS + appointement.getImagePath())
                 .circleCrop()
-                .placeholder(R.drawable.ic_girl)
+                .placeholder(circularProgressDrawable)
                 .into(holder.patientAvtarImage);
         else if(!appointement.getImagePath().isEmpty() && appointement.getSexCode().contains("M")){
             Glide.with(mContext)
                     .load( Constants.BASE_URL+ Constants.BASE_EXTENSION_FOR_PHOTOS +appointement.getImagePath())
                     .circleCrop()
-                    .placeholder(R.drawable.man)
+                    .placeholder(circularProgressDrawable)
                     .into(holder.patientAvtarImage);
         }
         else {
-            if (appointement.getSexCode().contains("F")) {
+            if (appointement.getSexCode().contains(Constants.FEMALE)) {
 
                 holder.patientAvtarImage.setImageResource(R.drawable.ic_girl);
-            } else {
+            } else if(appointement.getSexCode().contains(Constants.MALE)) {
                 holder.patientAvtarImage.setImageResource(R.drawable.man);
             }
         }

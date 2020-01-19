@@ -85,7 +85,9 @@ public class Appointement implements Parcelable {
         arrivalTime = in.readString();
         callingTime = in.readString();
         slotId = in.readString();
+        imagePath = in.readString();
         isFollowup = in.readString();
+        activeBooking = in.readString();
     }
 
     public static final Creator<Appointement> CREATOR = new Creator<Appointement>() {
@@ -206,6 +208,8 @@ public class Appointement implements Parcelable {
         dest.writeString(arrivalTime);
         dest.writeString(callingTime);
         dest.writeString(slotId);
+        dest.writeString(imagePath);
         dest.writeString(isFollowup);
+        dest.writeString(activeBooking);
     }
 }

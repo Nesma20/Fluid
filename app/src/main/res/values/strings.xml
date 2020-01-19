@@ -41,6 +41,7 @@
     <string name="retry_btn">Retry</string>
     <string name="error_while_login">Error While log in, Please retry again</string>
     <string name="no_location_available">There is NO current location available</string>
+    <string name="no_customer_in_current_location">There is no currently appointments at this clinic</string>
     <string name="error_all_customers_arrived">Error, All customers already arrived.</string>
     <string name="error_no_customer_called">Error, There is no customer called to be checked in.</string>
     <string name="error_call_when_there_is_customer_checked_in">Error, there is a customer didn\'t check out yet, you can\'t call anyone</string>

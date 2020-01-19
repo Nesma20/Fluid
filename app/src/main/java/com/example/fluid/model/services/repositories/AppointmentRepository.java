@@ -23,7 +23,7 @@ public class AppointmentRepository {
     List<Appointement> myItemList;
     boolean responseReturned = true;
     boolean failureOnResponse = false;
-    private MutableLiveData<List<Appointement>> mutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<AppointmentItems> mutableLiveData = new MutableLiveData<>();
 
     public MutableLiveData getAllData(String clinicCode) {
         myItemList = new ArrayList<>();
@@ -35,8 +35,9 @@ public class AppointmentRepository {
                 if (response.isSuccessful()) {
                     System.out.println("*********************** on response ********************");
                     AppointmentItems appointmentItems = response.body();
-                    if(appointmentItems != null && appointmentItems.getItems()!= null) {
+                    if(appointmentItems != null ) {
                         myItemList = (ArrayList<Appointement>) appointmentItems.getItems();
+                        if(appointmentItems.getItems()!=null)
                         for (Appointement item : myItemList) {
                             Log.i("appointmentItems", "  ************** item arrival time ************   " + item.getArrivalTime() + "slot " + item.getSlotId());
                             Log.i("appointmentItems", "  ************** item scheduled time ************   " + item.getScheduledTime());
@@ -46,7 +47,7 @@ public class AppointmentRepository {
                             Log.i("appointmentItems", "  ************** item active booking ************   " + item.getActiveBooking());
 
                         }
-                        mutableLiveData.setValue(myItemList);
+                        mutableLiveData.setValue(appointmentItems);
                     }
                 } else {
                     System.out.println("no access to resources");

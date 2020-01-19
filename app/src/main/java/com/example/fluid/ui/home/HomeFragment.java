@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.fluid.R;
+import com.example.fluid.model.pojo.AppointmentItems;
 import com.example.fluid.ui.dialogs.CustomAlertDialog;
 import com.example.fluid.ui.listeners.MyAlertActionListener;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
@@ -53,7 +55,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     private OnFragmentInteractionListener mListener;
     CustomAlertDialog alertDialog;
     boolean isFragmentVisible = false;
-
+ConstraintLayout noAppointmentsHereLayout;
 
     public HomeFragment() {
 
@@ -103,6 +105,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        noAppointmentsHereLayout = view.findViewById(R.id.layout_no_appointments);
         if (myList.size() == 0 && isFragmentVisible) {
 
             onDataChanged();
@@ -307,25 +310,36 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
             if (CheckForNetwork.isConnectionOn(activity1)) {
                 mListener.allowProgressBarToBeGone();
 
-                homeViewModel.getAllItems(clinicCode).observe(this, new Observer<List<Appointement>>() {
+                homeViewModel.getAllItems(clinicCode).observe(this, new Observer<AppointmentItems>() {
                     @Override
-                    public void onChanged(List<Appointement> items) {
-                        myList = items;
-                        numOfCalls = 0;
-                        isAppointmentStarted = false;
-                        for (int i = 0; i < myList.size(); i++) {
-                            if (!myList.get(i).getCallingTime().isEmpty())
-                                numOfCalls++;
-                            if (!myList.get(i).getCheckinTime().isEmpty()) {
-                                isAppointmentStarted = true;
-                                itemStarted = myList.get(i);
+                    public void onChanged(AppointmentItems items) {
+                        if(items.getItems()!=null) {
+                            noAppointmentsHereLayout.setVisibility(View.GONE);
+                            myList = items.getItems();
+                            numOfCalls = 0;
+                            isAppointmentStarted = false;
+                            for (int i = 0; i < myList.size(); i++) {
+                                if (!myList.get(i).getCallingTime().isEmpty())
+                                    numOfCalls++;
+                                if (!myList.get(i).getCheckinTime().isEmpty()) {
+                                    isAppointmentStarted = true;
+                                    itemStarted = myList.get(i);
+                                }
                             }
+                            mListener.enableFloatingButtons();
+                            mListener.onCallCustomer(numOfCalls);
+                            mListener.onIconChanged(isAppointmentStarted);
+                            myAdapter.setItems(myList);
+                            setAdapterTorecyclerView();
+                            mListener.notifyByListSize(items.getItems().size());
                         }
-                        mListener.onCallCustomer(numOfCalls);
-                        mListener.onIconChanged(isAppointmentStarted);
-                        myAdapter.setItems(myList);
-                        setAdapterTorecyclerView();
-                        mListener.notifyByListSize(items.size());
+                        else
+                        {
+                            mSwipeRefreshLayout.setVisibility(View.GONE);
+                            noAppointmentsHereLayout.setVisibility(View.VISIBLE);
+                            mListener.dismissFloatingButtons();
+
+                        }
 
                     }
                 });
@@ -354,6 +368,8 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         void animateStartOrFinishButton(String state);
 
         void showAlertWithMessage(String message);
+        void dismissFloatingButtons();
+        void enableFloatingButtons();
 
     }
 

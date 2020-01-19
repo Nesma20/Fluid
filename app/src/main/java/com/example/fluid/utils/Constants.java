@@ -15,7 +15,8 @@ public interface Constants {
     public static final String BASE_EXTENSION_FOR_PHOTOS = "/i/";
     public static final String ACTIVE_BOOKING = "Y";
     public static final String INACTIVE_BOOKING = "N";
-
+public static final String MALE = "M";
+public static final String FEMALE = "F";
 
 
 

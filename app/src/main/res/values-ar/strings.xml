@@ -51,5 +51,6 @@
     <string name="login">الدخول</string>
     <string name="locations_activity">الاماكن</string>
     <string name="Appointment_details">تفاصيل الحجز</string>
+    <string name="no_customer_in_current_location">لا يوجد مواعيد في هذه العيادة</string>
 
 </resources>
