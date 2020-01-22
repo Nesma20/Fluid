@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.fluid.model.pojo.AppointmentItems;
+import com.example.fluid.model.pojo.ReturnedStatus;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.model.services.repositories.AppointmentRepository;
@@ -18,11 +19,13 @@ public class HomeViewModel extends ViewModel {
         myliveData = appointmentRepository.getAllData(clinicCode);
         return myliveData;
     }
-    public void updateWithCalling(final String sessionId, final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
-        appointmentRepository.callPatient(sessionId, new OnDataChangedCallBackListener<Boolean>() {
+    public void updateWithCalling(final String sessionId, final OnDataChangedCallBackListener<Integer> onDataChangedCallBackListener){
+        appointmentRepository.callPatient(sessionId, new OnDataChangedCallBackListener<ReturnedStatus>() {
             @Override
-            public void onResponse(Boolean dataChanged) {
-                onDataChangedCallBackListener.onResponse(dataChanged);
+            public void onResponse(ReturnedStatus status) {
+                if(status.getReturnStatus().intValue()>0)
+                onDataChangedCallBackListener.onResponse(status.getReturnStatus());
+
             }
         });
 

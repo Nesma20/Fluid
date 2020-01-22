@@ -258,12 +258,22 @@ ConstraintLayout noAppointmentsHereLayout;
 
     @Override
     public void callPatient() {
-        homeViewModel.updateWithCalling(sessionId, new OnDataChangedCallBackListener<Boolean>() {
+        homeViewModel.updateWithCalling(sessionId, new OnDataChangedCallBackListener<Integer>() {
             @Override
-            public void onResponse(Boolean dataChanged) {
-                if (dataChanged.booleanValue()) {
-                    // refresh data
-                    homeViewModel.getAllItems(clinicCode);
+            public void onResponse(Integer sloteId) {
+                if (sloteId.intValue()>0) {
+                    {
+                        for(Appointement appointement : myList)
+                        {
+                            if(appointement.getSlotId().contains(sloteId.intValue()+"")) {
+                                Log.i(TAG, appointement.getEnglishName() + " called");
+                                homeViewModel.getAllItems(clinicCode);
+                            }
+
+                        }
+
+                    }
+
 
                 } else {
                     mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));

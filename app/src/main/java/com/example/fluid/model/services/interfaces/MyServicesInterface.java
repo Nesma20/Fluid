@@ -18,8 +18,8 @@ public interface MyServicesInterface {
     @GET("/ords/fluid/api/getClinicSchedule/{location_code}")
     Call<AppointmentItems> getAppointementData(@Path("location_code") String code);
 
-    @PUT("/ords/fluid/api/call/{location_code}")
-    Call<ResponseBody> callPatient(@Path("location_code") String clinicCode);
+    @PUT("/ords/fluid/api/call/{session_id}")
+    Call<ReturnedStatus> callPatient(@Path("session_id") String session_id);
 
     @PUT("/ords/fluid/api/checkin/{slot_id}")
     Call<ResponseBody> checkIn(@Path("slot_id") String slot_id);

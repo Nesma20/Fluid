@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.fluid.model.pojo.AppointmentItems;
+import com.example.fluid.model.pojo.ReturnedStatus;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.model.services.interfaces.MyServicesInterface;
@@ -64,27 +65,29 @@ public class AppointmentRepository {
         return mutableLiveData;
     }
 
-    public void callPatient(String clinicCode, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
+    public void callPatient(String sessionId, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
 
         MyServicesInterface myServicesInterface = (MyServicesInterface) RetrofitInstance.getService();
-        Call<ResponseBody> call = myServicesInterface.callPatient(clinicCode);
+        Call<ReturnedStatus> call = myServicesInterface.callPatient(sessionId);
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<ReturnedStatus>() {
 
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<ReturnedStatus> call, Response<ReturnedStatus> response) {
                 if (response.code() == Constants.STATE_OK) {
-                    onDataChangedCallBackListener.onResponse(responseReturned);
+                     if(response.body()!= null)
+                    onDataChangedCallBackListener.onResponse(response.body());
+                     else {
+                         onDataChangedCallBackListener.onResponse(null);
+                     }
                 }
-                else {
-                    onDataChangedCallBackListener.onResponse(failureOnResponse);
-                }
+
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<ReturnedStatus> call, Throwable t) {
 
-                onDataChangedCallBackListener.onResponse(failureOnResponse);
+                onDataChangedCallBackListener.onResponse(null);
                 call.cancel();
             }
         });
