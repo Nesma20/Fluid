@@ -74,7 +74,7 @@ public class Appointement implements Parcelable {
         return activeBooking;
     }
 
-    protected Appointement(Parcel in) {
+    public Appointement(Parcel in) {
         mRN = in.readString();
         arabicName = in.readString();
         englishName = in.readString();
@@ -90,6 +90,9 @@ public class Appointement implements Parcelable {
         activeBooking = in.readString();
     }
 
+    public Appointement(){
+
+    }
     public static final Creator<Appointement> CREATOR = new Creator<Appointement>() {
         @Override
         public Appointement createFromParcel(Parcel in) {

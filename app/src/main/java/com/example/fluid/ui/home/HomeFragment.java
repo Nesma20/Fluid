@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     private List<Appointement> myList = new ArrayList<>();
     private AppointmentListAdapter myAdapter;
     private View view;
-    Appointement itemStarted;
+    Appointement itemStarted = new Appointement();
     Activity activity1;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean isAppointmentStarted = false;
@@ -55,7 +56,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     private OnFragmentInteractionListener mListener;
     CustomAlertDialog alertDialog;
     boolean isFragmentVisible = false;
-ConstraintLayout noAppointmentsHereLayout;
+    ConstraintLayout noAppointmentsHereLayout;
 
     public HomeFragment() {
 
@@ -116,15 +117,14 @@ ConstraintLayout noAppointmentsHereLayout;
             public void onRefresh() {
                 if (isFragmentVisible)
 
-                if(checkForNetworkConnection()) {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                    homeViewModel.getAllItems(clinicCode);
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-                else {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    mListener.onNoDataReturned();
-                }
+                    if (checkForNetworkConnection()) {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                        homeViewModel.getAllItems(clinicCode);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    } else {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mListener.onNoDataReturned();
+                    }
 
             }
         });
@@ -192,36 +192,42 @@ ConstraintLayout noAppointmentsHereLayout;
     }
 
     @Override
-    public void updateData(Appointement appointement, final String state) {
-        if (state.equals(Constants.STARTING_STATE)) {
+    public void updateData(final Appointement appointement, final String state) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (state.equals(Constants.STARTING_STATE)) {
 
-            homeViewModel.updateWithCheckIn(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
-                @Override
-                public void onResponse(Boolean dataChanged) {
-                    if (dataChanged.booleanValue()) {
-                        homeViewModel.getAllItems(clinicCode);
-                        mListener.animateStartOrFinishButton(state);
-                        numOfCalls--;
-                    } else {
-                        mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
-                    }
+                    homeViewModel.updateWithCheckIn(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+                        @Override
+                        public void onResponse(Boolean dataChanged) {
+                            if (dataChanged.booleanValue()) {
+                                homeViewModel.getAllItems(clinicCode);
+                                mListener.animateStartOrFinishButton(state);
+                                numOfCalls--;
+                            } else {
+                                mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                            }
 
+                        }
+                    });
+
+                } else if (state.equals((Constants.ARRIVED_STATE))) {
+                    homeViewModel.confirmArrival(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+                        @Override
+                        public void onResponse(Boolean dataChanged) {
+                            if (dataChanged.booleanValue()) {
+                                //refresh data
+                                homeViewModel.getAllItems(clinicCode);
+                            } else {
+                                mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                            }
+                        }
+                    });
                 }
-            });
+            }
+        },1000);
 
-        } else if (state.equals((Constants.ARRIVED_STATE))) {
-            homeViewModel.confirmArrival(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
-                @Override
-                public void onResponse(Boolean dataChanged) {
-                    if (dataChanged.booleanValue()) {
-                        //refresh data
-                        homeViewModel.getAllItems(clinicCode);
-                    } else {
-                        mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
-                    }
-                }
-            });
-        }
         if (alertDialog != null)
             alertDialog.dismiss();
     }
@@ -241,7 +247,6 @@ ConstraintLayout noAppointmentsHereLayout;
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        homeViewModel = null;
         clinicCode = null;
     }
 
@@ -258,45 +263,57 @@ ConstraintLayout noAppointmentsHereLayout;
 
     @Override
     public void callPatient() {
-        homeViewModel.updateWithCalling(sessionId, new OnDataChangedCallBackListener<Integer>() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onResponse(Integer sloteId) {
-                if (sloteId.intValue()>0) {
-                    {
-                        for(Appointement appointement : myList)
-                        {
-                            if(appointement.getSlotId().contains(sloteId.intValue()+"")) {
-                                Log.i(TAG, appointement.getEnglishName() + " called");
-                                homeViewModel.getAllItems(clinicCode);
+            public void run() {
+                    homeViewModel.updateWithCalling(sessionId, new OnDataChangedCallBackListener<Integer>() {
+                        @Override
+                        public void onResponse(Integer sloteId) {
+                            if (sloteId.intValue() > 0) {
+                                {
+                                    for (Appointement appointement : myList) {
+                                        if (appointement.getSlotId().contains(sloteId.intValue() + "")) {
+                                            Log.i(TAG, appointement.getEnglishName() + " called");
+                                            homeViewModel.getAllItems(clinicCode);
+                                        }
+
+                                    }
+
+                                }
+
+
+                            } else {
+                                mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
                             }
-
                         }
+                    });
 
-                    }
-
-
-                } else {
-                    mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
-                }
             }
-        });
+        }, 1000);
+
     }
 
     @Override
     public void checkOutPatient() {
-        homeViewModel.updateWithCheckOut(itemStarted.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onResponse(Boolean dataChanged) {
-                if (dataChanged.booleanValue()) {
-                    // animate the button
-                    mListener.animateStartOrFinishButton(Constants.ENDING_STATE);
-                    // refresh data
-                    homeViewModel.getAllItems(clinicCode);
-                } else {
-                    mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
-                }
+            public void run() {
+                homeViewModel.updateWithCheckOut(itemStarted.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+                    @Override
+                    public void onResponse(Boolean dataChanged) {
+                        if (dataChanged.booleanValue()) {
+                            // animate the button
+                            mListener.animateStartOrFinishButton(Constants.ENDING_STATE);
+                            // refresh data
+                            homeViewModel.getAllItems(clinicCode);
+                        } else {
+                            mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                        }
+                    }
+                });
             }
-        });
+        },1000);
+
     }
 
     @Override
@@ -323,7 +340,7 @@ ConstraintLayout noAppointmentsHereLayout;
                 homeViewModel.getAllItems(clinicCode).observe(this, new Observer<AppointmentItems>() {
                     @Override
                     public void onChanged(AppointmentItems items) {
-                        if(items.getItems()!=null) {
+                        if (items.getItems() != null) {
                             noAppointmentsHereLayout.setVisibility(View.GONE);
                             myList = items.getItems();
                             numOfCalls = 0;
@@ -342,9 +359,7 @@ ConstraintLayout noAppointmentsHereLayout;
                             myAdapter.setItems(myList);
                             setAdapterTorecyclerView();
                             mListener.notifyByListSize(items.getItems().size());
-                        }
-                        else
-                        {
+                        } else {
                             mSwipeRefreshLayout.setVisibility(View.GONE);
                             noAppointmentsHereLayout.setVisibility(View.VISIBLE);
                             mListener.dismissFloatingButtons();
@@ -378,7 +393,9 @@ ConstraintLayout noAppointmentsHereLayout;
         void animateStartOrFinishButton(String state);
 
         void showAlertWithMessage(String message);
+
         void dismissFloatingButtons();
+
         void enableFloatingButtons();
 
     }
