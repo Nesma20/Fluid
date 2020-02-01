@@ -85,8 +85,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     ConstraintLayout noLocationAvailableConstraintLayout;
     MainViewModel mainViewModel;
     Button retryGetLocation;
-    FragmentManager manager;
-    FragmentTransaction transaction;
+
+    UpdateEventListener listener;
+    HomeFragment homeFragment;
     AlertDialog alertDialog;
     private static final int DRAWABLE_RESOURCE_FOR_START_STATE = R.drawable.animation_fab_finish;
     private static final int COLOR_ID_FOR_START_STATE = R.color.colorAccent;
@@ -134,8 +135,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
 
-                    if (isAppointmentStarted)
-                        myCallListenerList.get(mViewPager.getCurrentItem()).callPatient();
+                    if (isAppointmentStarted) {
+                        getCurrentFragment();
+                      //  myCallListenerList.get(mViewPager.getCurrentItem()).callPatient();
+                        listener.callPatient();
+                    }
                     else {
                         showAlertWithMessage(getResources().getString(R.string.error_call_when_there_is_customer_checked_in));
                     }
@@ -148,8 +152,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onClick(View v) {
                 if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
-
-                    myCallListenerList.get(mViewPager.getCurrentItem()).confirmArrived();
+                    getCurrentFragment();
+                    listener.confirmArrived();
                 } else {
                     redirectToNoInternetConnection();
                 }
@@ -161,11 +165,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public void onClick(View v) {
                 if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
                     if (numOfCalls > 0) {
+                        getCurrentFragment();
                         if (isAppointmentStarted) {
-                            myCallListenerList.get(mViewPager.getCurrentItem()).checkInPatient();
+                            listener.checkInPatient();
 
                         } else {
-                            myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
+                           listener.checkOutPatient();
 
                         }
                     } else {
@@ -184,6 +189,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     getAllLocations();
             }
         });
+    }
+
+    private void getCurrentFragment(){
+        homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + mViewPager.getCurrentItem());
+        listener = homeFragment;
     }
 
     private void getAllLocations() {
@@ -286,22 +296,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void setupViewPager(final ViewPager myViewPager) {
         enableButtonsAndLayoutToBeVisible();
         myCallListenerList = new ArrayList<>();
-        HomeFragment homeFragment;
+
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        UpdateEventListener listener;
+
 
         for (int i = 0; i < locationList.size(); i++) {
-            homeFragment = mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId(), locationList.get(i).getSessionId()), locationList.get(i).getFacilityId());
-            myViewPager.setOffscreenPageLimit(1);
-            listener = homeFragment;
-            myCallListenerList.add(listener);
+           mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId(), locationList.get(i).getSessionId()), locationList.get(i).getFacilityId());
         }
         myViewPager.setAdapter(mViewPagerAdapter);
+        myViewPager.setOffscreenPageLimit(1);
+
         mTabLayout.setupWithViewPager(myViewPager);
         for (int i = 0; i < locationList.size(); i++) {
             if (mTabLayout.getTabAt(i).getCustomView() == null)
                 mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(i).getCount())));
+
+
+
         }
+
     }
 
     private View updateTabTextView(int pos, final int listSize) {

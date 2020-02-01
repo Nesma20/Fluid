@@ -52,7 +52,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     private static final String ARG_LOCATION_CODE = "LOCATION_CODE";
     private static final String ARG_SESSION_ID = "SESSION_ID";
     private int numOfCalls = 0;
-    private static String TAG = "AppointmentListFragment";
+    private static final String TAG = "AppointmentListFragment";
     private OnFragmentInteractionListener mListener;
     CustomAlertDialog alertDialog;
     boolean isFragmentVisible = false;
@@ -81,12 +81,27 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
             sessionId = getArguments().getString(ARG_SESSION_ID);
         }
 
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(TAG, "onstart method");
+        Log.i(TAG, "onstart method "+clinicCode );
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume method "+clinicCode);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause method "+clinicCode);
 
     }
 
@@ -99,6 +114,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(TAG, "onCreateView method");
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         myListView = view.findViewById(R.id.appointmentRecyclerView);
@@ -107,6 +123,22 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         noAppointmentsHereLayout = view.findViewById(R.id.layout_no_appointments);
+
+        return view;
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.i(TAG, "onActivityCreated method");
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         if (myList.size() == 0 && isFragmentVisible) {
 
             onDataChanged();
@@ -128,13 +160,6 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
             }
         });
-        return view;
-    }
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     public void setAdapterTorecyclerView() {
@@ -193,6 +218,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
 
     @Override
     public void updateData(final Appointement appointement, final String state) {
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
