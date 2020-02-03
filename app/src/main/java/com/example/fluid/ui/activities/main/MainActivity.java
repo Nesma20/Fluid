@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.AnimationDrawable;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -32,6 +33,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.example.fluid.R;
@@ -57,6 +59,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,71 +130,55 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mEmailTxtView = header.findViewById(R.id.emailTxtView);
 
         displayUserInfo();
-        getAllLocations();
 
-        callFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
+        callFab.setOnClickListener(v -> {
 
-                    if (isAppointmentStarted) {
-                        getCurrentFragment();
-                      //  myCallListenerList.get(mViewPager.getCurrentItem()).callPatient();
-                        listener.callPatient();
-                    }
-                    else {
-                        showAlertWithMessage(getResources().getString(R.string.error_call_when_there_is_customer_checked_in));
-                    }
-                } else {
-                    redirectToNoInternetConnection();
-                }
-            }
-        });
-        arrivalFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
+            if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
+
+                if (isAppointmentStarted) {
                     getCurrentFragment();
-                    listener.confirmArrived();
-                } else {
-                    redirectToNoInternetConnection();
-                }
+                    listener.callPatient();
 
+                } else {
+                    showAlertWithMessage(getResources().getString(R.string.error_call_when_there_is_customer_checked_in));
+                }
+            } else {
+                redirectToNoInternetConnection();
             }
         });
-        startOrEndFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
-                    if (numOfCalls > 0) {
-                        getCurrentFragment();
-                        if (isAppointmentStarted) {
-                            listener.checkInPatient();
+        arrivalFab.setOnClickListener(v -> {
+            if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
+                getCurrentFragment();
+                listener.confirmArrived();
+            } else {
+                redirectToNoInternetConnection();
+            }
 
-                        } else {
-                           listener.checkOutPatient();
+        });
+        startOrEndFab.setOnClickListener(v -> {
+            if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
+                if (numOfCalls > 0) {
+                    getCurrentFragment();
+                    if (isAppointmentStarted) {
+                        listener.checkInPatient();
 
-                        }
                     } else {
-                        // TODO: alert with there is no customer called to be checked in.
-                        showAlertWithMessage(getResources().getString(R.string.error_no_customer_called));
+                        listener.checkOutPatient();
+
                     }
                 } else {
-                    redirectToNoInternetConnection();
+                    // TODO: alert with there is no customer called to be checked in.
+                    showAlertWithMessage(getResources().getString(R.string.error_no_customer_called));
                 }
-            }
-
-        });
-        retryGetLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    getAllLocations();
+            } else {
+                redirectToNoInternetConnection();
             }
         });
+        retryGetLocation.setOnClickListener(v -> getAllLocations());
     }
 
-    private void getCurrentFragment(){
+    private void getCurrentFragment() {
         homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + mViewPager.getCurrentItem());
         listener = homeFragment;
     }
@@ -205,19 +192,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 @Override
                 public void onResponse(LocationList dataChanged) {
                     mProgressBar.setVisibility(View.GONE);
-                    if(dataChanged != null){
-                    if (dataChanged.getItems() != null) {
-                        locationList = (ArrayList<Location>) dataChanged.getItems();
-                        disableNoLocationLayout();
-                        setupViewPager(mViewPager);
+                    if (dataChanged != null) {
+                        if (dataChanged.getItems() != null) {
+                            locationList = (ArrayList<Location>) dataChanged.getItems();
+                            disableNoLocationLayout();
+                            setupViewPager(mViewPager);
 
-                    } else if (dataChanged.getStatus().equals("no data found")) {
-                        enableLayoutForNoLocations();
-                        hideButtonAndTabLayout();
+                        } else if (dataChanged.getStatus().equals("no data found")) {
+                            enableLayoutForNoLocations();
+                            hideButtonAndTabLayout();
 
-                    }
-                    }
-                    else {
+                        }
+                    } else {
                         //TODO :handle if there error in return response data was null or failure occured
                     }
                 }
@@ -227,34 +213,29 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void displayUserInfo() {
-        mainViewModel.getFullName().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String name) {
-                mUserNameTxtView.setText(name);
-            }
-        });
-        mainViewModel.getEmail().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String email) {
-                mEmailTxtView.setText(email);
-            }
-        });
-        mainViewModel.getImageUrl().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String imgUrl) {
-                // TODO: use glide to update image view src
-                Glide.with(MainActivity.this)
-                        .load(Constants.BASE_GOOGLE_URL_FOR_IMAGES + imgUrl)
-                        .circleCrop()
-                        .into(mImageView);
-            }
+        mainViewModel.getFullName().observe(this, name -> mUserNameTxtView.setText(name));
+        mainViewModel.getEmail().observe(this, email -> mEmailTxtView.setText(email));
+        mainViewModel.getImageUrl().observe(this, imgUrl -> {
+            // TODO: use glide to update image view src
+            Glide.with(MainActivity.this)
+                    .load(Constants.BASE_GOOGLE_URL_FOR_IMAGES + imgUrl)
+                    .circleCrop()
+                    .into(mImageView);
         });
 
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG,"onStart method");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG,"onResume method");
+        getAllLocations();
 
     }
 
@@ -296,24 +277,33 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void setupViewPager(final ViewPager myViewPager) {
         enableButtonsAndLayoutToBeVisible();
         myCallListenerList = new ArrayList<>();
-
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-
-
         for (int i = 0; i < locationList.size(); i++) {
-           mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId(), locationList.get(i).getSessionId()), locationList.get(i).getFacilityId());
+            mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId(), locationList.get(i).getSessionId()), locationList.get(i).getFacilityId());
         }
         myViewPager.setAdapter(mViewPagerAdapter);
-        myViewPager.setOffscreenPageLimit(1);
-
+        myViewPager.setOffscreenPageLimit(0);
         mTabLayout.setupWithViewPager(myViewPager);
+
+        //TODO : to display tabs with data
         for (int i = 0; i < locationList.size(); i++) {
             if (mTabLayout.getTabAt(i).getCustomView() == null)
                 mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(i).getCount())));
 
-
+        }
+        for (int i = 0; i < locationList.size(); i++) {
+            homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + i);
+            if(homeFragment !=null)
+            {
+                Bundle bundle = new Bundle();
+                bundle.putString(HomeFragment.ARG_LOCATION_CODE,locationList.get(i).getFacilityId());
+                bundle.putString(HomeFragment.ARG_SESSION_ID,locationList.get(i).getSessionId());
+                homeFragment.setArgumentsAfterCreation(bundle);
+            }
 
         }
+
+
 
     }
 
@@ -474,13 +464,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    public void dismissFloatingButtons(){
+    public void dismissFloatingButtons() {
         callFab.setVisibility(View.GONE);
         arrivalFab.setVisibility(View.GONE);
         startOrEndFab.setVisibility(View.GONE);
     }
+
     @Override
-    public void enableFloatingButtons(){
+    public void enableFloatingButtons() {
         callFab.setVisibility(View.VISIBLE);
         arrivalFab.setVisibility(View.VISIBLE);
         startOrEndFab.setVisibility(View.VISIBLE);
@@ -489,11 +480,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i(TAG,"onDestroy method");
         if (myCallListenerList != null)
             for (UpdateEventListener updateEventListener : myCallListenerList) {
                 updateEventListener = null;
             }
         myCallListenerList = null;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG,"onPause method");
     }
 
     private void signOutFromGoogle() {

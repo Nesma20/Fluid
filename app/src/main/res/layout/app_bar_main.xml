@@ -39,7 +39,7 @@
         android:layout_height="100dp"
         android:gravity="center"
         android:visibility="invisible"
-        app:layout_anchor="@+id/view_pager"
+        app:layout_anchor="@+id/constraintLayout"
         app:layout_anchorGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +109,9 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -121,14 +123,13 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            app:backgroundTint="@color/colorPrimary"
             android:background="@drawable/animation_fab_start"
-            android:src="@drawable/animation_fab_start"
             android:fitsSystemWindows="true"
             android:padding="10dp"
+            android:src="@drawable/animation_fab_start"
+            app:backgroundTint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            >
+            app:layout_constraintEnd_toEndOf="parent">
 
         </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
@@ -142,9 +143,9 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:fitsSystemWindows="true"
-            app:backgroundTint="@color/colorPrimary"
             android:scaleType="fitXY"
             android:src="@drawable/ic_call"
+            app:backgroundTint="@color/colorPrimary"
             app:layout_constraintBottom_toTopOf="@+id/start_fab"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -153,17 +154,17 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_above="@id/call_fab"
-            app:backgroundTint="@color/colorPrimary"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:fitsSystemWindows="true"
             android:scaleType="fitXY"
-            app:rippleColor="@color/colorPrimaryDark"
             android:src="@drawable/ic_arrive"
+            app:backgroundTint="@color/colorPrimary"
             app:layout_constraintBottom_toTopOf="@+id/call_fab"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:rippleColor="@color/colorPrimaryDark" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

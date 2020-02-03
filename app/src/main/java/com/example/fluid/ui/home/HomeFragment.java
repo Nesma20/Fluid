@@ -2,18 +2,15 @@ package com.example.fluid.ui.home;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -31,8 +28,6 @@ import com.example.fluid.ui.listeners.UpdateEventListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.utils.CheckForNetwork;
 import com.example.fluid.utils.Constants;
-import com.example.fluid.utils.PreferenceController;
-import com.example.fluid.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +42,10 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean isAppointmentStarted = false;
     private RecyclerView myListView;
-    private String clinicCode;
+    private String locationCode;
     private String sessionId;
-    private static final String ARG_LOCATION_CODE = "LOCATION_CODE";
-    private static final String ARG_SESSION_ID = "SESSION_ID";
+    public static final String ARG_LOCATION_CODE = "LOCATION_CODE";
+    public static final String ARG_SESSION_ID = "SESSION_ID";
     private int numOfCalls = 0;
     private static final String TAG = "AppointmentListFragment";
     private OnFragmentInteractionListener mListener;
@@ -77,31 +72,47 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate method");
         if (getArguments() != null) {
-            clinicCode = getArguments().getString(ARG_LOCATION_CODE);
+            locationCode = getArguments().getString(ARG_LOCATION_CODE);
             sessionId = getArguments().getString(ARG_SESSION_ID);
         }
 
+
+    }
+    public void setArgumentsAfterCreation(Bundle bundle){
+        Log.i(TAG, "setArgumentsAfterCreation method");
+        if (bundle != null) {
+            if(!locationCode.equals(bundle.getString(ARG_LOCATION_CODE)))
+            locationCode = bundle.getString(ARG_LOCATION_CODE);
+            if(!sessionId.equals(bundle.getString(ARG_SESSION_ID)))
+                sessionId = bundle.getString(ARG_SESSION_ID);
+        }
+
+        if (myList.size() == 0 && isFragmentVisible) {
+
+            onDataChanged();
+
+        }
 
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(TAG, "onstart method "+clinicCode );
+        Log.i(TAG, "onstart method "+ locationCode);
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume method "+clinicCode);
+        Log.i(TAG, "onResume method "+ locationCode);
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.i(TAG, "onPause method "+clinicCode);
+        Log.i(TAG, "onPause method "+ locationCode);
 
     }
 
@@ -123,7 +134,6 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         noAppointmentsHereLayout = view.findViewById(R.id.layout_no_appointments);
-
         return view;
     }
 
@@ -132,34 +142,26 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "onActivityCreated method");
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            if (isFragmentVisible)
 
+                if (checkForNetworkConnection()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    homeViewModel.getAllItems(locationCode);
+                    mSwipeRefreshLayout.setRefreshing(false);
+                } else {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mListener.onNoDataReturned();
+                }
+
+        });
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (myList.size() == 0 && isFragmentVisible) {
 
-            onDataChanged();
-
-        }
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (isFragmentVisible)
-
-                    if (checkForNetworkConnection()) {
-                        mSwipeRefreshLayout.setRefreshing(true);
-                        homeViewModel.getAllItems(clinicCode);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    } else {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mListener.onNoDataReturned();
-                    }
-
-            }
-        });
     }
 
     public void setAdapterTorecyclerView() {
@@ -228,7 +230,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
                         @Override
                         public void onResponse(Boolean dataChanged) {
                             if (dataChanged.booleanValue()) {
-                                homeViewModel.getAllItems(clinicCode);
+                                homeViewModel.getAllItems(locationCode);
                                 mListener.animateStartOrFinishButton(state);
                                 numOfCalls--;
                             } else {
@@ -244,7 +246,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
                         public void onResponse(Boolean dataChanged) {
                             if (dataChanged.booleanValue()) {
                                 //refresh data
-                                homeViewModel.getAllItems(clinicCode);
+                                homeViewModel.getAllItems(locationCode);
                             } else {
                                 mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
                             }
@@ -273,7 +275,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        clinicCode = null;
+        locationCode = null;
     }
 
 
@@ -300,7 +302,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
                                     for (Appointement appointement : myList) {
                                         if (appointement.getSlotId().contains(sloteId.intValue() + "")) {
                                             Log.i(TAG, appointement.getEnglishName() + " called");
-                                            homeViewModel.getAllItems(clinicCode);
+                                            homeViewModel.getAllItems(locationCode);
                                         }
 
                                     }
@@ -331,7 +333,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
                             // animate the button
                             mListener.animateStartOrFinishButton(Constants.ENDING_STATE);
                             // refresh data
-                            homeViewModel.getAllItems(clinicCode);
+                            homeViewModel.getAllItems(locationCode);
                         } else {
                             mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
                         }
@@ -363,7 +365,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, MyAle
             if (CheckForNetwork.isConnectionOn(activity1)) {
                 mListener.allowProgressBarToBeGone();
 
-                homeViewModel.getAllItems(clinicCode).observe(this, new Observer<AppointmentItems>() {
+                homeViewModel.getAllItems(locationCode).observe(this, new Observer<AppointmentItems>() {
                     @Override
                     public void onChanged(AppointmentItems items) {
                         if (items.getItems() != null) {

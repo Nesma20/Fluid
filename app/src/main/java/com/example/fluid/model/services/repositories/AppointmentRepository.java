@@ -75,9 +75,11 @@ public class AppointmentRepository {
             @Override
             public void onResponse(Call<ReturnedStatus> call, Response<ReturnedStatus> response) {
                 if (response.code() == Constants.STATE_OK) {
-                     if(response.body()!= null)
-                    onDataChangedCallBackListener.onResponse(response.body());
-                     else {
+                     if(response.body()!= null) {
+                         Log.i("AppointmentListFragment", "response from repo: " + response.toString());
+                         onDataChangedCallBackListener.onResponse(response.body());
+
+                     }else {
                          onDataChangedCallBackListener.onResponse(null);
                      }
                 }

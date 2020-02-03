@@ -1,5 +1,7 @@
 package com.example.fluid.ui.home;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -23,6 +25,7 @@ public class HomeViewModel extends ViewModel {
         appointmentRepository.callPatient(sessionId, new OnDataChangedCallBackListener<ReturnedStatus>() {
             @Override
             public void onResponse(ReturnedStatus status) {
+                Log.i("AppointmentListFragment","status return from call "+ status.getReturnStatus().intValue());
                 if(status.getReturnStatus().intValue()>0)
                 onDataChangedCallBackListener.onResponse(status.getReturnStatus());
 
