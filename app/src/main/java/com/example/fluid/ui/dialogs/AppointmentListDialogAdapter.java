@@ -13,25 +13,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.fluid.R;
-import com.example.fluid.ui.listeners.MyAlertActionListener;
+import com.example.fluid.ui.listeners.AlertActionListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.utils.Constants;
 import com.example.fluid.utils.PreferenceController;
 import com.example.fluid.utils.StringUtil;
 
 import java.util.List;
-import java.util.Locale;
 
-public class AlertDialogAdapter extends RecyclerView.Adapter<AlertDialogAdapter.myViewHolder> {
+public class AppointmentListDialogAdapter extends RecyclerView.Adapter<AppointmentListDialogAdapter.myViewHolder> {
     Context mContext;
-    List<Appointement> items;
+    List<Appointement> appointmentList;
     String state;
-    MyAlertActionListener myAlertActionListener;
+    AlertActionListener alertActionListener;
 
-    public AlertDialogAdapter(Context mContext, List<Appointement> items, MyAlertActionListener myAlertActionListener, String state) {
+    public AppointmentListDialogAdapter(Context mContext, List<Appointement> appointmentList, AlertActionListener alertActionListener, String state) {
         this.mContext = mContext;
-        this.items = items;
-        this.myAlertActionListener = myAlertActionListener;
+        this.appointmentList = appointmentList;
+        this.alertActionListener = alertActionListener;
         this.state = state;
     }
 
@@ -44,7 +43,7 @@ public class AlertDialogAdapter extends RecyclerView.Adapter<AlertDialogAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull myViewHolder holder, int position) {
-        final Appointement appointement = items.get(position);
+        final Appointement appointement = appointmentList.get(position);
         String languageName = PreferenceController.getInstance(mContext).get(PreferenceController.LANGUAGE);
         if (languageName.contains(Constants.ENGLISH)) {
             holder.patientNameTxt.setText(StringUtil.toCamelCase(appointement.getEnglishName()));
@@ -76,7 +75,7 @@ public class AlertDialogAdapter extends RecyclerView.Adapter<AlertDialogAdapter.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myAlertActionListener.updateData(appointement, state);
+                alertActionListener.updateData(appointement, state);
             }
         });
 
@@ -84,7 +83,7 @@ public class AlertDialogAdapter extends RecyclerView.Adapter<AlertDialogAdapter.
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return appointmentList.size();
     }
 
 

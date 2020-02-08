@@ -137,8 +137,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
 
                 if (isAppointmentStarted) {
-                    getCurrentFragment();
-                    listener.callPatient();
+
+                    myCallListenerList.get(mViewPager.getCurrentItem()).callPatient();
 
                 } else {
                     showAlertWithMessage(getResources().getString(R.string.error_call_when_there_is_customer_checked_in));
@@ -149,8 +149,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
         arrivalFab.setOnClickListener(v -> {
             if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
-                getCurrentFragment();
-                listener.confirmArrived();
+                myCallListenerList.get(mViewPager.getCurrentItem()).confirmArrived();
+
             } else {
                 redirectToNoInternetConnection();
             }
@@ -161,10 +161,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 if (numOfCalls > 0) {
                     getCurrentFragment();
                     if (isAppointmentStarted) {
-                        listener.checkInPatient();
+                        myCallListenerList.get(mViewPager.getCurrentItem()).checkInPatient();
+
 
                     } else {
-                        listener.checkOutPatient();
+                        myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
+
 
                     }
                 } else {
@@ -285,7 +287,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         myViewPager.setOffscreenPageLimit(0);
         mTabLayout.setupWithViewPager(myViewPager);
 
-        //TODO : to display tabs with data
         for (int i = 0; i < locationList.size(); i++) {
             if (mTabLayout.getTabAt(i).getCustomView() == null)
                 mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(i).getCount())));
@@ -299,7 +300,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 bundle.putString(HomeFragment.ARG_LOCATION_CODE,locationList.get(i).getFacilityId());
                 bundle.putString(HomeFragment.ARG_SESSION_ID,locationList.get(i).getSessionId());
                 homeFragment.setArgumentsAfterCreation(bundle);
+                myCallListenerList.add(homeFragment);
             }
+
 
         }
 
@@ -486,6 +489,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 updateEventListener = null;
             }
         myCallListenerList = null;
+            if(alertDialog!= null)
+                alertDialog.dismiss();
     }
 
     @Override
