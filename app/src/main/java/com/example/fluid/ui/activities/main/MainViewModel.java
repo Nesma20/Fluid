@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.fluid.model.pojo.Location;
 import com.example.fluid.model.pojo.LocationList;
+import com.example.fluid.model.services.repositories.AppointmentRepository;
 import com.example.fluid.model.services.repositories.UserRepository;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.utils.App;
@@ -14,10 +15,12 @@ import com.example.fluid.utils.PreferenceController;
 
 public class MainViewModel extends ViewModel {
     private static final String TAG = "MainActivity";
-UserRepository userRepository = new UserRepository();
+    UserRepository userRepository = new UserRepository();
+    AppointmentRepository appointmentRepository = new AppointmentRepository();
     private MutableLiveData<String> fullNameLivedata;
     private MutableLiveData<String> emailLiveData;
     private MutableLiveData<String> imageUrlLiveData;
+    private MutableLiveData<Integer> numOfUnarrivedCustomersLiveData;
     public void clearDataFromSharedPreference(){
         PreferenceController.getInstance(App.getContext()).clear(PreferenceController.PREF_EMAIL);
         PreferenceController.getInstance(App.getContext()).clear(PreferenceController.PREF_IMAGE_PROFILE_URL);
@@ -50,21 +53,25 @@ UserRepository userRepository = new UserRepository();
         return imageUrlLiveData;
     }
     public String getDataFromSharedPreference(String key){
-       return PreferenceController.getInstance(App.getContext()).get(key);
+        return PreferenceController.getInstance(App.getContext()).get(key);
     }
     public void getLocationData(String email, final OnDataChangedCallBackListener onDataChangedCallBackListener){
         userRepository.getLocationList(email, new OnDataChangedCallBackListener<LocationList>() {
             @Override
             public void onResponse(LocationList dataChanged) {
                 if (dataChanged !=null && dataChanged.getItems()!= null) {
-                for (Location location : dataChanged.getItems()) {
-                    Log.i(TAG, "facility id : " + location.getFacilityId());
-                    Log.i(TAG, "session id " + location.getSessionId());
+                    for (Location location : dataChanged.getItems()) {
+                        Log.i(TAG, "facility id : " + location.getFacilityId());
+                        Log.i(TAG, "session id " + location.getSessionId());
+                    }
                 }
-            }
                 onDataChangedCallBackListener.onResponse(dataChanged);
             }
         });
+
+    }
+    public MutableLiveData getNumOfUnArrivedData(String locationCode){
+        return appointmentRepository.getUnArrivedNumber(locationCode);
 
     }
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.fluid.model.pojo.AppointmentItems;
 import com.example.fluid.model.pojo.ReturnedStatus;
+import com.example.fluid.ui.EspressoTestingIdlingResource;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.model.services.interfaces.MyServicesInterface;
@@ -21,10 +22,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AppointmentRepository {
-    List<Appointement> myItemList;
+    List<Appointement> myItemList = new ArrayList<>();
     boolean responseReturned = true;
     boolean failureOnResponse = false;
     private MutableLiveData<AppointmentItems> mutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> numberOfUnArrivedCustomers = new MutableLiveData<>();
+    AppointmentItems appointmentItems;
 
     public MutableLiveData getAllData(String clinicCode) {
         myItemList = new ArrayList<>();
@@ -35,19 +38,21 @@ public class AppointmentRepository {
             public void onResponse(Call<AppointmentItems> call, Response<AppointmentItems> response) {
                 if (response.isSuccessful()) {
                     System.out.println("*********************** on response ********************");
-                    AppointmentItems appointmentItems = response.body();
+                    appointmentItems = response.body();
                     if(appointmentItems != null ) {
                         myItemList = (ArrayList<Appointement>) appointmentItems.getItems();
                         if(appointmentItems.getItems()!=null)
-                        for (Appointement item : myItemList) {
-                            Log.i("appointmentItems", "  ************** item arrival time ************   " + item.getArrivalTime() + "slot " + item.getSlotId());
-                            Log.i("appointmentItems", "  ************** item scheduled time ************   " + item.getScheduledTime());
-                            Log.i("appointmentItems", "  ************** item calling time ************   " + item.getCallingTime());
-                            Log.i("appointmentItems", "  ************** item checkin time ************   " + item.getCheckinTime());
-                            Log.i("appointmentItems", "  ************** item expected time ************   " + item.getExpectedTime());
-                            Log.i("appointmentItems", "  ************** item active booking ************   " + item.getActiveBooking());
+                            for (Appointement item : myItemList) {
+                                Log.i("appointmentItems", "  ************** item arrival time ************   " + item.getArrivalTime() + "slot " + item.getSlotId());
+                                Log.i("appointmentItems", "  ************** item scheduled time ************   " + item.getScheduledTime());
+                                Log.i("appointmentItems", "  ************** item calling time ************   " + item.getCallingTime());
+                                Log.i("appointmentItems", "  ************** item checkin time ************   " + item.getCheckinTime());
+                                Log.i("appointmentItems", "  ************** item expected time ************   " + item.getExpectedTime());
+                                Log.i("appointmentItems", "  ************** item active booking ************   " + item.getActiveBooking());
 
-                        }
+                            }
+                        //TODO: For testing
+                        EspressoTestingIdlingResource.decrement();
                         mutableLiveData.setValue(appointmentItems);
                     }
                 } else {
@@ -75,13 +80,13 @@ public class AppointmentRepository {
             @Override
             public void onResponse(Call<ReturnedStatus> call, Response<ReturnedStatus> response) {
                 if (response.code() == Constants.STATE_OK) {
-                     if(response.body()!= null) {
-                         Log.i("AppointmentListFragment", "response from repo: " + response.toString());
-                         onDataChangedCallBackListener.onResponse(response.body());
+                    if(response.body()!= null) {
+                        Log.i("AppointmentListFragment", "response from repo: " + response.toString());
+                        onDataChangedCallBackListener.onResponse(response.body());
 
-                     }else {
-                         onDataChangedCallBackListener.onResponse(null);
-                     }
+                    }else {
+                        onDataChangedCallBackListener.onResponse(null);
+                    }
                 }
 
             }
@@ -161,6 +166,41 @@ public class AppointmentRepository {
                 onDataChangedCallBackListener.onResponse(failureOnResponse);
             }
         });
+    }
+    int returnNumber;
+    public MutableLiveData getUnArrivedNumber(String locationCode ){
+
+        MyServicesInterface myServicesInterface = (MyServicesInterface) RetrofitInstance.getService();
+        Call<AppointmentItems> call = myServicesInterface.getAppointementData(locationCode);
+        call.enqueue(new Callback<AppointmentItems>() {
+            @Override
+            public void onResponse(Call<AppointmentItems> call, Response<AppointmentItems> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("*********************** on response in get number arrived ********************");
+                    appointmentItems = response.body();
+                    if(appointmentItems != null ) {
+                        for(int i = 0; i<appointmentItems.getItems().size();i++){
+                            if(appointmentItems.getItems().get(i).getArrivalTime().isEmpty()){
+                                myItemList.add(appointmentItems.getItems().get(i));
+                            }
+                        }
+                        returnNumber = myItemList.size();
+                        numberOfUnArrivedCustomers.setValue(returnNumber);
+
+                    }
+                } else {
+
+                    returnNumber = 0;
+                    numberOfUnArrivedCustomers.setValue(returnNumber);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AppointmentItems> call, Throwable t) {
+                call.cancel();
+            }
+        });
+        return numberOfUnArrivedCustomers;
     }
 
 

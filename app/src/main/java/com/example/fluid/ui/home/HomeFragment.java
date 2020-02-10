@@ -21,6 +21,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.fluid.R;
 import com.example.fluid.model.pojo.AppointmentItems;
+import com.example.fluid.ui.EspressoTestingIdlingResource;
 import com.example.fluid.ui.dialogs.ArriveOrCheckinListDialog;
 import com.example.fluid.ui.listeners.AlertActionListener;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
@@ -55,7 +56,6 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
     public static final String ARG_SESSION_ID = "SESSION_ID";
     private static final String TAG = "AppointmentListFragment";
 
-
     public HomeFragment() {
 
     }
@@ -81,12 +81,13 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
 
 
     }
-    public void setArgumentsAfterCreation(Bundle bundle){
+
+    public void setArgumentsAfterCreation(Bundle bundle) {
         Log.i(TAG, "setArgumentsAfterCreation method");
         if (bundle != null) {
-            if(!locationCode.equals(bundle.getString(ARG_LOCATION_CODE)))
-            locationCode = bundle.getString(ARG_LOCATION_CODE);
-            if(!sessionId.equals(bundle.getString(ARG_SESSION_ID)))
+            if (!locationCode.equals(bundle.getString(ARG_LOCATION_CODE)))
+                locationCode = bundle.getString(ARG_LOCATION_CODE);
+            if (!sessionId.equals(bundle.getString(ARG_SESSION_ID)))
                 sessionId = bundle.getString(ARG_SESSION_ID);
         }
 
@@ -98,24 +99,25 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
 
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(TAG, "onstart method "+ locationCode);
+        Log.i(TAG, "onstart method " + locationCode);
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume method "+ locationCode);
+        Log.i(TAG, "onResume method " + locationCode);
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.i(TAG, "onPause method "+ locationCode);
+        Log.i(TAG, "onPause method " + locationCode);
 
     }
 
@@ -123,7 +125,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy method");
-        if(alertDialog !=null)
+        if (alertDialog != null)
             alertDialog.dismiss();
     }
 
@@ -179,7 +181,6 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
 
     private void checkInAction() {
         if (numOfCalls == 1) {
-
             for (int counterToFindTheCalledOne = 0; counterToFindTheCalledOne < appointmentList.size(); counterToFindTheCalledOne++) {
                 if (!appointmentList.get(counterToFindTheCalledOne).getCallingTime().isEmpty()) {
                     updateData(appointmentList.get(counterToFindTheCalledOne), Constants.STARTING_STATE);
@@ -194,9 +195,10 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
     }
 
     private void buildAlertWithList(String state) {
-
         List<Appointement> itemsList = new ArrayList<>();
         if (state.equals(Constants.STARTING_STATE)) {
+            EspressoTestingIdlingResource.increment();
+
             for (int i = 0; i < appointmentList.size(); i++) {
 
                 if (appointmentList.get(i).getCheckinTime().isEmpty()
@@ -204,63 +206,75 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
                     itemsList.add(appointmentList.get(i));
                 }
             }
+           EspressoTestingIdlingResource.decrement();
 
-        } else if (state.equals(Constants.ARRIVED_STATE))
+        } else if (state.equals(Constants.ARRIVED_STATE)) {
+            EspressoTestingIdlingResource.increment();
             for (int i = 0; i < appointmentList.size(); i++) {
                 if (appointmentList.get(i).getArrivalTime().isEmpty()) {
                     itemsList.add(appointmentList.get(i));
                 }
             }
-//        if (itemsList.size() > 0) {
+        }
+        if (itemsList.size() > 0) {
             alertDialog = new ArriveOrCheckinListDialog(getContext(), itemsList, this, state);
             alertDialog.getWindow().setLayout(getView().getWidth(), getView().getHeight() / 2);
             alertDialog.show();
-
-//        } else {
-//            // TODO : alert for that all customers already arrived.
-//            mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_all_customers_arrived));
-//        }
+            //TODO : for testing
+            EspressoTestingIdlingResource.decrement();
+        } else {
+            mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_all_customers_arrived));
+        }
 
     }
 
     @Override
     public void updateData(final Appointement appointement, final String state) {
+        if (state.equals(Constants.STARTING_STATE)) {
+            EspressoTestingIdlingResource.increment();
+            homeViewModel.updateWithCheckIn(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+                @Override
+                public void onResponse(Boolean dataChanged) {
+                    if (dataChanged.booleanValue()) {
+                        homeViewModel.getAllItems(locationCode);
+                        mListener.animateStartOrFinishButton(state);
+                        numOfCalls--;
+                        EspressoTestingIdlingResource.decrement();
+                    } else {
+                        mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                    }
 
-
-                if (state.equals(Constants.STARTING_STATE)) {
-
-                    homeViewModel.updateWithCheckIn(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
-                        @Override
-                        public void onResponse(Boolean dataChanged) {
-                            if (dataChanged.booleanValue()) {
-                                homeViewModel.getAllItems(locationCode);
-                                mListener.animateStartOrFinishButton(state);
-                                numOfCalls--;
-                            } else {
-                                mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
-                            }
-
-                        }
-                    });
-
-                } else if (state.equals((Constants.ARRIVED_STATE))) {
-                    homeViewModel.confirmArrival(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
-                        @Override
-                        public void onResponse(Boolean dataChanged) {
-                            if (dataChanged.booleanValue()) {
-                                //refresh data
-                                homeViewModel.getAllItems(locationCode);
-                                Toast.makeText(getContext(),appointement.getEnglishName() +" arrived",Toast.LENGTH_SHORT).show();
-                            } else {
-                                mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
-                            }
-                        }
-                    });
                 }
+            });
 
-        if (alertDialog != null)
+        } else if (state.equals((Constants.ARRIVED_STATE))) {
+            EspressoTestingIdlingResource.increment();
+            homeViewModel.confirmArrival(appointement.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+                @Override
+                public void onResponse(Boolean dataChanged) {
+
+                    if (dataChanged.booleanValue()) {
+                        //refresh data
+                        homeViewModel.getAllItems(locationCode);
+
+                        Toast.makeText(getContext(), appointement.getEnglishName() + " arrived", Toast.LENGTH_SHORT).show();
+                        EspressoTestingIdlingResource.decrement();
+
+
+                    } else {
+                        mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                    }
+
+                }
+            });
+        }
+
+        if (alertDialog != null) {
             alertDialog.dismiss();
+
+        }
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -288,53 +302,56 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
 
     @Override
     public void confirmArrived() {
+
         buildAlertWithList(Constants.ARRIVED_STATE);
     }
 
     @Override
     public void callPatient() {
-      
-                    homeViewModel.updateWithCalling(sessionId, new OnDataChangedCallBackListener<Integer>() {
-                        @Override
-                        public void onResponse(Integer sloteId) {
-                            if (sloteId.intValue() > 0) {
-                                {
-                                    for (Appointement appointement : appointmentList) {
-                                        if (appointement.getSlotId().contains(sloteId.intValue() + "")) {
-                                            homeViewModel.getAllItems(locationCode);
-                                            Toast.makeText(getContext(),appointement.getEnglishName() + " called",Toast.LENGTH_LONG).show();
-
-                                        }
-
-                                    }
-
-                                }
 
 
-                            } else {
-                                mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+        homeViewModel.updateWithCalling(sessionId, new OnDataChangedCallBackListener<Integer>() {
+            @Override
+            public void onResponse(Integer sloteId) {
+                if (sloteId.intValue() > 0) {
+                    {
+                        EspressoTestingIdlingResource.increment();
+                        for (Appointement appointement : appointmentList) {
+                            if (appointement.getSlotId().contains(sloteId.intValue() + "")) {
+                                homeViewModel.getAllItems(locationCode);
+                                Toast.makeText(getContext(), appointement.getEnglishName() + " called", Toast.LENGTH_SHORT).show();
+
                             }
+
                         }
-                    });
+
+                        EspressoTestingIdlingResource.decrement();
+                    }
+
+
+                } else {
+                    mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                }
+            }
+        });
 
     }
 
     @Override
     public void checkOutPatient() {
-                homeViewModel.updateWithCheckOut(itemStarted.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
-                    @Override
-                    public void onResponse(Boolean dataChanged) {
-                        if (dataChanged.booleanValue()) {
-                            // animate the button
-                            mListener.animateStartOrFinishButton(Constants.ENDING_STATE);
-                            // refresh data
-                            homeViewModel.getAllItems(locationCode);
-                        } else {
-                            mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
-                        }
-                    }
-                });
-            
+        homeViewModel.updateWithCheckOut(itemStarted.getSlotId(), new OnDataChangedCallBackListener<Boolean>() {
+            @Override
+            public void onResponse(Boolean dataChanged) {
+                if (dataChanged.booleanValue()) {
+                    // animate the button
+                    mListener.animateStartOrFinishButton(Constants.ENDING_STATE);
+                    // refresh data
+                    homeViewModel.getAllItems(locationCode);
+                } else {
+                    mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_connection_whle_retrieve_data));
+                }
+            }
+        });
 
 
     }
@@ -359,11 +376,11 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
 
             if (CheckForNetwork.isConnectionOn(mainActivity)) {
                 mListener.allowProgressBarToBeGone();
-
                 homeViewModel.getAllItems(locationCode).observe(this, new Observer<AppointmentItems>() {
                     @Override
                     public void onChanged(AppointmentItems items) {
                         if (items.getItems() != null) {
+                            EspressoTestingIdlingResource.increment();
                             noAppointmentsHereLayout.setVisibility(View.GONE);
                             appointmentList = items.getItems();
                             numOfCalls = 0;
@@ -382,12 +399,15 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
                             appointmentListAdapter.setItems(appointmentList);
                             setAdapterTorecyclerView();
                             mListener.notifyByListSize(items.getItems().size());
+                            EspressoTestingIdlingResource.decrement();
                         } else {
                             mSwipeRefreshLayout.setVisibility(View.GONE);
                             noAppointmentsHereLayout.setVisibility(View.VISIBLE);
                             mListener.dismissFloatingButtons();
 
                         }
+
+
 
                     }
                 });
@@ -428,6 +448,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
         super.setMenuVisibility(menuVisible);
         isFragmentVisible = menuVisible;
         if (getContext() != null && menuVisible) {
+            EspressoTestingIdlingResource.increment();
             mListener.allowProgressBarToBeVisible();
             onDataChanged();
             mListener.allowProgressBarToBeGone();

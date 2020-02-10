@@ -8,16 +8,15 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.fluid.model.pojo.AppointmentItems;
 import com.example.fluid.model.pojo.ReturnedStatus;
+import com.example.fluid.ui.EspressoTestingIdlingResource;
 import com.example.fluid.ui.listeners.OnDataChangedCallBackListener;
-import com.example.fluid.model.pojo.Appointement;
 import com.example.fluid.model.services.repositories.AppointmentRepository;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HomeViewModel extends ViewModel {
     AppointmentRepository appointmentRepository = new AppointmentRepository();
     MutableLiveData myliveData = new MutableLiveData();
     public LiveData<AppointmentItems> getAllItems(String clinicCode){
+        EspressoTestingIdlingResource.increment();
         myliveData = appointmentRepository.getAllData(clinicCode);
         return myliveData;
     }

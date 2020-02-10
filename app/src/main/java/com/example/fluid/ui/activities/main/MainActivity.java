@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -32,6 +34,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.test.espresso.IdlingResource;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -99,6 +102,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public static final String LOCATIONS = "locations";
     public static final String TAG = "MainActivity";
     private int numOfCalls;
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private SimpleIdlingResource loadDataIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,8 +143,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
 
                 if (isAppointmentStarted) {
-
-                    myCallListenerList.get(mViewPager.getCurrentItem()).callPatient();
+                    getCurrentFragment();
+                    listener.callPatient();
 
                 } else {
                     showAlertWithMessage(getResources().getString(R.string.error_call_when_there_is_customer_checked_in));
@@ -148,8 +154,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
         arrivalFab.setOnClickListener(v -> {
+
+
             if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
-                myCallListenerList.get(mViewPager.getCurrentItem()).confirmArrived();
+                getCurrentFragment();
+                listener.confirmArrived();
 
             } else {
                 redirectToNoInternetConnection();
@@ -161,11 +170,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 if (numOfCalls > 0) {
                     getCurrentFragment();
                     if (isAppointmentStarted) {
-                        myCallListenerList.get(mViewPager.getCurrentItem()).checkInPatient();
-
+                        getCurrentFragment();
+                        listener.checkInPatient();
 
                     } else {
-                        myCallListenerList.get(mViewPager.getCurrentItem()).checkOutPatient();
+                        listener.checkOutPatient();
 
 
                     }
@@ -189,6 +198,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (!CheckForNetwork.isConnectionOn(this)) {
             redirectToNoInternetConnection();
         } else {
+            getNumOfUnArrivedCustomers();
             mProgressBar.setVisibility(View.VISIBLE);
             mainViewModel.getLocationData(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL), new OnDataChangedCallBackListener<LocationList>() {
                 @Override
@@ -198,6 +208,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         if (dataChanged.getItems() != null) {
                             locationList = (ArrayList<Location>) dataChanged.getItems();
                             disableNoLocationLayout();
+
                             setupViewPager(mViewPager);
 
                         } else if (dataChanged.getStatus().equals("no data found")) {
@@ -230,13 +241,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i(TAG,"onStart method");
+        Log.i(TAG, "onStart method");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG,"onResume method");
+        Log.i(TAG, "onResume method");
         getAllLocations();
 
     }
@@ -277,35 +288,32 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setupViewPager(final ViewPager myViewPager) {
-        enableButtonsAndLayoutToBeVisible();
+
+
         myCallListenerList = new ArrayList<>();
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         for (int i = 0; i < locationList.size(); i++) {
-            mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId(), locationList.get(i).getSessionId()), locationList.get(i).getFacilityId());
-        }
+        mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId(), locationList.get(i).getSessionId()), locationList.get(i).getFacilityId());
+       }
         myViewPager.setAdapter(mViewPagerAdapter);
         myViewPager.setOffscreenPageLimit(0);
         mTabLayout.setupWithViewPager(myViewPager);
 
         for (int i = 0; i < locationList.size(); i++) {
-            if (mTabLayout.getTabAt(i).getCustomView() == null)
-                mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(i).getCount())));
-
-        }
-        for (int i = 0; i < locationList.size(); i++) {
-            homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + i);
-            if(homeFragment !=null)
-            {
-                Bundle bundle = new Bundle();
-                bundle.putString(HomeFragment.ARG_LOCATION_CODE,locationList.get(i).getFacilityId());
-                bundle.putString(HomeFragment.ARG_SESSION_ID,locationList.get(i).getSessionId());
-                homeFragment.setArgumentsAfterCreation(bundle);
-                myCallListenerList.add(homeFragment);
-            }
-
+        if (mTabLayout.getTabAt(i).getCustomView() == null)
+            mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(0).getCount())));
+       }
+       for (int i = 0; i < locationList.size(); i++) {
+        homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + i);
+        if (homeFragment != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(HomeFragment.ARG_LOCATION_CODE, locationList.get(i).getFacilityId());
+            bundle.putString(HomeFragment.ARG_SESSION_ID, locationList.get(i).getSessionId());
+            homeFragment.setArgumentsAfterCreation(bundle);
 
         }
 
+        }
 
 
     }
@@ -426,6 +434,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         else
             ((TextView) mTabLayout.getTabAt(mViewPager.getCurrentItem()).getCustomView().findViewById(R.id.new_notifications_for_list_size)).setText("" + listSize);
 
+
     }
 
     @Override
@@ -483,20 +492,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i(TAG,"onDestroy method");
+        Log.i(TAG, "onDestroy method");
         if (myCallListenerList != null)
             for (UpdateEventListener updateEventListener : myCallListenerList) {
                 updateEventListener = null;
             }
         myCallListenerList = null;
-            if(alertDialog!= null)
-                alertDialog.dismiss();
+        if (alertDialog != null)
+            alertDialog.dismiss();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(TAG,"onPause method");
+        Log.i(TAG, "onPause method");
     }
 
     private void signOutFromGoogle() {
@@ -542,6 +551,36 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         alertDialog = builder.create();
         alertDialog.show();
 
+    }
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResourceForEnableButton() {
+        if (loadDataIdlingResource == null) {
+            loadDataIdlingResource = new SimpleIdlingResource();
+
+        }
+        return loadDataIdlingResource;
+    }
+
+    int numOfUnArrivedData;
+
+    private void getNumOfUnArrivedCustomers() {
+
+        mainViewModel.getNumOfUnArrivedData("OPTH1").observe(this, (Observer<Integer>) o ->
+                {
+                    numOfUnArrivedData = o.intValue();
+                }
+        );
+
+    }
+    @VisibleForTesting
+    public int getNumberofUnArrivedCustomer() {
+        return numOfUnArrivedData;
+    }
+    @VisibleForTesting
+    public int getNumberOfCustomerAtFirstLocation(){
+        return Integer.parseInt(locationList.get(1).getCount());
     }
 }
 
