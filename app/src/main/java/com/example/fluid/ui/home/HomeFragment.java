@@ -1,8 +1,11 @@
 package com.example.fluid.ui.home;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +36,7 @@ import com.example.fluid.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressLint("ParcelCreator")
 public class HomeFragment extends Fragment implements UpdateEventListener, AlertActionListener {
     private HomeViewModel homeViewModel;
     private AppointmentListAdapter appointmentListAdapter;
@@ -78,6 +82,9 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
             locationCode = getArguments().getString(ARG_LOCATION_CODE);
             sessionId = getArguments().getString(ARG_SESSION_ID);
         }
+        if(savedInstanceState !=null){
+            appointmentList = savedInstanceState.getParcelableArrayList("appointmentList");
+        }
 
 
     }
@@ -119,6 +126,15 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
         super.onPause();
         Log.i(TAG, "onPause method " + locationCode);
 
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(outState!=null){
+            outState.putParcelableArrayList("appointmentList", (ArrayList<? extends Parcelable>) appointmentList);
+        }
     }
 
     @Override
@@ -419,6 +435,16 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
+
 
     public interface OnFragmentInteractionListener {
         void onIconChanged(boolean isAppointmentStarted);
@@ -447,7 +473,7 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
         isFragmentVisible = menuVisible;
-        if (getContext() != null && menuVisible) {
+        if (getContext() != null && menuVisible ) {
             EspressoTestingIdlingResource.increment();
             mListener.allowProgressBarToBeVisible();
             onDataChanged();

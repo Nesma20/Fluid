@@ -51,7 +51,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/view_pager"
             android:orientation="horizontal"

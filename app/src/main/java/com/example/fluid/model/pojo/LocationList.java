@@ -3,6 +3,7 @@ package com.example.fluid.model.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocationList {
@@ -12,13 +13,13 @@ public class LocationList {
 
     @SerializedName("items")
     @Expose
-    private List<Location> items = null;
+    private ArrayList<Location> items = null;
 
-    public List<Location> getItems() {
+    public ArrayList<Location> getItems() {
         return items;
     }
 
-    public void setItems(List<Location> locations) {
+    public void setItems(ArrayList<Location> locations) {
         this.items = locations;
     }
 

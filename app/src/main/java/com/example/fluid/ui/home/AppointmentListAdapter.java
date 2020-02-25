@@ -125,7 +125,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             public void onClick(View v) {
                 Intent intent = new Intent(mContext.getApplicationContext(), AppointmentDetailsActivity.class);
                 intent.putExtra(APPOINTMENT, (Parcelable) appointement);
-                mContext.startActivity(intent);
+                holder.itemView.getContext().startActivity(intent);
             }
         });
 

@@ -9,6 +9,8 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.AnimationDrawable;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +32,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -64,8 +67,11 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener {
 
@@ -73,7 +79,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     boolean isAppointmentStarted = true;
     private FloatingActionButton startOrEndFab, callFab, arrivalFab;
     private Toolbar toolbar;
-    private ViewPager mViewPager;
+    private ViewPager2 mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
     private TabLayout mTabLayout;
     private ProgressBar mProgressBar;
@@ -91,7 +97,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     ConstraintLayout noLocationAvailableConstraintLayout;
     MainViewModel mainViewModel;
     Button retryGetLocation;
-
+    Map<Integer,Fragment> fragmentsListMap = new HashMap<>();
     UpdateEventListener listener;
     HomeFragment homeFragment;
     AlertDialog alertDialog;
@@ -109,6 +115,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
+        if (savedInstanceState != null) {
+            myCallListenerList = savedInstanceState.getParcelableArrayList("listenerList");
+                locationList = savedInstanceState.getParcelableArrayList("locationList");
+
+        }
         setContentView(R.layout.activity_main);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.request_id_token))
@@ -134,9 +146,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mImageView = header.findViewById(R.id.userImageView);
         mUserNameTxtView = header.findViewById(R.id.userNameTxt);
         mEmailTxtView = header.findViewById(R.id.emailTxtView);
-
         displayUserInfo();
-
 
         callFab.setOnClickListener(v -> {
 
@@ -190,7 +200,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void getCurrentFragment() {
-        homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + mViewPager.getCurrentItem());
+        homeFragment = (HomeFragment) fragmentsListMap.get(mViewPager.getCurrentItem());
         listener = homeFragment;
     }
 
@@ -200,18 +210,38 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             getNumOfUnArrivedCustomers();
             mProgressBar.setVisibility(View.VISIBLE);
+
             mainViewModel.getLocationData(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL), new OnDataChangedCallBackListener<LocationList>() {
                 @Override
-                public void onResponse(LocationList dataChanged) {
+                public void onResponse(LocationList locationsList) {
                     mProgressBar.setVisibility(View.GONE);
-                    if (dataChanged != null) {
-                        if (dataChanged.getItems() != null) {
-                            locationList = (ArrayList<Location>) dataChanged.getItems();
+                    if (locationsList != null) {
+                        if (locationsList.getItems() != null) {
                             disableNoLocationLayout();
 
-                            setupViewPager(mViewPager);
+                            if (locationList.size() > 0) {
+                                boolean isTheSameList = false;
 
-                        } else if (dataChanged.getStatus().equals("no data found")) {
+                                if (locationsList.getItems().size() == locationList.size()) {
+                                    for (int i = 0; i < locationList.size(); i++) {
+                                        if (locationList.get(i).getSessionId().equals(locationsList.getItems().get(i).getSessionId())) {
+                                            isTheSameList = true;
+                                        } else
+                                            isTheSameList = false;
+                                    }
+                                }
+                                if (!isTheSameList) {
+                                    locationList = locationsList.getItems();
+                                    setupViewPager(mViewPager);
+                                } else if (mViewPagerAdapter == null)
+                                    setupViewPager(mViewPager);
+                            } else {
+
+                                locationList = locationsList.getItems();
+                                setupViewPager(mViewPager);
+                            }
+
+                        } else if (locationsList.getStatus().equals("no data found")) {
                             enableLayoutForNoLocations();
                             hideButtonAndTabLayout();
 
@@ -287,31 +317,34 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         retryGetLocation = findViewById(R.id.retryBtn);
     }
 
-    private void setupViewPager(final ViewPager myViewPager) {
-
+    private void setupViewPager(final ViewPager2 myViewPager) {
 
         myCallListenerList = new ArrayList<>();
-        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        for (int i = 0; i < locationList.size(); i++) {
-        mViewPagerAdapter.addFragment(HomeFragment.newInstance(locationList.get(i).getFacilityId(), locationList.get(i).getSessionId()), locationList.get(i).getFacilityId());
-       }
+        mViewPagerAdapter = new ViewPagerAdapter(this, locationList);
+
+
         myViewPager.setAdapter(mViewPagerAdapter);
-        myViewPager.setOffscreenPageLimit(0);
-        mTabLayout.setupWithViewPager(myViewPager);
-
+        myViewPager.setOffscreenPageLimit(1);
+        new TabLayoutMediator(mTabLayout, mViewPager,
+                (tab, position) -> tab.setText(locationList.get(position).getFacilityId())
+        ).attach();
         for (int i = 0; i < locationList.size(); i++) {
-        if (mTabLayout.getTabAt(i).getCustomView() == null)
-            mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(0).getCount())));
-       }
-       for (int i = 0; i < locationList.size(); i++) {
-        homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + i);
-        if (homeFragment != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(HomeFragment.ARG_LOCATION_CODE, locationList.get(i).getFacilityId());
-            bundle.putString(HomeFragment.ARG_SESSION_ID, locationList.get(i).getSessionId());
-            homeFragment.setArgumentsAfterCreation(bundle);
-
+            if (mTabLayout.getTabAt(i).getCustomView() == null)
+                mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(0).getCount())));
         }
+        fragmentsListMap = mViewPagerAdapter.getFragmentsList();
+        if(fragmentsListMap.size()>0)
+        for (int i = 0; i < locationList.size(); i++) {
+            homeFragment = (HomeFragment) fragmentsListMap.get(i);
+            myCallListenerList.add(homeFragment);
+            if (homeFragment != null) {
+
+                Bundle bundle = new Bundle();
+                bundle.putString(HomeFragment.ARG_LOCATION_CODE, locationList.get(i).getFacilityId());
+                bundle.putString(HomeFragment.ARG_SESSION_ID, locationList.get(i).getSessionId());
+                homeFragment.setArgumentsAfterCreation(bundle);
+
+            }
 
         }
 
@@ -574,13 +607,28 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         );
 
     }
+
     @VisibleForTesting
     public int getNumberofUnArrivedCustomer() {
         return numOfUnArrivedData;
     }
+
     @VisibleForTesting
-    public int getNumberOfCustomerAtFirstLocation(){
+    public int getNumberOfCustomerAtFirstLocation() {
         return Integer.parseInt(locationList.get(1).getCount());
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelableArrayList("locationList", locationList);
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        outState.putParcelableArrayList("listenerList", (ArrayList<? extends Parcelable>) myCallListenerList);
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 }
 

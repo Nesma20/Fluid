@@ -1,5 +1,6 @@
 package com.example.fluid.ui.activities.appointmentdetails;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -124,5 +126,21 @@ AppointmentDetailsViewModel appointmentDetailsViewModel = new AppointmentDetails
             mTxtView.setText(getResources().getString(R.string.when_there_is_no_scheduled_time));
         mTxtView.setTextSize(12);
         mTxtView.setTextColor(COLOR_WHE_NO_TIME_FOUND);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }
