@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "574842241815",
-    "firebase_url": "https://fluid-52648.firebaseio.com",
-    "project_id": "fluid-52648",
-    "storage_bucket": "fluid-52648.appspot.com"
+    "project_number": "189285446458",
+    "firebase_url": "https://fluid-c98e7.firebaseio.com",
+    "project_id": "fluid-c98e7",
+    "storage_bucket": "fluid-c98e7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:574842241815:android:9c8e9c9a4e62ef6ba52d52",
+        "mobilesdk_app_id": "1:189285446458:android:52eb0c1ea0324675471603",
         "android_client_info": {
-          "package_name": "com.example.fluid"
+          "package_name": "com.example.testbugs"
         }
       },
       "oauth_client": [
         {
-          "client_id": "574842241815-v2406n53tbap19fjcea7s9496vbvjor6.apps.googleusercontent.com",
+          "client_id": "189285446458-3033k8vu4fguod79t44gd0ihlorarjtm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.fluid",
-            "certificate_hash": "db6856b6a73bd5147b170b003234266a7da195bb"
+            "package_name": "com.example.testbugs",
+            "certificate_hash": "56515a54651330bcdcd5df2c03d5bb65126b5c7e"
           }
         },
         {
-          "client_id": "574842241815-20po4mvnj6ndc5cecig7sh3a0vvd5euc.apps.googleusercontent.com",
+          "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyATNt_O5qL5ovukfRVr4jjj4bY7ShnpUPk"
+          "current_key": "AIzaSyB1-eWZ9MpcOAHJ1GbdXu8WXaFNkvgL10o"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com",
+              "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
@@ -45,35 +45,72 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:574842241815:android:57050b7344d990d1a52d52",
+        "mobilesdk_app_id": "1:189285446458:android:b58421e7297d4ce8471603",
         "android_client_info": {
-          "package_name": "com.example.itadminapp"
+          "package_name": "com.thetatechno.displayapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "574842241815-9aqd2vngcidp2ontr4bomf2rj840ij8l.apps.googleusercontent.com",
+          "client_id": "189285446458-ruh545qiev8heimoapqc2c51sl7hpje5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.itadminapp",
+            "package_name": "com.thetatechno.displayapp",
             "certificate_hash": "db6856b6a73bd5147b170b003234266a7da195bb"
           }
         },
         {
-          "client_id": "574842241815-20po4mvnj6ndc5cecig7sh3a0vvd5euc.apps.googleusercontent.com",
+          "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyATNt_O5qL5ovukfRVr4jjj4bY7ShnpUPk"
+          "current_key": "AIzaSyB1-eWZ9MpcOAHJ1GbdXu8WXaFNkvgL10o"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "574842241815-r9t9g16s08jflvunfu9rjdd99uscvfir.apps.googleusercontent.com",
+              "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189285446458:android:d3923ed39eabed84471603",
+        "android_client_info": {
+          "package_name": "com.thetatechno.fluid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189285446458-vkfllqq0g8td5kr7omephnfji7mj595k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thetatechno.fluid",
+            "certificate_hash": "db6856b6a73bd5147b170b003234266a7da195bb"
+          }
+        },
+        {
+          "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1-eWZ9MpcOAHJ1GbdXu8WXaFNkvgL10o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

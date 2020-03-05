@@ -1,9 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+// Apply the Crashlytics Gradle plugin
+apply plugin: 'com.google.firebase.crashlytics'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.example.fluid"
+        applicationId "com.thetatechno.fluid"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
@@ -52,11 +56,13 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-plus:17.0.0'
+
     implementation 'com.google.firebase:firebase-database:19.2.0'
 
     implementation 'com.google.apis:google-api-services-people:v1-rev506-1.25.0'
     implementation 'com.google.api-client:google-api-client-android:1.25.0'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation 'com.google.firebase:firebase-analytics:17.2.2'
     // gradle for image loading
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
@@ -70,7 +76,9 @@ dependencies {
     implementation 'androidx.test.espresso:espresso-idling-resource:3.2.0'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation "com.google.android.material:material:1.2.0-alpha03"
-
+    // Add the Firebase SDK for Crashlytics.
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
