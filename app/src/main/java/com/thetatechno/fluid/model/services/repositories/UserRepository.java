@@ -51,7 +51,7 @@ public class UserRepository {
     public void getLocationList (final String email, final OnDataChangedCallBackListener<LocationList> onDataChangedCallBackListener){
 
         MyServicesInterface myServicesInterface = RetrofitInstance.getService();
-        Call<LocationList> call = myServicesInterface.getLocationList(email);
+        Call<LocationList> call = myServicesInterface.getCurrentRunningLocationList(email);
         call.enqueue(new Callback<LocationList>() {
 
             @Override

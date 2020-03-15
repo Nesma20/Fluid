@@ -29,10 +29,10 @@ public class AppointmentRepository {
     private MutableLiveData<Integer> numberOfUnArrivedCustomers = new MutableLiveData<>();
     AppointmentItems appointmentItems;
 
-    public MutableLiveData getAllData(String clinicCode) {
+    public MutableLiveData getAppointmentListData(String clinicCode) {
         myItemList = new ArrayList<>();
         MyServicesInterface myServicesInterface = (MyServicesInterface) RetrofitInstance.getService();
-        Call<AppointmentItems> call = myServicesInterface.getAppointementData(clinicCode);
+        Call<AppointmentItems> call = myServicesInterface.getAppointmentListData(clinicCode);
         call.enqueue(new Callback<AppointmentItems>() {
             @Override
             public void onResponse(Call<AppointmentItems> call, Response<AppointmentItems> response) {
@@ -48,7 +48,6 @@ public class AppointmentRepository {
                                 Log.i("appointmentItems", "  ************** item calling time ************   " + item.getCallingTime());
                                 Log.i("appointmentItems", "  ************** item checkin time ************   " + item.getCheckinTime());
                                 Log.i("appointmentItems", "  ************** item expected time ************   " + item.getExpectedTime());
-                                Log.i("appointmentItems", "  ************** item active booking ************   " + item.getActiveBooking());
 
                             }
                         //TODO: For testing
@@ -56,7 +55,7 @@ public class AppointmentRepository {
                         mutableLiveData.setValue(appointmentItems);
                     }
                 } else {
-                    System.out.println("no access to resources");
+                    Log.i("appointmentItems","no access to resources");
                     mutableLiveData.setValue(null);
                 }
             }
@@ -167,11 +166,14 @@ public class AppointmentRepository {
             }
         });
     }
+
     int returnNumber;
+
+    // For testing
     public MutableLiveData getUnArrivedNumber(String locationCode ){
 
         MyServicesInterface myServicesInterface = (MyServicesInterface) RetrofitInstance.getService();
-        Call<AppointmentItems> call = myServicesInterface.getAppointementData(locationCode);
+        Call<AppointmentItems> call = myServicesInterface.getAppointmentListData(locationCode);
         call.enqueue(new Callback<AppointmentItems>() {
             @Override
             public void onResponse(Call<AppointmentItems> call, Response<AppointmentItems> response) {
@@ -179,13 +181,15 @@ public class AppointmentRepository {
                     System.out.println("*********************** on response in get number arrived ********************");
                     appointmentItems = response.body();
                     if(appointmentItems != null ) {
-                        for(int i = 0; i<appointmentItems.getItems().size();i++){
-                            if(appointmentItems.getItems().get(i).getArrivalTime().isEmpty()){
-                                myItemList.add(appointmentItems.getItems().get(i));
+                        if(appointmentItems.getItems()!=null) {
+                            for (int i = 0; i < appointmentItems.getItems().size(); i++) {
+                                if (appointmentItems.getItems().get(i).getArrivalTime().isEmpty()) {
+                                    myItemList.add(appointmentItems.getItems().get(i));
+                                }
                             }
+                            returnNumber = myItemList.size();
+                            numberOfUnArrivedCustomers.setValue(returnNumber);
                         }
-                        returnNumber = myItemList.size();
-                        numberOfUnArrivedCustomers.setValue(returnNumber);
 
                     }
                 } else {

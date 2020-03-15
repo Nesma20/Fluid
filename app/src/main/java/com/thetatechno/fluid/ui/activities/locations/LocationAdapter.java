@@ -1,4 +1,4 @@
-package com.thetatechno.fluid.ui.locations;
+package com.thetatechno.fluid.ui.activities.locations;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,18 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thetatechno.fluid.R;
-import com.thetatechno.fluid.model.pojo.Location;
+import com.thetatechno.fluid.model.pojo.CurrentLocation;
+import com.thetatechno.fluid.model.pojo.Facility;
 
 import java.util.List;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyViewHolder> {
 
-    List<Location> locations;
+    List<Facility> currentLocations;
     Context mContext;
 
-    public LocationAdapter(Context mContext,List<Location> locations){
+    public LocationAdapter(Context mContext,List<Facility> currentLocations){
         this.mContext = mContext ;
-        this.locations = locations ;
+        this.currentLocations = currentLocations;
 
     }
 
@@ -34,13 +35,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-       String location = locations.get(position).getFacilityId();
+       String location = currentLocations.get(position).getDescription();
        holder.locationName.setText(location);
     }
 
     @Override
     public int getItemCount() {
-        return locations.size();
+        return currentLocations.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{

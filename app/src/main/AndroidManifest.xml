@@ -36,7 +36,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName="com.thetatechno.fluid.ui.activities.main.MainActivity" />
         <activity
-            android:name="com.thetatechno.fluid.ui.locations.LocationsActivity"
+            android:name="com.thetatechno.fluid.ui.activities.locations.LocationsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName="com.thetatechno.fluid.ui.activities.main.MainActivity" />
         <activity

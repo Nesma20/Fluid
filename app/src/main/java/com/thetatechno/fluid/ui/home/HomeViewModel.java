@@ -17,7 +17,7 @@ public class HomeViewModel extends ViewModel {
     MutableLiveData myliveData = new MutableLiveData();
     public LiveData<AppointmentItems> getAllItems(String clinicCode){
         EspressoTestingIdlingResource.increment();
-        myliveData = appointmentRepository.getAllData(clinicCode);
+        myliveData = appointmentRepository.getAppointmentListData(clinicCode);
         return myliveData;
     }
     public void updateWithCalling(final String sessionId, final OnDataChangedCallBackListener<Integer> onDataChangedCallBackListener){

@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Location implements Parcelable {
+public class CurrentLocation implements Parcelable {
     @SerializedName("sessionId")
     @Expose
     private String sessionId;
@@ -18,20 +18,20 @@ public class Location implements Parcelable {
     @Expose
     private String facilityId;
 
-    protected Location(Parcel in) {
+    protected CurrentLocation(Parcel in) {
         sessionId = in.readString();
         facilityId = in.readString();
     }
 
-    public static final Creator<Location> CREATOR = new Creator<Location>() {
+    public static final Creator<CurrentLocation> CREATOR = new Creator<CurrentLocation>() {
         @Override
-        public Location createFromParcel(Parcel in) {
-            return new Location(in);
+        public CurrentLocation createFromParcel(Parcel in) {
+            return new CurrentLocation(in);
         }
 
         @Override
-        public Location[] newArray(int size) {
-            return new Location[size];
+        public CurrentLocation[] newArray(int size) {
+            return new CurrentLocation[size];
         }
     };
 

@@ -3,23 +3,23 @@ package com.thetatechno.fluid.model.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class LocationList {
+public class FacilityList {
     @SerializedName("status")
     @Expose
     private String status;
 
-    @SerializedName("items")
+    @SerializedName("data")
     @Expose
-    private ArrayList<CurrentLocation> items = null;
+    private List<Facility> facilities = null;
 
-    public ArrayList<CurrentLocation> getItems() {
-        return items;
+    public List<Facility> getFacilities() {
+        return facilities;
     }
 
-    public void setItems(ArrayList<CurrentLocation> currentLocations) {
-        this.items = currentLocations;
+    public void setFacilities(List<Facility> items) {
+        this.facilities = items;
     }
 
     public String getStatus() {

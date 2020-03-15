@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.thetatechno.fluid.model.pojo.Location;
+import com.thetatechno.fluid.model.pojo.CurrentLocation;
 import com.thetatechno.fluid.model.pojo.LocationList;
 import com.thetatechno.fluid.model.services.repositories.AppointmentRepository;
 import com.thetatechno.fluid.model.services.repositories.UserRepository;
@@ -60,9 +60,9 @@ public class MainViewModel extends ViewModel {
             @Override
             public void onResponse(LocationList dataChanged) {
                 if (dataChanged !=null && dataChanged.getItems()!= null) {
-                    for (Location location : dataChanged.getItems()) {
-                        Log.i(TAG, "facility id : " + location.getFacilityId());
-                        Log.i(TAG, "session id " + location.getSessionId());
+                    for (CurrentLocation currentLocation : dataChanged.getItems()) {
+                        Log.i(TAG, "facility id : " + currentLocation.getFacilityId());
+                        Log.i(TAG, "session id " + currentLocation.getSessionId());
                     }
                 }
                 onDataChangedCallBackListener.onResponse(dataChanged);

@@ -35,7 +35,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.thetatechno.fluid.R;
-import com.thetatechno.fluid.model.pojo.Location;
+import com.thetatechno.fluid.model.pojo.CurrentLocation;
 import com.thetatechno.fluid.model.pojo.LocationList;
 import com.thetatechno.fluid.ui.activities.BaseActivity;
 import com.thetatechno.fluid.ui.activities.NoInternetConnectionActivity;
@@ -44,7 +44,7 @@ import com.thetatechno.fluid.ui.adapters.ViewPagerAdapter;
 import com.thetatechno.fluid.ui.home.HomeFragment;
 import com.thetatechno.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.thetatechno.fluid.ui.listeners.UpdateEventListener;
-import com.thetatechno.fluid.ui.locations.LocationsActivity;
+import com.thetatechno.fluid.ui.activities.locations.LocationsActivity;
 import com.thetatechno.fluid.utils.CheckForNetwork;
 import com.thetatechno.fluid.utils.Constants;
 import com.thetatechno.fluid.utils.PreferenceController;
@@ -65,7 +65,7 @@ import java.util.Map;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener {
 
-    private ArrayList<Location> locationList = new ArrayList<>();
+    private ArrayList<CurrentLocation> currentLocationList = new ArrayList<>();
     boolean isAppointmentStarted = true;
     private FloatingActionButton startOrEndFab, callFab, arrivalFab;
     private Toolbar toolbar;
@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         Log.i(TAG, "onCreate");
         if (savedInstanceState != null) {
             myCallListenerList = savedInstanceState.getParcelableArrayList("listenerList");
-                locationList = savedInstanceState.getParcelableArrayList("locationList");
+                currentLocationList = savedInstanceState.getParcelableArrayList("locationList");
 
         }
         setContentView(R.layout.activity_main);
@@ -209,25 +209,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         if (locationsList.getItems() != null) {
                             disableNoLocationLayout();
 
-                            if (locationList.size() > 0) {
+                            if (currentLocationList.size() > 0) {
                                 boolean isTheSameList = false;
 
-                                if (locationsList.getItems().size() == locationList.size()) {
-                                    for (int i = 0; i < locationList.size(); i++) {
-                                        if (locationList.get(i).getSessionId().equals(locationsList.getItems().get(i).getSessionId())) {
+                                if (locationsList.getItems().size() == currentLocationList.size()) {
+                                    for (int i = 0; i < currentLocationList.size(); i++) {
+                                        if (currentLocationList.get(i).getSessionId().equals(locationsList.getItems().get(i).getSessionId())) {
                                             isTheSameList = true;
                                         } else
                                             isTheSameList = false;
                                     }
                                 }
                                 if (!isTheSameList) {
-                                    locationList = locationsList.getItems();
+                                    currentLocationList = locationsList.getItems();
                                     setupViewPager(mViewPager);
                                 } else if (mViewPagerAdapter == null)
                                     setupViewPager(mViewPager);
                             } else {
 
-                                locationList = locationsList.getItems();
+                                currentLocationList = locationsList.getItems();
                                 setupViewPager(mViewPager);
                             }
 
@@ -310,28 +310,28 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void setupViewPager(final ViewPager2 myViewPager) {
 
         myCallListenerList = new ArrayList<>();
-        mViewPagerAdapter = new ViewPagerAdapter(this, locationList);
+        mViewPagerAdapter = new ViewPagerAdapter(this, currentLocationList);
 
 
         myViewPager.setAdapter(mViewPagerAdapter);
         myViewPager.setOffscreenPageLimit(1);
         new TabLayoutMediator(mTabLayout, mViewPager,
-                (tab, position) -> tab.setText(locationList.get(position).getFacilityId())
+                (tab, position) -> tab.setText(currentLocationList.get(position).getFacilityId())
         ).attach();
-        for (int i = 0; i < locationList.size(); i++) {
+        for (int i = 0; i < currentLocationList.size(); i++) {
             if (mTabLayout.getTabAt(i).getCustomView() == null)
-                mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(locationList.get(0).getCount())));
+                mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(currentLocationList.get(0).getCount())));
         }
         fragmentsListMap = mViewPagerAdapter.getFragmentsList();
         if(fragmentsListMap.size()>0)
-        for (int i = 0; i < locationList.size(); i++) {
+        for (int i = 0; i < currentLocationList.size(); i++) {
             homeFragment = (HomeFragment) fragmentsListMap.get(i);
             myCallListenerList.add(homeFragment);
             if (homeFragment != null) {
 
                 Bundle bundle = new Bundle();
-                bundle.putString(HomeFragment.ARG_LOCATION_CODE, locationList.get(i).getFacilityId());
-                bundle.putString(HomeFragment.ARG_SESSION_ID, locationList.get(i).getSessionId());
+                bundle.putString(HomeFragment.ARG_LOCATION_CODE, currentLocationList.get(i).getFacilityId());
+                bundle.putString(HomeFragment.ARG_SESSION_ID, currentLocationList.get(i).getSessionId());
                 homeFragment.setArgumentsAfterCreation(bundle);
 
             }
@@ -345,7 +345,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         customTabView = getLayoutInflater().inflate(R.layout.location_tab, null);
         tabTitle = customTabView.findViewById(R.id.location_tab_txt_view);
         tabCount = customTabView.findViewById(R.id.new_notifications_for_list_size);
-        tabTitle.setText(locationList.get(pos).getFacilityId());
+        tabTitle.setText(currentLocationList.get(pos).getFacilityId());
         if (listSize != 0) {
             tabCount.setText(listSize + "");
         } else {
@@ -375,7 +375,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             case R.id.nav_location:
                 Intent intent = new Intent(this, LocationsActivity.class);
-                intent.putParcelableArrayListExtra(LOCATIONS, locationList);
                 startActivity(intent);
                 break;
             case R.id.logout:
@@ -605,12 +604,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @VisibleForTesting
     public int getNumberOfCustomerAtFirstLocation() {
-        return Integer.parseInt(locationList.get(1).getCount());
+        return Integer.parseInt(currentLocationList.get(1).getCount());
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putParcelableArrayList("locationList", locationList);
+        outState.putParcelableArrayList("locationList", currentLocationList);
         super.onSaveInstanceState(outState);
 
     }
