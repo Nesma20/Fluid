@@ -470,12 +470,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void enableLayoutForNoLocations() {
-
+        mViewPager.setVisibility(View.GONE);
         noLocationAvailableConstraintLayout.setVisibility(View.VISIBLE);
 
     }
 
     private void disableNoLocationLayout() {
+        mViewPager.setVisibility(View.VISIBLE);
+        enableButtonsAndLayoutToBeVisible();
         noLocationAvailableConstraintLayout.setVisibility(View.GONE);
 
     }
@@ -604,7 +606,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @VisibleForTesting
     public int getNumberOfCustomerAtFirstLocation() {
-        return Integer.parseInt(currentLocationList.get(1).getCount());
+        return Integer.parseInt(currentLocationList.get(0).getCount());
     }
 
     @Override

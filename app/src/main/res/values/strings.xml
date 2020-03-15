@@ -41,19 +41,22 @@
     <string name="no_internet_txt">No internet found. Check your internet connection and try again.</string>
     <string name="retry_btn">Retry</string>
     <string name="error_while_login">Error While log in, Please retry again</string>
-    <string name="no_location_available">There is NO current currentLocation available</string>
+    <string name="no_location_available">There is NO current Location available</string>
     <string name="no_customer_in_current_location">There is no currently appointments at this clinic</string>
     <string name="error_all_customers_arrived">Error, All customers already arrived.</string>
     <string name="error_no_customer_called">Error, There is no customer called to be checked in.</string>
     <string name="error_call_when_there_is_customer_checked_in">Error, there is a customer didn\'t check out yet, you can\'t call anyone</string>
     <string name="error_connection_whle_retrieve_data">There is a connection error, Try agian later.</string>
-    <string name="error_no_data_returned">There is no customers in current currentLocation.</string>
+    <string name="error_no_data_returned">There is no appointments in current Location.</string>
+    <string name="error_no_data_found" translatable="false">no data found</string>
+
     <string name="copy_write_theta_techno">POWERED BY THETA.</string>
     <string name="ok">OK</string>
     <string name="nurse_image">nurse image</string>
     <string name="Appointment_details">Appointment Details</string>
     <string name="login">Log in</string>
     <string name="locations_activity">Locations</string>
+    <string name="status_no_data_found" translatable="false">no data found</string>
     <string name="web_client_id" translatable="false">815187245291-7e4grr42vi5g1f166ckac4hhfp1m93c6.apps.googleusercontent.com</string>
     <string name="request_id_token" translatable="false">815187245291-7e4grr42vi5g1f166ckac4hhfp1m93c6.apps.googleusercontent.com</string>
 <!--    <string name="client_id" translatable="false">815187245291-7e4grr42vi5g1f166ckac4hhfp1m93c6.apps.googleusercontent.com</string>-->

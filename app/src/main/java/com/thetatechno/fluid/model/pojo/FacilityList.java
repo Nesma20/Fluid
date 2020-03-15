@@ -8,7 +8,7 @@ import java.util.List;
 public class FacilityList {
     @SerializedName("status")
     @Expose
-    private String status;
+    private String status ;
 
     @SerializedName("data")
     @Expose
