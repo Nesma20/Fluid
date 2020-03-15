@@ -320,7 +320,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         ).attach();
         for (int i = 0; i < currentLocationList.size(); i++) {
             if (mTabLayout.getTabAt(i).getCustomView() == null)
-                mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(currentLocationList.get(0).getCount())));
+                mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(currentLocationList.get(i).getCount())));
         }
         fragmentsListMap = mViewPagerAdapter.getFragmentsList();
         if(fragmentsListMap.size()>0)
