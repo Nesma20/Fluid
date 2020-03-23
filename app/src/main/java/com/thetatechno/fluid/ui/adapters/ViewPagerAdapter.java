@@ -29,6 +29,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         Fragment fragment = HomeFragment.newInstance(mCurrentLocationList.get(position).getFacilityId(), mCurrentLocationList.get(position).getSessionId());
         fragmentsListMap.put(position,fragment);
+
         return fragment;
     }
 
@@ -39,7 +40,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     public Map<Integer,Fragment> getFragmentsList(){
         return fragmentsListMap;
     }
-
 
 
 }

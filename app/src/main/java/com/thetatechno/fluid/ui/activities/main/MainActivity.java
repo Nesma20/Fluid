@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -319,8 +320,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 (tab, position) -> tab.setText(currentLocationList.get(position).getFacilityId())
         ).attach();
         for (int i = 0; i < currentLocationList.size(); i++) {
-            if (mTabLayout.getTabAt(i).getCustomView() == null)
-                mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(currentLocationList.get(i).getCount())));
+            if (mTabLayout.getTabAt(i).getCustomView() == null) {
+                try {
+                    if(currentLocationList.get(i).getCount() != null)
+                    mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(currentLocationList.get(i).getCount())));
+                }catch (NumberFormatException ex){
+                    ex.printStackTrace();
+                    Toast.makeText(MainActivity.this,"No appointments here", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
         fragmentsListMap = mViewPagerAdapter.getFragmentsList();
         if(fragmentsListMap.size()>0)
@@ -366,6 +374,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
         switch (id) {
@@ -382,7 +391,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
 
         }
-
+        menuItem.setChecked(false);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
