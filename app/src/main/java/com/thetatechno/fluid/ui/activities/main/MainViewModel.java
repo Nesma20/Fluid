@@ -14,21 +14,23 @@ import com.thetatechno.fluid.utils.App;
 import com.thetatechno.fluid.utils.PreferenceController;
 
 public class MainViewModel extends ViewModel {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainAgentActivity";
     UserRepository userRepository = new UserRepository();
     AppointmentRepository appointmentRepository = new AppointmentRepository();
     private MutableLiveData<String> fullNameLivedata;
     private MutableLiveData<String> emailLiveData;
     private MutableLiveData<String> imageUrlLiveData;
     private MutableLiveData<Integer> numOfUnarrivedCustomersLiveData;
-    public void clearDataFromSharedPreference(){
+
+    public void clearDataFromSharedPreference() {
         PreferenceController.getInstance(App.getContext()).clear(PreferenceController.PREF_EMAIL);
         PreferenceController.getInstance(App.getContext()).clear(PreferenceController.PREF_IMAGE_PROFILE_URL);
         PreferenceController.getInstance(App.getContext()).clear(PreferenceController.PREF_USER_NAME);
         PreferenceController.getInstance(App.getContext()).clear(PreferenceController.PREF_USER_ID);
 
     }
-    public MutableLiveData<String> getFullName(){
+
+    public MutableLiveData<String> getFullName() {
         if (fullNameLivedata == null) {
             fullNameLivedata = new MutableLiveData<String>();
         }
@@ -36,7 +38,8 @@ public class MainViewModel extends ViewModel {
         fullNameLivedata.setValue(name);
         return fullNameLivedata;
     }
-    public MutableLiveData<String> getEmail(){
+
+    public MutableLiveData<String> getEmail() {
         if (emailLiveData == null) {
             emailLiveData = new MutableLiveData<String>();
         }
@@ -44,7 +47,8 @@ public class MainViewModel extends ViewModel {
         emailLiveData.setValue(email);
         return emailLiveData;
     }
-    public MutableLiveData<String> getImageUrl(){
+
+    public MutableLiveData<String> getImageUrl() {
         if (imageUrlLiveData == null) {
             imageUrlLiveData = new MutableLiveData<String>();
         }
@@ -52,14 +56,16 @@ public class MainViewModel extends ViewModel {
         imageUrlLiveData.setValue(imageUrl);
         return imageUrlLiveData;
     }
-    public String getDataFromSharedPreference(String key){
+
+    public String getDataFromSharedPreference(String key) {
         return PreferenceController.getInstance(App.getContext()).get(key);
     }
-    public void getLocationData(String email, final OnDataChangedCallBackListener onDataChangedCallBackListener){
+
+    public void getLocationData(String email, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
         userRepository.getLocationList(email, new OnDataChangedCallBackListener<LocationList>() {
             @Override
             public void onResponse(LocationList dataChanged) {
-                if (dataChanged !=null && dataChanged.getItems()!= null) {
+                if (dataChanged != null && dataChanged.getItems() != null) {
                     for (CurrentLocation currentLocation : dataChanged.getItems()) {
                         Log.i(TAG, "facility id : " + currentLocation.getFacilityId());
                         Log.i(TAG, "session id " + currentLocation.getSessionId());
@@ -70,7 +76,8 @@ public class MainViewModel extends ViewModel {
         });
 
     }
-    public MutableLiveData getNumOfUnArrivedData(String locationCode){
+
+    public MutableLiveData getNumOfUnArrivedData(String locationCode) {
         return appointmentRepository.getUnArrivedNumber(locationCode);
 
     }

@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.thetatechno.fluid.ui.home.HomeFragment"
+        android:name="com.thetatechno.fluid.ui.home.HomeAgentFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 

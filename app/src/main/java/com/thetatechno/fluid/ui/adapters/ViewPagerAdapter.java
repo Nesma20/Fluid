@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.thetatechno.fluid.model.pojo.CurrentLocation;
-import com.thetatechno.fluid.ui.home.HomeFragment;
+import com.thetatechno.fluid.ui.home.HomeAgentFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        Fragment fragment = HomeFragment.newInstance(mCurrentLocationList.get(position).getFacilityId(), mCurrentLocationList.get(position).getSessionId());
+        Fragment fragment = HomeAgentFragment.newInstance(mCurrentLocationList.get(position).getFacilityId(), mCurrentLocationList.get(position).getSessionId());
         fragmentsListMap.put(position,fragment);
 
         return fragment;
