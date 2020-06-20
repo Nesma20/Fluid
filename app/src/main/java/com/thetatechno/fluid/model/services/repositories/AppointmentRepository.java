@@ -69,6 +69,46 @@ public class AppointmentRepository {
         return mutableLiveData;
     }
 
+    public MutableLiveData getProviderAppointment(String doctorCode) {
+        myItemList = new ArrayList<>();
+        MyServicesInterface myServicesInterface = (MyServicesInterface) RetrofitInstance.getService();
+        Call<AppointmentItems> call = myServicesInterface.getProviderAppointment(doctorCode);
+        call.enqueue(new Callback<AppointmentItems>() {
+            @Override
+            public void onResponse(Call<AppointmentItems> call, Response<AppointmentItems> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("*********************** on response ********************");
+                    appointmentItems = response.body();
+                    if(appointmentItems != null ) {
+                        myItemList = (ArrayList<Appointement>) appointmentItems.getItems();
+                        if(appointmentItems.getItems()!=null)
+                            for (Appointement item : myItemList) {
+                                Log.i("appointmentItems", "  ************** item arrival time ************   " + item.getArrivalTime() + "slot " + item.getSlotId());
+                                Log.i("appointmentItems", "  ************** item scheduled time ************   " + item.getScheduledTime());
+                                Log.i("appointmentItems", "  ************** item calling time ************   " + item.getCallingTime());
+                                Log.i("appointmentItems", "  ************** item checkin time ************   " + item.getCheckinTime());
+                                Log.i("appointmentItems", "  ************** item expected time ************   " + item.getExpectedTime());
+
+                            }
+                        //TODO: For testing
+                        EspressoTestingIdlingResource.decrement();
+                        mutableLiveData.setValue(appointmentItems);
+                    }
+                } else {
+                    Log.i("appointmentItems","no access to resources");
+                    mutableLiveData.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AppointmentItems> call, Throwable t) {
+                call.cancel();
+                mutableLiveData.setValue(null);
+            }
+        });
+        return mutableLiveData;
+    }
+
     public void callPatient(String sessionId, final OnDataChangedCallBackListener onDataChangedCallBackListener) {
 
         MyServicesInterface myServicesInterface = (MyServicesInterface) RetrofitInstance.getService();
@@ -168,7 +208,43 @@ public class AppointmentRepository {
     }
 
     int returnNumber;
+    // For testing
+    public MutableLiveData getUnArrivedNumber(String locationCode ){
 
+        MyServicesInterface myServicesInterface = (MyServicesInterface) RetrofitInstance.getService();
+        Call<AppointmentItems> call = myServicesInterface.getAppointmentListData(locationCode);
+        call.enqueue(new Callback<AppointmentItems>() {
+            @Override
+            public void onResponse(Call<AppointmentItems> call, Response<AppointmentItems> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("*********************** on response in get number arrived ********************");
+                    appointmentItems = response.body();
+                    if(appointmentItems != null ) {
+                        if(appointmentItems.getItems()!=null) {
+                            for (int i = 0; i < appointmentItems.getItems().size(); i++) {
+                                if (appointmentItems.getItems().get(i).getArrivalTime().isEmpty()) {
+                                    myItemList.add(appointmentItems.getItems().get(i));
+                                }
+                            }
+                            returnNumber = myItemList.size();
+                            numberOfUnArrivedCustomers.setValue(returnNumber);
+                        }
+
+                    }
+                } else {
+
+                    returnNumber = 0;
+                    numberOfUnArrivedCustomers.setValue(returnNumber);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AppointmentItems> call, Throwable t) {
+                call.cancel();
+            }
+        });
+        return numberOfUnArrivedCustomers;
+    }
 
 
 

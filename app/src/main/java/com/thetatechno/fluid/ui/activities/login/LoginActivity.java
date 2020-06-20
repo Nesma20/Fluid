@@ -1,11 +1,7 @@
 package com.thetatechno.fluid.ui.activities.login;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -15,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.thetatechno.fluid.R;
-import com.thetatechno.fluid.ui.activities.main.MainActivity;
+import com.thetatechno.fluid.ui.activities.main.MainAgentActivity;
 import com.thetatechno.fluid.ui.listeners.OnDataChangedCallBackListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -53,9 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         loginWithGoogleAccountBtn = findViewById(R.id.login_btn);
         setTitle(getString(R.string.login));
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.request_id_token))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
-                .requestProfile()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         loginWithGoogleAccountBtn.setSize(SignInButton.SIZE_STANDARD);
@@ -74,9 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void redirectToMain() {
-
-
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intent = new Intent(LoginActivity.this, MainAgentActivity.class);
         startActivity(intent);
         finish();
     }

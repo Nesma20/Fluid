@@ -20,6 +20,9 @@ public interface MyServicesInterface {
     @GET("/ords/fluid/api/getClinicSchedule/{location_code}")
     Call<AppointmentItems> getAppointmentListData(@Path("location_code") String code);
 
+    @GET("/ords/fluid/api/getClinicSchedule/{doctor_code}")
+    Call<AppointmentItems> getProviderAppointment(@Path("doctor_code") String doctorCode);
+
     @PUT("/ords/fluid/api/call/{session_id}")
     Call<ReturnedStatus> callPatient(@Path("session_id") String session_id);
 

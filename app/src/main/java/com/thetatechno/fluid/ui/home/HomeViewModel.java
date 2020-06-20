@@ -20,6 +20,11 @@ public class HomeViewModel extends ViewModel {
         myliveData = appointmentRepository.getAppointmentListData(clinicCode);
         return myliveData;
     }
+    public LiveData<AppointmentItems> getAllProviderItems(String doctorCode){
+        EspressoTestingIdlingResource.increment();
+        myliveData = appointmentRepository.getProviderAppointment(doctorCode);
+        return myliveData;
+    }
     public void updateWithCalling(final String sessionId, final OnDataChangedCallBackListener<Integer> onDataChangedCallBackListener){
         appointmentRepository.callPatient(sessionId, new OnDataChangedCallBackListener<ReturnedStatus>() {
             @Override

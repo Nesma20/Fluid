@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.thetatechno.fluid.utils.App"
+        android:name=".utils.App"
         android:allowBackup="false"
         android:icon="@drawable/ic_fluid"
         android:label="@string/app_name"
@@ -16,7 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.thetatechno.fluid.ui.activities.SplashActivity"
+        <activity android:name=".ui.activities.main.MainProviderActivity"></activity>
+        <activity
+            android:name=".ui.activities.SplashActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -25,32 +27,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.thetatechno.fluid.ui.activities.NoInternetConnectionActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-           ></activity>
-        <activity android:name="com.thetatechno.fluid.ui.activities.login.LoginActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            ></activity>
         <activity
-            android:name="com.thetatechno.fluid.ui.activities.appointmentdetails.AppointmentDetailsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName="com.thetatechno.fluid.ui.activities.main.MainActivity" />
+            android:name=".ui.activities.NoInternetConnectionActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
-            android:name="com.thetatechno.fluid.ui.activities.locations.LocationsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName="com.thetatechno.fluid.ui.activities.main.MainActivity" />
+            android:name=".ui.activities.login.LoginActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
-            android:name="com.thetatechno.fluid.ui.activities.main.MainActivity"
+            android:name=".ui.activities.appointmentdetails.AppointmentDetailsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".ui.activities.main.MainAgentActivity" />
+        <activity
+            android:name=".ui.activities.locations.LocationsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".ui.activities.main.MainAgentActivity" />
+        <activity
+            android:name=".ui.activities.main.MainAgentActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/main_activity_name"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-        <activity android:name="com.thetatechno.fluid.ui.activities.BaseActivity" />
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".ui.activities.BaseActivity" />
+        <activity android:name=".ui.activities.video.PlaceCallActivity" />
+        <activity android:name=".ui.activities.video.IncomingCallScreenActivity" />
 
         <service
-            android:name="com.thetatechno.fluid.model.services.MyFirebaseMessagingService"
+            android:name=".model.services.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

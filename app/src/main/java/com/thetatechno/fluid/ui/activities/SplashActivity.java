@@ -7,7 +7,8 @@ import android.util.Log;
 
 import com.thetatechno.fluid.R;
 import com.thetatechno.fluid.ui.activities.login.LoginActivity;
-import com.thetatechno.fluid.ui.activities.main.MainActivity;
+import com.thetatechno.fluid.ui.activities.main.MainAgentActivity;
+import com.thetatechno.fluid.ui.activities.main.MainProviderActivity;
 import com.thetatechno.fluid.utils.App;
 import com.thetatechno.fluid.utils.CheckForNetwork;
 import com.thetatechno.fluid.utils.Constants;
@@ -43,10 +44,17 @@ public class SplashActivity extends BaseActivity {
     }
 
     public void redirectToMain() {
-        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
+        if (true){//Agent
+            Intent intent = new Intent(SplashActivity.this, MainAgentActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }else {//Provider
+            Intent intent = new Intent(SplashActivity.this, MainProviderActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
 
     }
 
@@ -68,7 +76,7 @@ public class SplashActivity extends BaseActivity {
                     if (isUserLoggedIn()) {
                         redirectToMain();
                     } else {
-                        redirectToMain();
+                        redirectToLogin();
                     }
                 } else {
                     redirectToNoInternetConnection();

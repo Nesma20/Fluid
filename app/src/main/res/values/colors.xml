@@ -9,4 +9,7 @@
     <color name="silver">#C0C0C0</color>
     <color name="colorLightBlue">#640069C0</color>
     <color name="colorLocationLine">#428DFF</color>
+    <color name="sinch_purple">#ff63029d</color>
+    <color name="off_white">#fffafafa</color>
+    <color name="greyish">#fff2f1f2</color>
 </resources>

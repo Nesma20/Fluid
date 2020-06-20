@@ -1,6 +1,5 @@
 package com.thetatechno.fluid.ui.activities.locations;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -10,12 +9,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.thetatechno.fluid.model.pojo.CurrentLocation;
 import com.thetatechno.fluid.model.pojo.Facility;
 import com.thetatechno.fluid.model.pojo.FacilityList;
 import com.thetatechno.fluid.ui.activities.BaseActivity;
 import com.thetatechno.fluid.ui.activities.NoInternetConnectionActivity;
-import com.thetatechno.fluid.ui.activities.main.MainActivity;
 import com.thetatechno.fluid.R;
 import com.thetatechno.fluid.utils.CheckForNetwork;
 
