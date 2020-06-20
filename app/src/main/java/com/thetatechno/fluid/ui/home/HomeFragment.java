@@ -213,19 +213,14 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
     private void buildAlertWithList(String state) {
         List<Appointement> itemsList = new ArrayList<>();
         if (state.equals(Constants.STARTING_STATE)) {
-            EspressoTestingIdlingResource.increment();
-
             for (int i = 0; i < appointmentList.size(); i++) {
-
                 if (appointmentList.get(i).getCheckinTime().isEmpty()
                         && !appointmentList.get(i).getCallingTime().isEmpty()) {
                     itemsList.add(appointmentList.get(i));
                 }
             }
-           EspressoTestingIdlingResource.decrement();
 
         } else if (state.equals(Constants.ARRIVED_STATE)) {
-            EspressoTestingIdlingResource.increment();
             for (int i = 0; i < appointmentList.size(); i++) {
                 if (appointmentList.get(i).getArrivalTime().isEmpty()) {
                     itemsList.add(appointmentList.get(i));
@@ -236,8 +231,6 @@ public class HomeFragment extends Fragment implements UpdateEventListener, Alert
             alertDialog = new ArriveOrCheckinListDialog(getContext(), itemsList, this, state);
             alertDialog.getWindow().setLayout(getView().getWidth(), getView().getHeight() / 2);
             alertDialog.show();
-            //TODO : for testing
-            EspressoTestingIdlingResource.decrement();
         } else {
             mListener.showAlertWithMessage(getContext().getResources().getString(R.string.error_all_customers_arrived));
         }

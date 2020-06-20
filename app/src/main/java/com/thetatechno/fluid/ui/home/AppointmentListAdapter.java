@@ -87,9 +87,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             }
         }
         if (appointement.getArrivalTime().isEmpty() && appointement.getCallingTime().isEmpty() && appointement.getCheckinTime().isEmpty()) {
-
             holder.patientStateImage.setImageResource(R.drawable.ic_chair);
-
         }
         if (!appointement.getArrivalTime().isEmpty()) {
             holder.patientStateImage.setImageResource(R.drawable.ic_arrive);

@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mImageView = header.findViewById(R.id.userImageView);
         mUserNameTxtView = header.findViewById(R.id.userNameTxt);
         mEmailTxtView = header.findViewById(R.id.emailTxtView);
-        displayUserInfo();
+//        displayUserInfo();
 
         callFab.setOnClickListener(v -> {
 
@@ -155,8 +155,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
         arrivalFab.setOnClickListener(v -> {
-
-
             if (CheckForNetwork.isConnectionOn(MainActivity.this)) {
                 getCurrentFragment();
                 listener.confirmArrived();
@@ -199,10 +197,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (!CheckForNetwork.isConnectionOn(this)) {
             redirectToNoInternetConnection();
         } else {
-            getNumOfUnArrivedCustomers();
+//            getNumOfUnArrivedCustomers();
             mProgressBar.setVisibility(View.VISIBLE);
 
-            mainViewModel.getLocationData(mainViewModel.getDataFromSharedPreference(PreferenceController.PREF_EMAIL), new OnDataChangedCallBackListener<LocationList>() {
+            mainViewModel.getLocationData("nesmatharwat20@gmail.com", new OnDataChangedCallBackListener<LocationList>() {
                 @Override
                 public void onResponse(LocationList locationsList) {
                     mProgressBar.setVisibility(View.GONE);
@@ -312,8 +310,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         myCallListenerList = new ArrayList<>();
         mViewPagerAdapter = new ViewPagerAdapter(this, currentLocationList);
-
-
         myViewPager.setAdapter(mViewPagerAdapter);
         myViewPager.setOffscreenPageLimit(1);
         new TabLayoutMediator(mTabLayout, mViewPager,
@@ -598,15 +594,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     int numOfUnArrivedData;
 
-    private void getNumOfUnArrivedCustomers() {
-
-        mainViewModel.getNumOfUnArrivedData("OPTH1").observe(this, (Observer<Integer>) o ->
-                {
-                    numOfUnArrivedData = o.intValue();
-                }
-        );
-
-    }
+//    private void getNumOfUnArrivedCustomers() {
+//
+//        mainViewModel.getNumOfUnArrivedData("OPTH1").observe(this, (Observer<Integer>) o ->
+//                {
+//                    numOfUnArrivedData = o.intValue();
+//                }
+//        );
+//
+//    }
 
     @VisibleForTesting
     public int getNumberofUnArrivedCustomer() {

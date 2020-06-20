@@ -41,8 +41,8 @@ public class LocationsRepository {
 
             @Override
             public void onFailure(Call<FacilityList> call, Throwable t) {
-                call.cancel();
                 facilityListMutableLiveData.setValue(null);
+                t.printStackTrace();
             }
         });
         return facilityListMutableLiveData;

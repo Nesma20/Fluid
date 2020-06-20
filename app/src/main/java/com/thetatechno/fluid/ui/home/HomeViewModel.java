@@ -31,7 +31,6 @@ public class HomeViewModel extends ViewModel {
             }
         });
 
-
     }
     public void updateWithCheckIn(String slotId, final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
         appointmentRepository.checkIn(slotId, new OnDataChangedCallBackListener<Boolean>() {
@@ -40,17 +39,14 @@ public class HomeViewModel extends ViewModel {
                     onDataChangedCallBackListener.onResponse(dataChanged);
             }
         });
-
     }
     public void updateWithCheckOut( String slotId,final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
         appointmentRepository.checkOut(slotId,new OnDataChangedCallBackListener<Boolean>(){
             @Override
             public void onResponse(Boolean dataChanged) {
                 onDataChangedCallBackListener.onResponse(dataChanged);
-
             }
         });
-
     }
     public void confirmArrival(String slotId, final OnDataChangedCallBackListener<Boolean> onDataChangedCallBackListener){
         appointmentRepository.confirmArrive(slotId, new OnDataChangedCallBackListener<Boolean>() {

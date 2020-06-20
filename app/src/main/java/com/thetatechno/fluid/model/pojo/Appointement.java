@@ -21,25 +21,25 @@ public class Appointement implements Parcelable {
     private String sexCode;
     @SerializedName("scheduled_time")
     @Expose
-    private String scheduledTime;
+    private String scheduledTime = "";
     @SerializedName("expected_time")
     @Expose
-    private String expectedTime;
+    private String expectedTime ="";
     @SerializedName("checkin_time")
     @Expose
-    private String checkinTime;
+    private String checkinTime ="";
     @SerializedName("arrival_time")
     @Expose
-    private String arrivalTime;
+    private String arrivalTime ="";
     @SerializedName("calling_time")
     @Expose
-    private String callingTime;
+    private String callingTime = "";
     @SerializedName("slot_id")
     @Expose
     private String slotId;
     @SerializedName("image_path")
     @Expose
-    private String imagePath;
+    private String imagePath = "";
 
     public String getImagePath() {
         return imagePath;

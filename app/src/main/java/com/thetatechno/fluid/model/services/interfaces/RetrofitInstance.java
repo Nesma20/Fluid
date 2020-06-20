@@ -25,7 +25,6 @@ public class RetrofitInstance {
     }
     public static MyServicesInterface getService() {
         if (retrofit == null) {
-
             BASE_URL = PreferenceController.getInstance(App.getContext()).get(Constants.BASE_URL);
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -33,10 +32,10 @@ public class RetrofitInstance {
                     .connectTimeout(20, TimeUnit.SECONDS)
                     .readTimeout(40, TimeUnit.SECONDS)
                     .writeTimeout(40, TimeUnit.SECONDS)
+                    .addInterceptor(interceptor)
                     .build();
 
             System.out.println("retrofit instance will be created");
-            System.out.println(Constants.BASE_URL);
             retrofit = new Retrofit
                     .Builder()
                     .baseUrl(Constants.BASE_URL)

@@ -70,9 +70,9 @@ public class MainViewModel extends ViewModel {
         });
 
     }
-    public MutableLiveData getNumOfUnArrivedData(String locationCode){
-        return appointmentRepository.getUnArrivedNumber(locationCode);
-
-    }
+//    public MutableLiveData getNumOfUnArrivedData(String locationCode){
+//        return appointmentRepository.getUnArrivedNumber(locationCode);
+//
+//    }
 
 }

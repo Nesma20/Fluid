@@ -17,7 +17,7 @@ import java.util.Map;
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
     Map<Integer, Fragment> fragmentsListMap = new HashMap<>();
-   List<CurrentLocation> mCurrentLocationList = new ArrayList<>();
+   List<CurrentLocation> mCurrentLocationList;
    private FragmentManager fragmentManager;
     public ViewPagerAdapter(@NonNull FragmentActivity fm, List<CurrentLocation> mCurrentLocationList) {
         super(fm);

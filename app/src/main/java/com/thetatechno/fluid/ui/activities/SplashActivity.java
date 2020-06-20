@@ -68,7 +68,7 @@ public class SplashActivity extends BaseActivity {
                     if (isUserLoggedIn()) {
                         redirectToMain();
                     } else {
-                        redirectToLogin();
+                        redirectToMain();
                     }
                 } else {
                     redirectToNoInternetConnection();

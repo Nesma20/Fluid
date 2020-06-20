@@ -89,11 +89,117 @@
       },
       "oauth_client": [
         {
-          "client_id": "189285446458-vkfllqq0g8td5kr7omephnfji7mj595k.apps.googleusercontent.com",
+          "client_id": "189285446458-ifl20kiccrouuhnf0iu3m3qg5ptccl22.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.thetatechno.fluid",
+            "certificate_hash": "99e6f96b047b8d4574fd11ac8a9ab29ff2183e04"
+          }
+        },
+        {
+          "client_id": "189285446458-s1gnnp9f7bqnfum41sdb3ffugia5e27t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thetatechno.fluid",
+            "certificate_hash": "56515a54651330bcdcd5df2c03d5bb65126b5c7e"
+          }
+        },
+        {
+          "client_id": "189285446458-51lellphea8fk8kmb2nru71q3gn5dl4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thetatechno.fluid",
+            "certificate_hash": "cdffb1f587e7b35fdc1f3771a6e3dcd1c4c1c2cb"
+          }
+        },
+        {
+          "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1-eWZ9MpcOAHJ1GbdXu8WXaFNkvgL10o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189285446458:android:869b80362b3c734d471603",
+        "android_client_info": {
+          "package_name": "com.thetatechno.fluidadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189285446458-qmirubk75naegu4f028nuf2evhddsqao.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thetatechno.fluidadmin",
             "certificate_hash": "db6856b6a73bd5147b170b003234266a7da195bb"
+          }
+        },
+        {
+          "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1-eWZ9MpcOAHJ1GbdXu8WXaFNkvgL10o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "189285446458-krn8jrg8siuafaqhh2mir3qk2f9480r2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189285446458:android:8c391438aff73749471603",
+        "android_client_info": {
+          "package_name": "com.thetatechno.fluidclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189285446458-e1titsdr7ar0kknc8ad7r04g3vjeikia.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thetatechno.fluidclient",
+            "certificate_hash": "99e6f96b047b8d4574fd11ac8a9ab29ff2183e04"
+          }
+        },
+        {
+          "client_id": "189285446458-7i5plr2p1l0g1d7fba9sq02bseu29ejf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thetatechno.fluidclient",
+            "certificate_hash": "db6856b6a73bd5147b170b003234266a7da195bb"
+          }
+        },
+        {
+          "client_id": "189285446458-j4a61jk063d0cdkkj6cieklntbsj5jj2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thetatechno.fluidclient",
+            "certificate_hash": "56515a54651330bcdcd5df2c03d5bb65126b5c7e"
           }
         },
         {

@@ -169,43 +169,7 @@ public class AppointmentRepository {
 
     int returnNumber;
 
-    // For testing
-    public MutableLiveData getUnArrivedNumber(String locationCode ){
 
-        MyServicesInterface myServicesInterface = (MyServicesInterface) RetrofitInstance.getService();
-        Call<AppointmentItems> call = myServicesInterface.getAppointmentListData(locationCode);
-        call.enqueue(new Callback<AppointmentItems>() {
-            @Override
-            public void onResponse(Call<AppointmentItems> call, Response<AppointmentItems> response) {
-                if (response.isSuccessful()) {
-                    System.out.println("*********************** on response in get number arrived ********************");
-                    appointmentItems = response.body();
-                    if(appointmentItems != null ) {
-                        if(appointmentItems.getItems()!=null) {
-                            for (int i = 0; i < appointmentItems.getItems().size(); i++) {
-                                if (appointmentItems.getItems().get(i).getArrivalTime().isEmpty()) {
-                                    myItemList.add(appointmentItems.getItems().get(i));
-                                }
-                            }
-                            returnNumber = myItemList.size();
-                            numberOfUnArrivedCustomers.setValue(returnNumber);
-                        }
-
-                    }
-                } else {
-
-                    returnNumber = 0;
-                    numberOfUnArrivedCustomers.setValue(returnNumber);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AppointmentItems> call, Throwable t) {
-                call.cancel();
-            }
-        });
-        return numberOfUnArrivedCustomers;
-    }
 
 
 }

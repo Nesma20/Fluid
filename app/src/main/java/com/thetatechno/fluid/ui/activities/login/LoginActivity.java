@@ -1,7 +1,11 @@
 package com.thetatechno.fluid.ui.activities.login;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -31,6 +35,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class LoginActivity extends AppCompatActivity {
     private final String TAG = "LoginActivity";
@@ -44,17 +50,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         loginWithGoogleAccountBtn = findViewById(R.id.login_btn);
         setTitle(getString(R.string.login));
-
-
-// Configure sign-in to request the user's ID, email address, and basic
-// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-//        Scope myScope = new Scope("https://www.googleapis.com/auth/user.birthday.read");
-//        Scope myScope2 = new Scope(Scopes.PLUS_ME);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestScopes(myScope, myScope2)
                 .requestIdToken(getString(R.string.request_id_token))
                 .requestEmail()
                 .requestProfile()
@@ -74,44 +72,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-
-
-
-//    public void getAccountDetails(final GoogleSignInAccount account) throws IOException {
-//        Thread myThread = new Thread() {
-//            @Override
-//            public void run() {
-//                HttpTransport httpTransport = new NetHttpTransport();
-//                JacksonFactory jsonFactory = new JacksonFactory();
-//                String clientId = getString(R.string.client_id);
-//                String clientSecret = getString(R.string.client_secret);
-//
-//                GoogleCredential credential = new GoogleCredential.Builder()
-//                        .setTransport(httpTransport)
-//                        .setJsonFactory(jsonFactory)
-//                        .setClientSecrets(clientId, clientSecret)
-//                        .build();
-//
-//                PeopleService peopleService =
-//                        new PeopleService.Builder(httpTransport, jsonFactory, credential).setApplicationName("Fluid").
-//                                build();
-//                try {
-//                    Log.i(TAG, "account token : " + account.getIdToken());
-//                    Person profile = peopleService.people().get("people/me")
-//                            .setPersonFields("birthdays,names,genders")
-//                            .execute();
-//                    Log.i(TAG, profile.getEmailAddresses().get(0).getValue());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        };
-//        myThread.start();
-//
-//
-//    }
-
-
 
     private void redirectToMain() {
 
@@ -164,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             e.printStackTrace();
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            Toast.makeText(this, "signInResult:failed code=" + e.getStatusCode() + " message" + e.getStatusMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "signInResult:failed code=" + e.getStatusCode(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -184,4 +144,5 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
+
 }

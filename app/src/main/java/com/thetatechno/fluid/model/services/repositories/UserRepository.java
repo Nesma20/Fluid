@@ -39,8 +39,9 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<ReturnedStatus> call, Throwable t) {
-                call.cancel();
                 userHandler.onUserAddedHandler(status);
+                t.printStackTrace();
+
             }
 
         });
@@ -65,7 +66,7 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<LocationList> call, Throwable t) {
-                call.cancel();
+                t.printStackTrace();
                 locationList = null;
                 onDataChangedCallBackListener.onResponse(locationList);
 
