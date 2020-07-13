@@ -57,4 +57,5 @@
     <string name="locations_activity">Locations</string>
     <string name="status_no_data_found" translatable="false">no data found</string>
     <string name="request_id_token" translatable="false">815187245291-7e4grr42vi5g1f166ckac4hhfp1m93c6.apps.googleusercontent.com</string>
+    <string name="error_email_not_found">This email isn\'t registered yet, please enter a valid email.</string>
 </resources>

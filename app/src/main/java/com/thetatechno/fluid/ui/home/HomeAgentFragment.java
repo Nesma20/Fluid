@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,10 +27,15 @@ import com.thetatechno.fluid.ui.EspressoTestingIdlingResource;
 import com.thetatechno.fluid.ui.dialogs.ArriveOrCheckinListDialog;
 import com.thetatechno.fluid.ui.listeners.AlertActionListener;
 import com.thetatechno.fluid.ui.listeners.OnDataChangedCallBackListener;
+import com.thetatechno.fluid.ui.listeners.OnUpdateDataEvent;
 import com.thetatechno.fluid.ui.listeners.UpdateEventListener;
 import com.thetatechno.fluid.model.pojo.Appointement;
 import com.thetatechno.fluid.utils.CheckForNetwork;
 import com.thetatechno.fluid.utils.Constants;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +49,6 @@ public class HomeAgentFragment extends Fragment implements UpdateEventListener, 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ConstraintLayout noAppointmentsHereLayout;
     private ArriveOrCheckinListDialog alertDialog;
-
     private OnFragmentInteractionListener mListener;
     private List<Appointement> appointmentList = new ArrayList<>();
     Appointement itemStarted = new Appointement();
@@ -77,6 +80,8 @@ public class HomeAgentFragment extends Fragment implements UpdateEventListener, 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+
         Log.i(TAG, "onCreate method");
         if (getArguments() != null) {
             locationCode = getArguments().getString(ARG_LOCATION_CODE);
@@ -89,43 +94,29 @@ public class HomeAgentFragment extends Fragment implements UpdateEventListener, 
 
     }
 
-    public void setArgumentsAfterCreation(Bundle bundle) {
+    public void resetSessionId(String sessionId) {
         Log.i(TAG, "setArgumentsAfterCreation method");
-        if (bundle != null) {
-            if (!locationCode.equals(bundle.getString(ARG_LOCATION_CODE)))
-                locationCode = bundle.getString(ARG_LOCATION_CODE);
-            if (!sessionId.equals(bundle.getString(ARG_SESSION_ID)))
-                sessionId = bundle.getString(ARG_SESSION_ID);
-        }
+            if (sessionId!=null && !sessionId.equals(this.sessionId))
+                this.sessionId =sessionId;
 
         if (appointmentList.size() == 0 && isFragmentVisible) {
-
             onDataChanged();
-
         }
 
     }
-
 
     @Override
     public void onStart() {
         super.onStart();
         Log.i(TAG, "onstart method " + locationCode);
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.i(TAG, "onResume method " + locationCode);
 
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        Log.i(TAG, "onPause method " + locationCode);
-
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
 
     }
 
@@ -149,7 +140,6 @@ public class HomeAgentFragment extends Fragment implements UpdateEventListener, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView method");
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         appointmentListView = view.findViewById(R.id.appointmentRecyclerView);
         appointmentListAdapter = new AppointmentListAdapter(getActivity());
@@ -160,6 +150,11 @@ public class HomeAgentFragment extends Fragment implements UpdateEventListener, 
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -317,8 +312,6 @@ public class HomeAgentFragment extends Fragment implements UpdateEventListener, 
 
     @Override
     public void callPatient() {
-
-
         homeViewModel.updateWithCalling(sessionId, new OnDataChangedCallBackListener<Integer>() {
             @Override
             public void onResponse(Integer sloteId) {
@@ -428,15 +421,7 @@ public class HomeAgentFragment extends Fragment implements UpdateEventListener, 
 
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
 
 
     public interface OnFragmentInteractionListener {
@@ -471,6 +456,29 @@ public class HomeAgentFragment extends Fragment implements UpdateEventListener, 
             mListener.allowProgressBarToBeVisible();
             onDataChanged();
             mListener.allowProgressBarToBeGone();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateData(OnUpdateDataEvent listener) {
+        if(listener.getFacilityCode().equals(locationCode)){
+            switch (listener.getAction()){
+                case Constants.ACTION_CALL:
+                    callPatient();
+                    break;
+                case Constants.ACTION_ARRIVE :
+                    confirmArrived();
+                    break;
+                case Constants.ACTION_CHECK_IN:
+                    checkInPatient();
+                    break;
+                case Constants.ACTION_CHECK_OUT:
+                    checkOutPatient();
+                    break;
+                case Constants.ACTION_UPDATE_SESSION_ID :
+                    resetSessionId(listener.getSessionId());
+
+            }
         }
     }
 

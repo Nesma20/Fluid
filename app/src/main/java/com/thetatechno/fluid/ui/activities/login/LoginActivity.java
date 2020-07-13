@@ -42,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
     UserViewModel userViewModel = new UserViewModel();
     String token = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-           final GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            final GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             FirebaseInstanceId.getInstance().getInstanceId()
                     .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -92,24 +93,22 @@ public class LoginActivity extends AppCompatActivity {
                             // Log
                             Log.i(TAG, "device token : " + token);
                             Log.i(TAG, "account : " + account.getDisplayName() + " : email " + account.getEmail() + "account id " + account.getId() + "account image url " + account.getPhotoUrl().getPath());
+                            userViewModel.createUser(account.getEmail(), account.getGivenName(), account.getFamilyName(),
+                                    account.getPhotoUrl().getPath(), account.getDisplayName(), token,
+                                    new OnDataChangedCallBackListener<Boolean>() {
+                                        @Override
+                                        public void onResponse(Boolean dataChanged) {
+                                            if(dataChanged)
+                                            redirectToMain();
+                                            else {
+                                                Toast.makeText(LoginActivity.this, R.string.error_email_not_found,Toast.LENGTH_SHORT).show();
+                                            }
 
-                                   userViewModel.createUser(account.getEmail(), account.getGivenName(), account.getFamilyName(),
-                                           account.getPhotoUrl().getPath(), account.getDisplayName(), token,
-                                           new OnDataChangedCallBackListener<Boolean>() {
-                                               @Override
-                                               public void onResponse(Boolean dataChanged) {
-//                                                   if (dataChanged.booleanValue()) {
-                                                       redirectToMain();
+                                        }
+                                    });
 
-                                               }
-                                           });
-
-                               }
-                           });
-
-
-
-
+                        }
+                    });
 
 
         } catch (ApiException e) {

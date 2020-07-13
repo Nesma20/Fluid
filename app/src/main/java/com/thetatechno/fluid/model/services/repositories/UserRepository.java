@@ -46,8 +46,6 @@ public class UserRepository {
 
         });
 
-
-
     }
     public void getLocationList (final String email, final OnDataChangedCallBackListener<LocationList> onDataChangedCallBackListener){
 

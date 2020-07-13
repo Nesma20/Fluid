@@ -44,6 +44,7 @@ import com.thetatechno.fluid.ui.activities.login.LoginActivity;
 import com.thetatechno.fluid.ui.adapters.ViewPagerAdapter;
 import com.thetatechno.fluid.ui.home.HomeAgentFragment;
 import com.thetatechno.fluid.ui.listeners.OnDataChangedCallBackListener;
+import com.thetatechno.fluid.ui.listeners.OnUpdateDataEvent;
 import com.thetatechno.fluid.ui.listeners.UpdateEventListener;
 import com.thetatechno.fluid.ui.activities.locations.LocationsActivity;
 import com.thetatechno.fluid.utils.CheckForNetwork;
@@ -59,13 +60,15 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MainAgentActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, HomeAgentFragment.OnFragmentInteractionListener {
-
+    OnUpdateDataEvent listener = new OnUpdateDataEvent();
     private ArrayList<CurrentLocation> currentLocationList = new ArrayList<>();
     boolean isAppointmentStarted = true;
     private FloatingActionButton startOrEndFab, callFab, arrivalFab;
@@ -76,7 +79,6 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
     private ProgressBar mProgressBar;
     DrawerLayout drawer;
     NavigationView navigationView;
-    private List<UpdateEventListener> myCallListenerList;
     GoogleSignInClient mGoogleSignInClient;
     TextView tabTitle;
     TextView tabCount;
@@ -88,15 +90,13 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
     ConstraintLayout noLocationAvailableConstraintLayout;
     MainViewModel mainViewModel;
     Button retryGetLocation;
-    Map<Integer,Fragment> fragmentsListMap = new HashMap<>();
-    UpdateEventListener listener;
+    Map<Integer, Fragment> fragmentsListMap = new HashMap<>();
     HomeAgentFragment homeAgentFragment;
     AlertDialog alertDialog;
     private static final int DRAWABLE_RESOURCE_FOR_START_STATE = R.drawable.animation_fab_finish;
     private static final int COLOR_ID_FOR_START_STATE = R.color.colorAccent;
     private static final int DRAWABLE_RESOURCE_FOR_FINISH_STATE = R.drawable.animation_fab_start;
     private static final int COLOR_ID_FOR_FINISH_STATE = R.color.colorPrimary;
-    public static final String LOCATIONS = "locations";
     public static final String TAG = "MainAgentActivity";
     private int numOfCalls;
     // The Idling Resource which will be null in production.
@@ -108,8 +108,7 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
         if (savedInstanceState != null) {
-            myCallListenerList = savedInstanceState.getParcelableArrayList("listenerList");
-                currentLocationList = savedInstanceState.getParcelableArrayList("locationList");
+            currentLocationList = savedInstanceState.getParcelableArrayList("locationList");
 
         }
         setContentView(R.layout.activity_main);
@@ -145,7 +144,8 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
 
                 if (isAppointmentStarted) {
                     getCurrentFragment();
-                    listener.callPatient();
+                    listener.setAction(Constants.ACTION_CALL);
+                    EventBus.getDefault().post(listener);
 
                 } else {
                     showAlertWithMessage(getResources().getString(R.string.error_call_when_there_is_customer_checked_in));
@@ -159,8 +159,8 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
 
             if (CheckForNetwork.isConnectionOn(MainAgentActivity.this)) {
                 getCurrentFragment();
-                listener.confirmArrived();
-
+                listener.setAction(Constants.ACTION_ARRIVE);
+                EventBus.getDefault().post(listener);
             } else {
                 redirectToNoInternetConnection();
             }
@@ -172,10 +172,12 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
                     getCurrentFragment();
                     if (isAppointmentStarted) {
                         getCurrentFragment();
-                        listener.checkInPatient();
+                        listener.setAction(Constants.ACTION_CHECK_IN);
+                        EventBus.getDefault().post(listener);
 
                     } else {
-                        listener.checkOutPatient();
+                        listener.setAction(Constants.ACTION_CHECK_OUT);
+                        EventBus.getDefault().post(listener);
 
 
                     }
@@ -191,8 +193,7 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
     }
 
     private void getCurrentFragment() {
-        homeAgentFragment = (HomeAgentFragment) fragmentsListMap.get(mViewPager.getCurrentItem());
-        listener = homeAgentFragment;
+        listener.setFacilityCode(currentLocationList.get(mViewPager.getCurrentItem()).getFacilityId());
     }
 
     private void getAllLocations() {
@@ -310,10 +311,7 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
 
     private void setupViewPager(final ViewPager2 myViewPager) {
 
-        myCallListenerList = new ArrayList<>();
         mViewPagerAdapter = new ViewPagerAdapter(this, currentLocationList);
-
-
         myViewPager.setAdapter(mViewPagerAdapter);
         myViewPager.setOffscreenPageLimit(1);
         new TabLayoutMediator(mTabLayout, mViewPager,
@@ -322,29 +320,22 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
         for (int i = 0; i < currentLocationList.size(); i++) {
             if (mTabLayout.getTabAt(i).getCustomView() == null) {
                 try {
-                    if(currentLocationList.get(i).getCount() != null)
-                    mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(currentLocationList.get(i).getCount())));
-                }catch (NumberFormatException ex){
+                    if (currentLocationList.get(i).getCount() != null)
+                        mTabLayout.getTabAt(i).setCustomView(updateTabTextView(i, Integer.parseInt(currentLocationList.get(i).getCount())));
+                } catch (NumberFormatException ex) {
                     ex.printStackTrace();
-                    Toast.makeText(MainAgentActivity.this,"No appointments here", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainAgentActivity.this, "No appointments here", Toast.LENGTH_SHORT).show();
                 }
             }
         }
-        fragmentsListMap = mViewPagerAdapter.getFragmentsList();
-        if(fragmentsListMap.size()>0)
-        for (int i = 0; i < currentLocationList.size(); i++) {
-            homeAgentFragment = (HomeAgentFragment) fragmentsListMap.get(i);
-            myCallListenerList.add(homeAgentFragment);
-            if (homeAgentFragment != null) {
 
-                Bundle bundle = new Bundle();
-                bundle.putString(HomeAgentFragment.ARG_LOCATION_CODE, currentLocationList.get(i).getFacilityId());
-                bundle.putString(HomeAgentFragment.ARG_SESSION_ID, currentLocationList.get(i).getSessionId());
-                homeAgentFragment.setArgumentsAfterCreation(bundle);
-
-            }
-
-        }
+//        for (int i = 0; i < currentLocationList.size(); i++) {
+//           listener.setSessionId(currentLocationList.get(i).getSessionId());
+//           listener.setFacilityCode(currentLocationList.get(i).getFacilityId());
+//           listener.setAction(Constants.ACTION_UPDATE_SESSION_ID);
+//            EventBus.getDefault().post(listener);
+//
+//        }
 
 
     }
@@ -526,11 +517,6 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
     protected void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy method");
-        if (myCallListenerList != null)
-            for (UpdateEventListener updateEventListener : myCallListenerList) {
-                updateEventListener = null;
-            }
-        myCallListenerList = null;
         if (alertDialog != null)
             alertDialog.dismiss();
     }
@@ -618,17 +604,5 @@ public class MainAgentActivity extends BaseActivity implements NavigationView.On
         return Integer.parseInt(currentLocationList.get(0).getCount());
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putParcelableArrayList("locationList", currentLocationList);
-        super.onSaveInstanceState(outState);
-
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        outState.putParcelableArrayList("listenerList", (ArrayList<? extends Parcelable>) myCallListenerList);
-        super.onSaveInstanceState(outState, outPersistentState);
-    }
 }
 

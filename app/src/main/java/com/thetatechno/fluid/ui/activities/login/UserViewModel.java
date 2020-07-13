@@ -19,7 +19,6 @@ public class UserViewModel {
             @Override
             public void onUserAddedHandler(ReturnedStatus returnedStatus) {
                 isUserCreated = checkOnReturnedStatus(returnedStatus);
-
                if (isUserCreated) {
                     saveDataInSharedPreference(email, displayName, imageProfile,  3385);
 

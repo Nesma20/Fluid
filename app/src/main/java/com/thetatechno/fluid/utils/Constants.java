@@ -15,7 +15,14 @@ public interface Constants {
     public static final String BASE_EXTENSION_FOR_PHOTOS = "/i/";
     public static final String ACTIVE_BOOKING = "Y";
     public static final String INACTIVE_BOOKING = "N";
-public static final String MALE = "M";
+    // ACTIONS FOR COMMUNICATION BETWEEN FRAGMENT AND ACTIVITY
+    public static final String ACTION_CALL = "CALL";
+    public static final String ACTION_CHECK_IN = "CHECK_IN";
+    public static final String ACTION_CHECK_OUT = "CHECK_OUT";
+    public static final String ACTION_ARRIVE = "ARRIVE";
+    public static final String ACTION_UPDATE_SESSION_ID = "UPDATE_SESSION_ID";
+
+    public static final String MALE = "M";
 public static final String FEMALE = "F";
 
 
